@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29.6)
+cmake_minimum_required(VERSION 4.0.0)
 project(Conway)
 
 set(
@@ -14,8 +14,6 @@ set(
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-
-add_compile_options("-Wall -Wextra")
 
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(wxWidgets CONFIG REQUIRED)

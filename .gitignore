@@ -7,6 +7,7 @@
 build
 vcpkg**
 !vcpkg.json
+CMakeUserPresets.json
 
 **/settings.toml
 
