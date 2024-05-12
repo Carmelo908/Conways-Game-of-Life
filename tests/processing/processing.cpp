@@ -3,6 +3,7 @@
 
 #include <position.hpp>
 
+#include <iostream>
 #include <string>
 #include <fstream>
 
@@ -10,30 +11,30 @@ std::string posToString(Position &pos)
 {
   std::string posString = "";
 
-  for (size_t y = 0; y < pos.getHeight(); y++)
+  for (size_t y = 0; y < pos.height; y++)
   {
-    for (size_t x = 0; x < pos.getWidth(); x++)
+    for (size_t x = 0; x < pos.width; x++)
     {
       posString += pos.getCellAt(x, y) ? " #" : " -";
     }
-
     posString += "\n";
   }
+
   return posString;
 }
 
 bool compareFiles(std::string logsPath = "./logs.txt", 
   std::string sequencePath = "./rightSequence.txt") 
 {
-  std::ifstream file1 {std::ifstream(logsPath)};
-  std::ifstream file2 {std::ifstream(sequencePath)};
+  std::ifstream logFile {std::ifstream(logsPath)};
+  std::ifstream sequenceFile {std::ifstream(sequencePath)};
 
   std::string logLine = "";
   std::string sequenceLine = "";
 
-  while (std::getline(file2, sequenceLine))
+  while (std::getline(sequenceFile, sequenceLine))
   {
-    std::getline(file1, logLine);
+    std::getline(logFile, logLine);
     if (logLine != sequenceLine)
      return false;   
   }
@@ -74,6 +75,5 @@ TEST_CASE("Compute fixed 10X10 position")
   }
   logFile.close();
 
-  INFO("The next results show whether the log file and the sequence file have the same content.")
-  REQUIRE(compareFiles());
+  CHECK(compareFiles());
 }

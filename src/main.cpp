@@ -13,12 +13,9 @@ Position* setupPosition()
 
   const nlohmann::json jsonObject {nlohmann::json::parse(jsonFile)};
 
-  uint16_t maxWidth {};
-  for (auto &&row : jsonObject[0])
-    for (auto &&cell : row)
-      maxWidth = maxWidth > row.size() ? maxWidth : row.size();
+  Position *currentGen {new Position(jsonObject[0].template get<Position::data_t>())};
 
-  return new Position(jsonObject[0]);
+  return currentGen;
 }
 
 class MyApp : public wxApp 
@@ -26,15 +23,12 @@ class MyApp : public wxApp
 public:
   virtual bool OnInit() 
   {
-    MainFrame *frame = new MainFrame("Conway");
-    frame->Show(true);
-
-    Position* currentGen {setupPosition()};
-
-    frame->getPosCanvas()->showPosition(currentGen);
+    MainFrame *mainFrame = new MainFrame(setupPosition());
+    mainFrame->Show(true);
 
     return true;
   }
 };
+
 
 wxIMPLEMENT_APP(MyApp);

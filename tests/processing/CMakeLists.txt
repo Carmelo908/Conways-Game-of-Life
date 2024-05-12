@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.22.1)
-project(computing)
+project(processing)
 
-add_executable(${PROJECT_NAME} computing.cpp)
+add_executable(${PROJECT_NAME} processing.cpp)
 
-set(CMAKE_CXX_FLAGS "-g -O0")
+set(CMAKE_CXX_FLAGS -g)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_STANDARD 23)
 

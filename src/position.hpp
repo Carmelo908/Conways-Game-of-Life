@@ -5,68 +5,55 @@
 
 #pragma once
 
-  class Position
+class Position
 {
 public:
   using row_t = std::vector<uint8_t>;
-  using data_t = std::vector<std::vector<uint8_t>>;
-
-  Position():
-    height {},
-    width {},
-    __data {}
-  {};
-
-  Position(nlohmann::json toCopy) :
-    height {toCopy.size()},
-    width {toCopy[0].size()},
-    __data {toCopy.template get<data_t>()}
-  {};
+  using data_t = std::vector<row_t>;
 
   Position(data_t toCopy) :
-    height {toCopy.size()},
-    width {toCopy[0].size()},
-    __data {toCopy}
+    height {static_cast<uint16_t>(toCopy.size())},
+    width {static_cast<uint16_t>(toCopy[0].size())},
+    _data {toCopy}
   {};
 
   const uint32_t countCells()
   {
     uint32_t cellsQuantity = 0;
-
-    for (const row_t &row : __data)
-      cellsQuantity += std::count(row.begin(), row.end(), true);
-
+    for (const row_t &row : _data)
+    {
+      cellsQuantity += std::count(row.begin(), row.end(), 1);
+    }
     return cellsQuantity;
   }
 
-  void advanceGen() // pending refactoring
+  void advanceGen() // TO DO: refactor this method
   {
-    data_t nextGen;
+    data_t nextGen = _data;
+    //std::copy(_data.begin(), _data.end(), std::back_inserter(nextGen));
 
-    std::copy(__data.begin(), __data.end(), std::back_inserter(nextGen));
-
-    for (uint32_t posY = 0; posY < height; posY++)
+    for (uint16_t posY = 0; posY < height; posY++)
     {
-      for (uint32_t posX = 0; posX < width; posX++)
+      for (uint16_t posX = 0; posX < width; posX++)
       {
-        if (!__data[posY][posX]) 
+        if (!_data[posY][posX]) 
         continue;
 
         uint8_t sorroundingCells = 0;
 
-        for (int32_t cellY = -1; cellY < 2; cellY++)
+        for (int16_t cellY = -1; cellY < 2; cellY++)
         {
           if (isOutOfBounds(posY + cellY, height))
           continue;
 
-          for (int32_t cellX = -1; cellX < 2; cellX++)
+          for (int16_t cellX = -1; cellX < 2; cellX++)
           {
             if (isOutOfBounds(posX + cellX, width)) 
             continue;
 
-            sorroundingCells += __data[posY + cellY][posX + cellX];
+            sorroundingCells += _data[posY + cellY][posX + cellX];
 
-            if (__data[posY + cellY][posX + cellX])
+            if (_data[posY + cellY][posX + cellX])
             continue;
 
             uint8_t sorroundingDeadCell = 0;
@@ -81,7 +68,7 @@ public:
                 continue;
 
                 sorroundingDeadCell += 
-                __data[posY + cellY + deadCellY][posX + cellX + deadCellX];
+                _data[posY + cellY + deadCellY][posX + cellX + deadCellX];
               }
             }
 
@@ -102,32 +89,23 @@ public:
         }
       }
     }
-
-  __data = nextGen;
+  _data = nextGen;
+  //std::copy(nextGen.begin(), nextGen.end(), std::back_inserter(_data));
   }
 
-  const uint16_t getWidth()
-  {
-    return width;
-  };
-
-  const uint16_t getHeight()
-  {
-    return height;
-  }
+  const uint16_t width, height;
 
   const bool getCellAt(uint16_t coordX, uint16_t coordY)
   {
-    return static_cast<bool>(__data[coordY][coordX]);
+    return static_cast<bool>(_data[coordY][coordX]);
   };
 
 private:
+
   const bool isOutOfBounds(const uint16_t cellCoord, const uint16_t maxCoord)
   {
     return cellCoord < 0 || cellCoord >= maxCoord;
   }
 
-  const size_t width, height;
-
-  data_t __data;  
+  data_t _data;  
 };
