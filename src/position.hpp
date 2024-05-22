@@ -14,23 +14,16 @@ public:
   Position(data_t toCopy) :
     height {static_cast<uint16_t>(toCopy.size())},
     width {static_cast<uint16_t>(toCopy[0].size())},
-    _data {toCopy}
-  {};
-
-  const uint32_t countCells()
+    _data {toCopy},
+    cellsQuantity {}
   {
-    uint32_t cellsQuantity = 0;
-    for (const row_t &row : _data)
-    {
-      cellsQuantity += std::count(row.begin(), row.end(), 1);
-    }
-    return cellsQuantity;
-  }
+    countCells();
+  };
+
 
   void advanceGen() // TO DO: refactor this method
   {
     data_t nextGen = _data;
-    //std::copy(_data.begin(), _data.end(), std::back_inserter(nextGen));
 
     for (uint16_t posY = 0; posY < height; posY++)
     {
@@ -89,8 +82,9 @@ public:
         }
       }
     }
+
   _data = nextGen;
-  //std::copy(nextGen.begin(), nextGen.end(), std::back_inserter(_data));
+  countCells();
   }
 
   const uint16_t width, height;
@@ -100,12 +94,25 @@ public:
     return static_cast<bool>(_data[coordY][coordX]);
   };
 
+  const uint getCellsQuantity() { return cellsQuantity; }
+
 private:
+  void countCells()
+  {
+    uint countedCells = 0;
+    for (const row_t &row : _data)
+    {
+      countedCells += std::count(row.begin(), row.end(), 1);
+    }
+    cellsQuantity = countedCells;
+  }
 
   const bool isOutOfBounds(const uint16_t cellCoord, const uint16_t maxCoord)
   {
     return cellCoord < 0 || cellCoord >= maxCoord;
   }
+
+  uint cellsQuantity;
 
   data_t _data;  
 };

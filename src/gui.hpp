@@ -1,7 +1,13 @@
 #include <thread>
+#include <chrono>
+#include <exception>
+#include <mutex>
+#include <string>
 
 #include <wx/wx.h>
 #include <wx/panel.h>
+#include <wx/button.h>
+#include <wx/sizer.h>
 
 #include <position.hpp>
 
@@ -9,54 +15,83 @@ enum widgets
 {
   button = 2,
   mainFrame,
-  canvas,
+  drawingFrame,
 };
 
-wxDEFINE_EVENT(GAME_START, wxEvent);
-
-class PosClientPtr : public wxClientData
-{
-  public:
-    PosClientPtr(Position* positionPtr) : 
-      position {positionPtr}
-    {};
-
-  Position *const position;
-};
-
-class PosDrawingPanel : public wxPanel
+class ClientPos : public wxClientData
 {
 public:
-  PosDrawingPanel(wxWindow *parent) :
-    wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(500, 300))
-   {
-    SetBackgroundColour(wxColour(0, 0, 0));
-   }
+  ClientPos(Position *positionPtr) :
+    position {positionPtr}
+  {};
 
-  void gameLoop(wxCommandEvent &event)
+  Position *position;
+};
+
+class ClientDrawingData : public ClientPos
+{
+public:
+  ClientDrawingData(Position *position, uint8_t cellSize) :
+    ClientPos {position},
+    cellSize {cellSize}
+  {};
+
+  uint8_t cellSize;
+};
+
+class DrawingPanel : public wxPanel
+{
+public:
+  DrawingPanel(wxWindow *parent, Position *position) :
+    wxPanel(parent, widgets::drawingFrame, wxDefaultPosition, 
+    wxSize(1000, 500), wxBORDER_THEME)
   {
-    auto *clientObject = static_cast<PosClientPtr*>(event.GetClientObject());
+    SetBackgroundColour(wxColour(0, 0, 0));
 
-    clientObject->position->advanceGen();
-    Refresh();
+    constexpr int maxWidth = 1000;
+    constexpr int maxHeight = 500;
+
+    uint8_t cellWidth, cellHeight;
+
+    cellWidth = maxWidth / position->width;
+    cellHeight = maxHeight / position->height;
+
+    uint8_t cellSize = cellWidth < cellHeight ? cellWidth : cellHeight;
+
+    wxSize panelSize {cellSize * position->width, cellSize * position->height}; 
+
+    SetClientObject(new ClientDrawingData(position, cellSize));
+    SetSize(panelSize);
   }
+
+private:
 
   void OnPaint(wxPaintEvent &event)
   {
-    auto clientObject {static_cast<PosClientPtr*>(this->GetClientObject())};
+    auto clientObject {static_cast<ClientDrawingData*>(GetClientObject())};
 
-    if (!clientObject)
-      return;
+    auto position {clientObject->position};
+    auto cellSize {clientObject->cellSize};
 
-    wxPaintDC dc {this};
-    dc.SetPen(*wxWHITE_PEN);
+    wxPaintDC paintDC {this};
 
-    dc.Clear();
+    wxBitmap posBitmap {1000, 500};
+    wxMemoryDC bitmapDC {posBitmap};
 
-    for (size_t y = 0; y < clientObject->position->height; y++)
-      for (size_t x = 0; x < clientObject->position->width; x++)
-        if (clientObject->position->getCellAt(x, y))
-          dc.DrawRectangle(x, y, 1, 1);
+    bitmapDC.SetPen(*wxWHITE_PEN);
+
+    for (uint16_t y = 0; y < position->height; y++)
+    {
+      for (uint16_t x = 0; x < position->width; x++)
+      {
+        if (position->getCellAt(x, y))
+        {
+          bitmapDC.DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    paintDC.DrawBitmap(posBitmap, 0, 0);
   };
 
   wxDECLARE_EVENT_TABLE();
@@ -67,44 +102,102 @@ class StartButton : public wxButton
 {
 public:
   StartButton(wxWindow *parent) :
-    wxButton(parent, button, "Start", wxPoint(1000, 600), wxSize(100, 100))
+    wxButton(parent, widgets::button, "Start", wxPoint(1000, 600), wxSize(100, 100))
   {};
 
 };
 
 
-class MainFrame : public wxFrame 
+class MainFrame : public wxFrame
 {
 public:
-  MainFrame(Position *currentGenPtr) :
-    wxFrame(nullptr, wxID_ANY, wxString("Conway's Life Game"), wxDefaultPosition, wxSize(1000, 700)),
-    currentGen {new PosClientPtr(currentGenPtr)},
-    posCanvas {new PosDrawingPanel(this)},
-    button {new StartButton(this)}
+  MainFrame() :
+    wxFrame(nullptr, wxID_ANY, wxString("Conway's Life Game"), 
+    wxDefaultPosition, wxSize(1000, 700)),
+    position {openPosition()},
+    isGameRunning {false},
+    button {new StartButton(this)},
+    drawingPanel {new DrawingPanel(this, position)}
   {
-    posCanvas->SetClientObject(currentGen);
+    wxBoxSizer *boxSizer {new wxBoxSizer(wxVERTICAL)};
+
+    boxSizer->Add(drawingPanel, 0, wxALIGN_CENTER_HORIZONTAL, 5);
+    // TO DO: fix drawingPanel sizing
+    SetSizerAndFit(boxSizer);
+
     SetBackgroundColour(wxColour(255, 0, 0));
+    Show(true);
   }
+
+private:
+  Position* openPosition() 
+  {
+    std::ifstream jsonFile {"./positions/random.json"};
+
+    const nlohmann::json jsonObject {nlohmann::json::parse(jsonFile)};
+
+    Position *openedPosition {new Position(jsonObject[0].template get<Position::data_t>())};
+
+    return openedPosition;
+  }
+
+  void gameLoop()
+  {
+    for (size_t i = 0; i < 100000; i++)
+    {
+      using namespace std::chrono;
+      auto startTime = high_resolution_clock::now();
+      
+      drawingPanel->Refresh();
+      if (!(isGameRunning))
+        break;
+      position->advanceGen();
+
+      auto endTime = high_resolution_clock::now();
+
+      milliseconds timeElapsed = 
+      duration_cast<milliseconds>(endTime - startTime);
+      // This is for adding configurable delay in a future
+    }
+
+    mtx.lock();
+    isGameRunning = false;
+    mtx.unlock();
+  };
 
   void onButtonClick(wxCommandEvent& WXUNUSED(event))
   {
-    currentGen->position->advanceGen();
-    posCanvas->Refresh();
-    posCanvas->Update();
+    if (isGameRunning)
+    {
+      mtx.lock();
+      isGameRunning = false;
+      mtx.unlock();
+      return;
+    }
+    
+    isGameRunning = true;
+
+    std::thread gameThread{&MainFrame::gameLoop, this};
+    gameThread.detach();
   };
 
-  PosClientPtr *currentGen;
-  PosDrawingPanel *posCanvas;
+  Position *position;
+
+  DrawingPanel *drawingPanel;
+
   StartButton *button;
+
+  std::mutex mtx;
+
+  bool isGameRunning;
 
   wxDECLARE_EVENT_TABLE();
 };
 
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
   EVT_BUTTON(widgets::button, MainFrame::onButtonClick)
-  EVT_COMMAND(widgets::canvas, GAME_START, PosDrawingPanel::gameLoop)
 wxEND_EVENT_TABLE()
 
-wxBEGIN_EVENT_TABLE(PosDrawingPanel, wxPanel)
-  EVT_PAINT(PosDrawingPanel::OnPaint)
+wxBEGIN_EVENT_TABLE(DrawingPanel, wxPanel)
+  EVT_PAINT(DrawingPanel::OnPaint)
 wxEND_EVENT_TABLE()
