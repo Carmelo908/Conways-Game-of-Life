@@ -1,1 +1,1 @@
-# The Conway's life game in C++ with WxWidgets.
+# The Conway's game of life in C++ with WxWidgets.

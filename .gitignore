@@ -1,0 +1,12 @@
+Conway
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+positions/**.json
+
+./tests/*/**
+./tests/*/!*.txt
+./tests/*/!*.json
+./tests/*/!*.cpp
