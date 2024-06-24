@@ -67,7 +67,7 @@ TEST_CASE("Compute fixed 10X10 position")
   {
     std::string posString = posToString(currentGen) +
     "gen: " + std::to_string(i) + "\n" +
-    "cells: " + std::to_string(currentGen.countCells()) + "\n\n";
+    "cells: " + std::to_string(currentGen.getCellsQuantity()) + "\n\n";
 
     logFile << posString;
 

@@ -5,9 +5,10 @@ add_executable(${PROJECT_NAME} src/main.cpp)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_STANDARD 23)
-set(JSON_INCLUDE_DIR /home/carmelo/Escritorio/libs/json-develop/include/nlohmann/)
+set(CMAKE_CXX_FLAGS "-Wall -g")
 
 find_package(wxWidgets REQUIRED COMPONENTS core base)
+find_package(nlohmann_json 3.10.5 REQUIRED)
 
 include(${wxWidgets_USE_FILE})
 
