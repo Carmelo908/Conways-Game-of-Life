@@ -1,5 +1,7 @@
 #include <vector>
 #include <cinttypes>
+#include <memory>
+#include <utility>
 
 #include <nlohmann/json.hpp>
 
@@ -20,16 +22,15 @@ public:
     countCells();
   };
 
-
   void advanceGen() // TO DO: refactor this method
   {
-    data_t nextGen = _data;
+    const data_t previousGen {_data};
 
     for (uint16_t posY = 0; posY < height; posY++)
     {
       for (uint16_t posX = 0; posX < width; posX++)
       {
-        if (!_data[posY][posX]) 
+        if (!previousGen[posY][posX]) 
         continue;
 
         uint8_t sorroundingCells = 0;
@@ -44,9 +45,9 @@ public:
             if (isOutOfBounds(posX + cellX, width)) 
             continue;
 
-            sorroundingCells += _data[posY + cellY][posX + cellX];
+            sorroundingCells += previousGen[posY + cellY][posX + cellX];
 
-            if (_data[posY + cellY][posX + cellX])
+            if (previousGen[posY + cellY][posX + cellX])
             continue;
 
             uint8_t sorroundingDeadCell = 0;
@@ -61,37 +62,26 @@ public:
                 continue;
 
                 sorroundingDeadCell += 
-                _data[posY + cellY + deadCellY][posX + cellX + deadCellX];
+                previousGen[posY + cellY + deadCellY][posX + cellX + deadCellX];
               }
             }
 
-            if (sorroundingDeadCell == 3)
-            {
-              nextGen[posY + cellY][posX + cellX] = true;
-            }
+            _data[posY + cellY][posX + cellX] = (sorroundingDeadCell == 3);
           }
         }
 
-        if (sorroundingCells == 4)
-        {
-          nextGen[posY][posX] = true;
-        }
-        else if (sorroundingCells != 3)
-        {
-          nextGen[posY][posX] = false;
-        }
+        _data[posY][posX] = (sorroundingCells == 4 || sorroundingCells == 3);
       }
     }
 
-  _data = nextGen;
-  countCells();
+    countCells();
   }
 
-  const uint16_t width, height;
+  const uint16_t height, width;
 
   const bool getCellAt(uint16_t coordX, uint16_t coordY)
   {
-    return static_cast<bool>(_data[coordY][coordX]);
+    return static_cast<bool>(_data.at(coordY).at(coordX));
   };
 
   const uint getCellsQuantity() { return cellsQuantity; }
@@ -112,7 +102,7 @@ private:
     return cellCoord < 0 || cellCoord >= maxCoord;
   }
 
-  uint cellsQuantity;
+  data_t _data;
 
-  data_t _data;  
+  uint cellsQuantity;
 };
