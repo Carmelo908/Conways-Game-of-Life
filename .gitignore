@@ -1,8 +1,9 @@
-Conway
-CMakeFiles
-CMakeCache.txt
-cmake_install.cmake
-Makefile
+**/Conway
+**/CMakeFiles
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/Makefile
+build
 
 positions/**.json
 
