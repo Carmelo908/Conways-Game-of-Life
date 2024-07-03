@@ -1,15 +1,15 @@
 #include <thread>
 #include <chrono>
-#include <exception>
-#include <mutex>
+#include <fstream>
+#include <memory>
 #include <string>
-
-#include <wx/wx.h>
-#include <wx/panel.h>
-#include <wx/button.h>
-#include <wx/sizer.h>
+#include <atomic>
+#include <cinttypes>
 
 #include <position.hpp>
+
+#include <wx/wx.h>
+#include <nlohmann/json.hpp>
 
 enum widgets
 {
@@ -18,11 +18,12 @@ enum widgets
   drawingFrame,
 };
 
+
 class ClientPos : public wxClientData
 {
 public:
-  ClientPos(Position *positionPtr) :
-    position {positionPtr}
+  ClientPos(Position *position) :
+    position {position}
   {};
 
   Position *position;
@@ -108,31 +109,31 @@ public:
 };
 
 
-class MainFrame : public wxFrame
+class GameFrame : public wxFrame
 {
 public:
-  MainFrame() :
+  GameFrame() :
     wxFrame(nullptr, wxID_ANY, wxString("Conway's Life Game"), 
     wxDefaultPosition, wxSize(1000, 700)),
-    position {openPosition()},
+    position {openPosition("./positions/random.json")},
     isGameRunning {false},
     button {new StartButton(this)},
     drawingPanel {new DrawingPanel(this, position)}
   {
     wxBoxSizer *boxSizer {new wxBoxSizer(wxVERTICAL)};
 
-    boxSizer->Add(drawingPanel, 0, wxALIGN_CENTER_HORIZONTAL, 5);
-    // TO DO: fix drawingPanel sizing
-    SetSizerAndFit(boxSizer);
+    boxSizer->Add(drawingPanel, 0, wxFIXED_MINSIZE |  wxALIGN_CENTER_HORIZONTAL);
 
+    SetSizerAndFit(boxSizer);
     SetBackgroundColour(wxColour(255, 0, 0));
     Show(true);
+    Maximize();
   }
 
 private:
-  Position* openPosition() 
+  static Position *openPosition(std::string filePath) 
   {
-    std::ifstream jsonFile {"./positions/random.json"};
+    std::ifstream jsonFile {filePath};
 
     const nlohmann::json jsonObject {nlohmann::json::parse(jsonFile)};
 
@@ -149,53 +150,42 @@ private:
       auto startTime = high_resolution_clock::now();
       
       drawingPanel->Refresh();
-      if (!(isGameRunning))
-        break;
+      if (!isGameRunning) break;
       position->advanceGen();
 
       auto endTime = high_resolution_clock::now();
-
-      milliseconds timeElapsed = 
-      duration_cast<milliseconds>(endTime - startTime);
+      auto timeElapsed = duration_cast<milliseconds>(endTime - startTime);
+      std::this_thread::sleep_for(milliseconds(10) - timeElapsed);
       // This is for adding configurable delay in a future
     }
 
-    mtx.lock();
     isGameRunning = false;
-    mtx.unlock();
   };
 
   void onButtonClick(wxCommandEvent& WXUNUSED(event))
   {
     if (isGameRunning)
     {
-      mtx.lock();
       isGameRunning = false;
-      mtx.unlock();
       return;
     }
-    
     isGameRunning = true;
 
-    std::thread gameThread{&MainFrame::gameLoop, this};
+    std::thread gameThread{&GameFrame::gameLoop, this};
     gameThread.detach();
   };
 
   Position *position;
-
-  DrawingPanel *drawingPanel;
+  std::atomic<bool> isGameRunning;
 
   StartButton *button;
-
-  std::mutex mtx;
-
-  bool isGameRunning;
+  DrawingPanel *drawingPanel;
 
   wxDECLARE_EVENT_TABLE();
 };
 
-wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
-  EVT_BUTTON(widgets::button, MainFrame::onButtonClick)
+wxBEGIN_EVENT_TABLE(GameFrame, wxFrame)
+  EVT_BUTTON(widgets::button, GameFrame::onButtonClick)
 wxEND_EVENT_TABLE()
 
 wxBEGIN_EVENT_TABLE(DrawingPanel, wxPanel)
