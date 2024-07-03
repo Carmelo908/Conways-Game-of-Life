@@ -4,6 +4,8 @@
 **/cmake_install.cmake
 **/Makefile
 build
+vcpkg**
+!vcpkg.json
 
 positions/**.json
 

@@ -14,10 +14,11 @@ These features are planned to be added in the future:
 - Better README and documentation
 
 # Requirements/dependencies
+- [vcpkg](https://vcpkg.io/) as dependency manager
 - [CMake](https://cmake.org/) as build system
 - [wxWidgets](https://www.wxwidgets.org) as GUI framework
 - [nlohmann_json](https://github.com/nlohmann/json) for serialization and
-  deserialization of JSON files which contains the position information
+  deserialization of JSON files which contains the positions information
 - [Catch2](https://github.com/catchorg/Catch2) as testing framework
 - [Python](https://www.python.org/) for the temporal positions generation 
   scripts. not strictly necessary though
