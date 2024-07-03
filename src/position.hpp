@@ -1,9 +1,6 @@
 #include <vector>
 #include <cinttypes>
 #include <memory>
-#include <utility>
-
-#include <nlohmann/json.hpp>
 
 #pragma once
 
@@ -99,7 +96,7 @@ private:
 
   const bool isOutOfBounds(const uint16_t cellCoord, const uint16_t maxCoord)
   {
-    return cellCoord < 0 || cellCoord >= maxCoord;
+    return (cellCoord < 0 || cellCoord >= maxCoord);
   }
 
   data_t _data;

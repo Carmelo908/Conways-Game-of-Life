@@ -1,11 +1,4 @@
-#include <fstream>
-#include <cinttypes>
-#include <vector>
-#include <cinttypes>
-#include <memory>
-
-#include <gui.hpp>
-#include <position.hpp>
+#include <gui/configmenu.hpp>
 
 class MyApp : public wxApp 
 {
@@ -17,7 +10,7 @@ wxIMPLEMENT_APP(MyApp);
 
 bool MyApp::OnInit()
 {
-  MainFrame *mainFrame = new MainFrame();
+  new ConfigMenu();
 
   return true;
 }
