@@ -9,7 +9,8 @@ vcpkg**
 
 positions/**.json
 
-./tests/*/**
-./tests/*/!*.txt
-./tests/*/!*.json
-./tests/*/!*.cpp
+tests/**
+
+!./tests/*/*.txt
+!./tests/*/*.json
+!./tests/*/*.cpp
