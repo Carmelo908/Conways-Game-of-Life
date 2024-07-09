@@ -18,25 +18,15 @@ enum widgets
   drawingFrame,
 };
 
-
-class ClientPos : public wxClientData
-{
-public:
-  ClientPos(Position *position) :
-    position {position}
-  {};
-
-  Position *position;
-};
-
-class ClientDrawingData : public ClientPos
+class ClientDrawingData : public wxClientData
 {
 public:
   ClientDrawingData(Position *position, uint8_t cellSize) :
-    ClientPos {position},
+    position {position},
     cellSize {cellSize}
   {};
 
+  Position *position;
   uint8_t cellSize;
 };
 
@@ -47,10 +37,9 @@ public:
     wxPanel(parent, widgets::drawingFrame, wxDefaultPosition, 
     wxSize(1000, 500), wxBORDER_THEME)
   {
-    SetBackgroundColour(wxColour(0, 0, 0));
+    Bind(wxEVT_PAINT, &DrawingPanel::OnPaint, this);
 
-    constexpr int maxWidth = 1000;
-    constexpr int maxHeight = 500;
+    SetBackgroundColour(wxColour(0, 0, 0));
 
     uint8_t cellWidth, cellHeight;
 
@@ -66,15 +55,12 @@ public:
   }
 
 private:
-
-  void OnPaint(wxPaintEvent &event)
+  void OnPaint(wxPaintEvent &)
   {
     auto clientObject {static_cast<ClientDrawingData*>(GetClientObject())};
 
     auto position {clientObject->position};
     auto cellSize {clientObject->cellSize};
-
-    wxPaintDC paintDC {this};
 
     wxBitmap posBitmap {1000, 500};
     wxMemoryDC bitmapDC {posBitmap};
@@ -85,44 +71,39 @@ private:
     {
       for (uint16_t x = 0; x < position->width; x++)
       {
-        if (position->getCellAt(x, y))
-        {
-          bitmapDC.DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize);
-        }
+        if (!position->getCellAt(x, y)) 
+        { 
+          continue; 
+        };
+        bitmapDC.DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize);
       }
     }
 
-    paintDC.DrawBitmap(posBitmap, 0, 0);
+    wxPaintDC(this).DrawBitmap(posBitmap, 0, 0);
   };
 
-  wxDECLARE_EVENT_TABLE();
+  static constexpr int maxWidth = 1000;
+  static constexpr int maxHeight = 500;
 };
-
-
-class StartButton : public wxButton
-{
-public:
-  StartButton(wxWindow *parent) :
-    wxButton(parent, widgets::button, "Start", wxPoint(1000, 600), wxSize(100, 100))
-  {};
-
-};
-
 
 class GameFrame : public wxFrame
 {
 public:
   GameFrame() :
-    wxFrame(nullptr, wxID_ANY, wxString("Conway's Life Game"), 
-    wxDefaultPosition, wxSize(1000, 700)),
+    wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", 
+      wxDefaultPosition, wxSize(1000, 700)),
     position {openPosition("./positions/random.json")},
     isGameRunning {false},
-    button {new StartButton(this)},
-    drawingPanel {new DrawingPanel(this, position)}
+    button {new wxButton(this, widgets::button, "Start", 
+      wxDefaultPosition, wxSize(100, 100))},
+    drawingPanel {new DrawingPanel(this, &position)}
   {
+    button->Bind(wxEVT_BUTTON, &GameFrame::onButtonClick, this); 
+
     wxBoxSizer *boxSizer {new wxBoxSizer(wxVERTICAL)};
 
-    boxSizer->Add(drawingPanel, 0, wxFIXED_MINSIZE |  wxALIGN_CENTER_HORIZONTAL);
+    boxSizer->Add(drawingPanel, 0, wxFIXED_MINSIZE | wxALIGN_CENTER_HORIZONTAL);
+    boxSizer->Add(button, 0, wxALIGN_CENTER_HORIZONTAL);
 
     SetSizerAndFit(boxSizer);
     SetBackgroundColour(wxColour(255, 0, 0));
@@ -131,13 +112,13 @@ public:
   }
 
 private:
-  static Position *openPosition(std::string filePath) 
+  static Position openPosition(std::string filePath)
   {
     std::ifstream jsonFile {filePath};
 
     const nlohmann::json jsonObject {nlohmann::json::parse(jsonFile)};
 
-    Position *openedPosition {new Position(jsonObject[0].template get<Position::data_t>())};
+    auto openedPosition {jsonObject[0].template get<Position::data_t>()};
 
     return openedPosition;
   }
@@ -150,8 +131,11 @@ private:
       auto startTime = high_resolution_clock::now();
       
       drawingPanel->Refresh();
-      if (!isGameRunning) break;
-      position->advanceGen();
+      if (!isGameRunning) 
+      {
+        break;
+      }
+      position.advanceGen();
 
       auto endTime = high_resolution_clock::now();
       auto timeElapsed = duration_cast<milliseconds>(endTime - startTime);
@@ -162,32 +146,21 @@ private:
     isGameRunning = false;
   };
 
-  void onButtonClick(wxCommandEvent& WXUNUSED(event))
+  void onButtonClick(wxCommandEvent&)
   {
     if (isGameRunning)
     {
       isGameRunning = false;
       return;
     }
-    isGameRunning = true;
 
-    std::thread gameThread{&GameFrame::gameLoop, this};
-    gameThread.detach();
+    isGameRunning = true;
+    std::thread(&GameFrame::gameLoop, this).detach();
   };
 
-  Position *position;
+  Position position;
   std::atomic<bool> isGameRunning;
 
-  StartButton *button;
+  wxButton *button;
   DrawingPanel *drawingPanel;
-
-  wxDECLARE_EVENT_TABLE();
 };
-
-wxBEGIN_EVENT_TABLE(GameFrame, wxFrame)
-  EVT_BUTTON(widgets::button, GameFrame::onButtonClick)
-wxEND_EVENT_TABLE()
-
-wxBEGIN_EVENT_TABLE(DrawingPanel, wxPanel)
-  EVT_PAINT(DrawingPanel::OnPaint)
-wxEND_EVENT_TABLE()
