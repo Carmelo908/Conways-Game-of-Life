@@ -76,30 +76,30 @@ public:
 
   const uint16_t height, width;
 
-  const bool getCellAt(uint16_t coordX, uint16_t coordY)
+  bool getCellAt(const uint16_t coordX, const uint16_t coordY) const
   {
     return static_cast<bool>(_data.at(coordY).at(coordX));
   };
 
-  const uint getCellsQuantity() { return cellsQuantity; }
+  uint getCellsQuantity() const { return cellsQuantity; }
 
 private:
   void countCells()
   {
-    uint countedCells = 0;
+    uint32_t countedCells = 0;
     for (const row_t &row : _data)
     {
-      countedCells += std::count(row.begin(), row.end(), 1);
+      countedCells += std::count(row.cbegin(), row.cend(), 1);
     }
     cellsQuantity = countedCells;
   }
 
-  const bool isOutOfBounds(const uint16_t cellCoord, const uint16_t maxCoord)
+  bool isOutOfBounds(const int16_t cellCoord, const uint16_t maxCoord) const
   {
     return (cellCoord < 0 || cellCoord >= maxCoord);
   }
 
   data_t _data;
 
-  uint cellsQuantity;
+  uint32_t cellsQuantity;
 };
