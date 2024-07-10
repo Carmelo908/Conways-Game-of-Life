@@ -1,4 +1,6 @@
-#include <gui/configmenu.hpp>
+#include <wx/wx.h>
+
+#include "gui/configmenu.hpp"
 
 class MyApp : public wxApp 
 {

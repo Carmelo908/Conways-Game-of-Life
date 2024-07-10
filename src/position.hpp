@@ -1,103 +1,29 @@
 #include <vector>
 #include <cinttypes>
-#include <memory>
 
 #pragma once
 
 class Position
 {
 public:
-  using row_t = std::vector<uint8_t>;
-  using data_t = std::vector<row_t>;
+using row_t = std::vector<uint8_t>;
+using data_t = std::vector<row_t>;
+  Position(const Position &) = delete;
 
-  Position(data_t toCopy) :
-    height {static_cast<uint16_t>(toCopy.size())},
-    width {static_cast<uint16_t>(toCopy[0].size())},
-    _data {toCopy},
-    cellsQuantity {}
-  {
-    countCells();
-  };
+  Position(data_t toCopy);
 
-  void advanceGen() // TO DO: refactor this method
-  {
-    const data_t previousGen {_data};
+  void advanceGen(); // TO DO: refactor this method
 
-    for (uint16_t posY = 0; posY < height; posY++)
-    {
-      for (uint16_t posX = 0; posX < width; posX++)
-      {
-        if (!previousGen[posY][posX]) 
-        continue;
+  bool getCellAt(const uint16_t coordX, const uint16_t coordY) const;
 
-        uint8_t sorroundingCells = 0;
-
-        for (int16_t cellY = -1; cellY < 2; cellY++)
-        {
-          if (isOutOfBounds(posY + cellY, height))
-          continue;
-
-          for (int16_t cellX = -1; cellX < 2; cellX++)
-          {
-            if (isOutOfBounds(posX + cellX, width)) 
-            continue;
-
-            sorroundingCells += previousGen[posY + cellY][posX + cellX];
-
-            if (previousGen[posY + cellY][posX + cellX])
-            continue;
-
-            uint8_t sorroundingDeadCell = 0;
-            for (int8_t deadCellY = -1; deadCellY < 2; deadCellY++)
-            {
-              if (isOutOfBounds(posY + cellY + deadCellY, height)) 
-              continue;
-
-              for (int8_t deadCellX = -1; deadCellX < 2; deadCellX++)
-              {
-                if (isOutOfBounds(posX + cellX + deadCellX, width))
-                continue;
-
-                sorroundingDeadCell += 
-                previousGen[posY + cellY + deadCellY][posX + cellX + deadCellX];
-              }
-            }
-
-            _data[posY + cellY][posX + cellX] = (sorroundingDeadCell == 3);
-          }
-        }
-
-        _data[posY][posX] = (sorroundingCells == 4 || sorroundingCells == 3);
-      }
-    }
-
-    countCells();
-  }
+  uint32_t getCellsQuantity() const;
 
   const uint16_t height, width;
 
-  bool getCellAt(const uint16_t coordX, const uint16_t coordY) const
-  {
-    return static_cast<bool>(_data.at(coordY).at(coordX));
-  };
-
-  uint getCellsQuantity() const { return cellsQuantity; }
-
 private:
-  void countCells()
-  {
-    uint32_t countedCells = 0;
-    for (const row_t &row : _data)
-    {
-      countedCells += std::count(row.cbegin(), row.cend(), 1);
-    }
-    cellsQuantity = countedCells;
-  }
+  void countCells();
 
-  bool isOutOfBounds(const int16_t cellCoord, const uint16_t maxCoord) const
-  {
-    return (cellCoord < 0 || cellCoord >= maxCoord);
-  }
+  bool isOutOfBounds(int16_t cellCoord, uint16_t maxCoord) const;
 
   data_t _data;
 

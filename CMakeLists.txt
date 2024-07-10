@@ -1,7 +1,16 @@
 cmake_minimum_required(VERSION 3.29.6)
 project(Conway)
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+set(
+  SOURCE_FILES 
+  src/main.cpp 
+  src/position.cpp
+  src/gui/configmenu.cpp
+  src/gui/fieldspanel.cpp
+  src/gui/gameframe.cpp
+)
+
+add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_STANDARD 23)
