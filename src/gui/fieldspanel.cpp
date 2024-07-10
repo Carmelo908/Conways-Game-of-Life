@@ -1,10 +1,13 @@
+#include <filesystem>
+#include <stdexcept>
+
 #include "gui/fieldspanel.hpp"
 
 FieldsPanel::FieldsPanel(wxFrame *parent) :
   wxPanel(parent),
   pathInput {new wxTextCtrl(this, wxID_ANY, "./positions/position.json",
   wxDefaultPosition, wxSize(200, 30))},
-  delayInput {new wxSpinCtrl(this, wxID_ANY, '0', 
+  delayInput {new wxSpinCtrl(this, wxID_ANY, "50", 
   wxDefaultPosition, wxSize(200, 30))}
 {
   pathInput->SetFont(pathInput->GetFont().Scale(1.1));
@@ -23,4 +26,33 @@ FieldsPanel::FieldsPanel(wxFrame *parent) :
   fieldsGrid->Add(delayInput);
 
   SetSizerAndFit(fieldsGrid);
+}
+
+SettingsData FieldsPanel::getSettingsInput() const
+{
+  SettingsData settings;
+
+  settings.posPath = getPosPath(); 
+  settings.delay = getDelay();
+
+  return settings;
+}
+
+std::string FieldsPanel::getPosPath() const
+{
+  std::string posPath = pathInput->GetValue().ToStdString();
+
+  if (!std::filesystem::exists(posPath))
+  {
+    throw InvalidInput("The file doesn't exist\n");
+  }
+  else
+  {
+    return posPath;
+  }
+}
+
+std::chrono::milliseconds FieldsPanel::getDelay() const
+{
+  return std::chrono::milliseconds(delayInput->GetValue());
 }
