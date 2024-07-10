@@ -1,7 +1,7 @@
 #include <filesystem>
 #include <stdexcept>
 
-#include "gui/fieldspanel.hpp"
+#include "fieldspanel.hpp"
 
 FieldsPanel::FieldsPanel(wxFrame *parent) :
   wxPanel(parent),

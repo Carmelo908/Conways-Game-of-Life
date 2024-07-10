@@ -22,10 +22,3 @@ target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(${PROJECT_NAME} PRIVATE wx::core wx::base)
 
 add_compile_options("-Wall -Wextra")
-
-target_include_directories(
-  ${PROJECT_NAME}
-  PRIVATE src/
-  PRIVATE src/gui
-  PRIVATE src/tomlconfig
-)

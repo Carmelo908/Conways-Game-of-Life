@@ -3,7 +3,7 @@
 
 #include <wx/wx.h>
 
-#include "position.hpp"
+#include "../position.hpp"
 #include "drawingpanel.hpp"
 
 #pragma once
