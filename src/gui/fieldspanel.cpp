@@ -5,10 +5,10 @@
 
 FieldsPanel::FieldsPanel(wxFrame *parent) :
   wxPanel(parent),
-  pathInput {new wxTextCtrl(this, wxID_ANY, "./positions/position.json",
-  wxDefaultPosition, wxSize(200, 30))},
+  pathInput {new wxFilePickerCtrl(this, wxID_ANY, "Initial position's file", 
+    wxFileSelectorPromptStr, "*.json", wxDefaultPosition, wxSize(200, 30))},
   delayInput {new wxSpinCtrl(this, wxID_ANY, "50", 
-  wxDefaultPosition, wxSize(200, 30))}
+    wxDefaultPosition, wxSize(200, 30))}
 {
   pathInput->SetFont(pathInput->GetFont().Scale(1.1));
   delayInput->SetFont(delayInput->GetFont().Scale(1.1));
@@ -32,24 +32,17 @@ SettingsData FieldsPanel::getSettingsInput() const
 {
   SettingsData settings;
 
-  settings.posPath = getPosPath(); 
+  settings.posPath = getPosPath();
   settings.delay = getDelay();
+
+  wxMessageBox(settings.posPath);
 
   return settings;
 }
 
 std::string FieldsPanel::getPosPath() const
 {
-  std::string posPath = pathInput->GetValue().ToStdString();
-
-  if (!std::filesystem::exists(posPath))
-  {
-    throw InvalidInput("The file doesn't exist\n");
-  }
-  else
-  {
-    return posPath;
-  }
+  return pathInput->GetFileName().GetFullPath().ToStdString();
 }
 
 std::chrono::milliseconds FieldsPanel::getDelay() const

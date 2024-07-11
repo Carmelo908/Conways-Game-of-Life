@@ -44,21 +44,19 @@ void GameFrame::gameLoop()
     using namespace std::chrono;
     auto startTime = high_resolution_clock::now();
     
-    drawingPanel->Refresh();
-    if (!isGameRunning) 
+    if (!isGameRunning)
     {
       break;
     }
     position.advanceGen();
+    drawingPanel->Refresh();
 
     auto endTime = high_resolution_clock::now();
     auto timeElapsed = duration_cast<milliseconds>(endTime - startTime);
     std::this_thread::sleep_for(milliseconds(10) - timeElapsed);
-    // This is for adding configurable delay in a future
   }
-
   isGameRunning = false;
-  };
+};
 
 void GameFrame::onButtonClick(wxCommandEvent &)
 {

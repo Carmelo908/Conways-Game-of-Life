@@ -1,5 +1,6 @@
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
+#include <wx/filepicker.h>
 
 #include "../settingsdata.hpp"
 
@@ -8,14 +9,9 @@ class FieldsPanel : public wxPanel
 public:
   FieldsPanel(wxFrame *parent);
 
-  struct InvalidInput : public std::runtime_error
-  {
-    InvalidInput(const std::string& message) : std::runtime_error(message) {}
-  };
-
   SettingsData getSettingsInput() const;
 
-  wxTextCtrl *pathInput;
+  wxFilePickerCtrl *pathInput;
   wxSpinCtrl *delayInput;
 
 private:

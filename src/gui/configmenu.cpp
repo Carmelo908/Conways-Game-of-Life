@@ -25,18 +25,8 @@ ConfigMenu::ConfigMenu() :
 
 void ConfigMenu::OnAcceptButton(wxCommandEvent &)
 {
-  SettingsData settings;
-  try
-  {
-    settings = fieldsPanel->getSettingsInput();
-  }
-  catch (const FieldsPanel::InvalidInput &e)
-  {
-    wxMessageBox(e.what());
-    return;
-  }
   Show(false);
-  
+  SettingsData settings = fieldsPanel->getSettingsInput();
   Destroy();
   new GameFrame();
 }
