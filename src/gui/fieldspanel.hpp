@@ -1,3 +1,5 @@
+#include <string_view>
+
 #include <wx/wx.h>
 #include <wx/spinctrl.h>
 #include <wx/filepicker.h>
@@ -15,10 +17,13 @@ public:
   wxSpinCtrl *delayInput;
 
 private:
+  void createControls();
+
+  wxStaticText *createLabel(std::string_view labelText);
+
+  void setUpLayout();
+
   std::chrono::milliseconds getDelay() const;
 
   std::string getPosPath() const;
-
-  static constexpr int gridRows = 2;
-  static constexpr int gridColumns = 2;
 };

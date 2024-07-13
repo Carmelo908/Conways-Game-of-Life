@@ -1,7 +1,6 @@
 #include <wx/wx.h>
 
 #include "fieldspanel.hpp"
-#include "gameframe.hpp"
 #include "../settingsdata.hpp"
 
 #pragma once
@@ -12,6 +11,10 @@ public:
   ConfigMenu();
 
 private:
+  void createButton();
+
+  void setUpLayout();
+
   void OnAcceptButton(wxCommandEvent &);
   
   wxButton *acceptButton;

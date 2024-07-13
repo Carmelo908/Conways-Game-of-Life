@@ -3,29 +3,48 @@
 
 #include "fieldspanel.hpp"
 
+constexpr int gridRows = 2;
+constexpr int gridColumns = 2;
+
 FieldsPanel::FieldsPanel(wxFrame *parent) :
   wxPanel(parent),
-  pathInput {new wxFilePickerCtrl(this, wxID_ANY, "Initial position's file", 
-    wxFileSelectorPromptStr, "*.json", wxDefaultPosition, wxSize(200, 30))},
-  delayInput {new wxSpinCtrl(this, wxID_ANY, "50", 
-    wxDefaultPosition, wxSize(200, 30))}
+  pathInput {new wxFilePickerCtrl()},
+  delayInput {new wxSpinCtrl()}
 {
+  createControls();
+  setUpLayout();
+}
+
+void FieldsPanel::createControls()
+{
+  pathInput->Create(this, wxID_ANY, wxEmptyString, 
+                    wxFileSelectorPromptStr, "*.json");
   pathInput->SetFont(pathInput->GetFont().Scale(1.1));
+  pathInput->SetInitialSize(wxSize(200, 30));
+
+  delayInput->Create(this, wxID_ANY, "50");
   delayInput->SetFont(delayInput->GetFont().Scale(1.1));
+  delayInput->SetRange(1, 10000);
+  delayInput->SetInitialSize(wxSize(200, 30));
+}
 
-  wxGridSizer *fieldsGrid = new wxGridSizer(gridRows, gridColumns, 10, 100);
+wxStaticText *FieldsPanel::createLabel(std::string_view labelText)
+{
+  wxStaticText *label = new wxStaticText(this, wxID_ANY, labelText.data());
+  label->SetFont(label->GetFont().Scale(1.1));
+  return label;
+}
 
-  auto pathLabel = new wxStaticText(this, wxID_ANY, "Position file's path:");
-  pathLabel->SetFont(pathLabel->GetFont().Scale(1.1));
-  fieldsGrid->Add(pathLabel);
-  auto delayLabel = new wxStaticText(this, wxID_ANY, 
-  "Delay between generations\n(in milliseconds):");
-  delayLabel->SetFont(delayLabel->GetFont().Scale(1.1));
-  fieldsGrid->Add(delayLabel);
-  fieldsGrid->Add(pathInput);
-  fieldsGrid->Add(delayInput);
+void FieldsPanel::setUpLayout()
+{
+  wxGridSizer *gridSizer = new wxGridSizer(gridRows, gridColumns, 10, 100);
 
-  SetSizerAndFit(fieldsGrid);
+  gridSizer->Add(createLabel("Initial position's file"));
+  gridSizer->Add(createLabel("Delay between generations\n(in milliseconds):"));
+  gridSizer->Add(pathInput);
+  gridSizer->Add(delayInput);
+
+  SetSizerAndFit(gridSizer);
 }
 
 SettingsData FieldsPanel::getSettingsInput() const
@@ -42,7 +61,16 @@ SettingsData FieldsPanel::getSettingsInput() const
 
 std::string FieldsPanel::getPosPath() const
 {
-  return pathInput->GetFileName().GetFullPath().ToStdString();
+  std::string filePath = pathInput->GetFileName().GetFullPath().ToStdString();
+  if (filePath == "")
+  {
+    throw std::invalid_argument("No file has been selected");
+  }
+  else
+  {
+    return filePath;
+  }
+  
 }
 
 std::chrono::milliseconds FieldsPanel::getDelay() const
