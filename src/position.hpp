@@ -6,26 +6,36 @@
 class Position
 {
 public:
-using row_t = std::vector<uint8_t>;
-using data_t = std::vector<row_t>;
+  using row_t = std::vector<uint8_t>;
+  using data_t = std::vector<row_t>;
+
+  Position(data_t &&toCopy);
+
   Position(const Position &) = delete;
 
-  Position(data_t toCopy);
+  void advanceGen();
 
-  void advanceGen(); // TO DO: refactor this method
-
-  bool getCellAt(const uint16_t coordX, const uint16_t coordY) const;
+  bool getCellAt(uint16_t coordX, uint16_t coordY) const;
 
   uint32_t getCellsQuantity() const;
+
+  size_t getGenCount() const;
 
   const uint16_t height, width;
 
 private:
-  void countCells();
+  uint32_t countCells();
 
   bool isOutOfBounds(int16_t cellCoord, uint16_t maxCoord) const;
+
+  bool updateCell(uint16_t cellX, uint16_t cellY, data_t const &previousGen);
+
+  uint8_t sorroundingCellsAt(int16_t cellX, int16_t cellY, 
+                            data_t const &previousGen) const;
 
   data_t _data;
 
   uint32_t cellsQuantity;
+
+  size_t genCount;
 };
