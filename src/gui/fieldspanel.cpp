@@ -6,10 +6,10 @@
 constexpr int gridRows = 2;
 constexpr int gridColumns = 2;
 
-FieldsPanel::FieldsPanel(wxFrame *parent) :
-  wxPanel(parent),
-  pathInput {new wxFilePickerCtrl()},
-  delayInput {new wxSpinCtrl()}
+FieldsPanel::FieldsPanel(wxFrame *parent)
+  : wxPanel(parent),
+    pathInput{new wxFilePickerCtrl()},
+    delayInput{new wxSpinCtrl()}
 {
   createControls();
   setUpLayout();
@@ -17,8 +17,8 @@ FieldsPanel::FieldsPanel(wxFrame *parent) :
 
 void FieldsPanel::createControls()
 {
-  pathInput->Create(this, wxID_ANY, wxEmptyString, 
-                    wxFileSelectorPromptStr, "*.json");
+  pathInput->Create(this, wxID_ANY, "", "Select the initial position's file",
+                    "*.json");
   pathInput->SetFont(pathInput->GetFont().Scale(1.1));
   pathInput->SetInitialSize(wxSize(200, 30));
 

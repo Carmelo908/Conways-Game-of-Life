@@ -1,0 +1,42 @@
+BasedOnStyle: LLVM
+IndentWidth: 2
+ColumnLimit: 80
+
+Language: Cpp
+
+AlignConsecutiveShortCaseStatements:
+  Enabled: true
+  AcrossEmptyLines: true
+  AcrossComments: true
+  AlignCaseColons: false
+AlignOperands: Align
+AllowShortCaseLabelsOnASingleLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: true
+AllowShortBlocksOnASingleLine: Empty
+AllowShortEnumsOnASingleLine: true
+AllowShortFunctionsOnASingleLine: All
+AllowShortLambdasOnASingleLine: Empty
+AlwaysBreakBeforeMultilineStrings: false
+AlwaysBreakTemplateDeclarations: true
+BinPackArguments: true
+BinPackParameters: true
+BraceWrapping:
+  AfterClass: true
+  AfterControlStatement: Always
+  AfterEnum: true
+  SplitEmptyFunction: false
+  AfterFunction: true
+  AfterNamespace: true
+  AfterStruct: true
+  AfterUnion: true
+BreakBeforeTernaryOperators: false
+BreakBeforeBraces: Custom
+ConstructorInitializerIndentWidth: 2
+EmptyLineBeforeAccessModifier: LogicalBlock
+PackConstructorInitializers: Never
+PointerAlignment: Right
+QualifierAlignment: Left
+ReferenceAlignment: Right
+RemoveSemicolon: true
+AlignAfterOpenBracket: Align

@@ -2,7 +2,7 @@
 
 #include "gui/configmenu.hpp"
 
-class MyApp : public wxApp 
+class MyApp : public wxApp
 {
 public:
   virtual bool OnInit() override;

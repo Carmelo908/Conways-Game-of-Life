@@ -6,9 +6,9 @@
 #include "configmenu.hpp"
 #include "gameframe.hpp"
 
-ConfigMenu::ConfigMenu() :
-  wxFrame(nullptr, wxID_ANY, "Settings"),
-  fieldsPanel {new FieldsPanel(this)}
+ConfigMenu::ConfigMenu()
+  : wxFrame(nullptr, wxID_ANY, "Settings"),
+    fieldsPanel{new FieldsPanel(this)}
 {
   createButton();
   setUpLayout();
@@ -20,7 +20,7 @@ ConfigMenu::ConfigMenu() :
 
 void ConfigMenu::setUpLayout()
 {
-  wxBoxSizer *verticalSizer {new wxBoxSizer(wxVERTICAL)};
+  wxBoxSizer *verticalSizer{new wxBoxSizer(wxVERTICAL)};
   verticalSizer->AddSpacer(20);
   verticalSizer->Add(fieldsPanel, 0, wxALIGN_CENTER_HORIZONTAL);
   verticalSizer->AddSpacer(80);
@@ -39,14 +39,14 @@ void ConfigMenu::createButton()
 
 std::unique_ptr<Position> ConfigMenu::openPosition(std::string_view filePath)
 {
-  std::ifstream jsonFile {filePath.data()};
-  const nlohmann::json jsonObject {nlohmann::json::parse(jsonFile)};
+  std::ifstream jsonFile{filePath.data()};
+  const nlohmann::json jsonObject{nlohmann::json::parse(jsonFile)};
 
-  auto openedPosition {std::make_unique<Position>
-  (jsonObject[0].template get<Position::data_t>())};
+  auto openedPosition{std::make_unique<Position>(
+      jsonObject[0].template get<Position::data_t>())};
 
   return openedPosition;
-};
+}
 
 void ConfigMenu::OnAcceptButton(wxCommandEvent &)
 {
@@ -59,12 +59,11 @@ void ConfigMenu::OnAcceptButton(wxCommandEvent &)
   }
   try
   {
-    settings.position = openPosition(settings.getUnopenedPath());  
-  }
-  catch (const nlohmann::json::parse_error &)
+    settings.position = openPosition(settings.getUnopenedPath());
+  } catch (const nlohmann::json::parse_error &)
   {
     wxMessageBox("Error parsing the file; it may contain invalid data.",
-                  "Parsing error");
+                 "Parsing error");
     return;
   }
   Show(false);

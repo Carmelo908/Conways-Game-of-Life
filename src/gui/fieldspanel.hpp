@@ -1,8 +1,8 @@
 #include <string_view>
 
-#include <wx/wx.h>
-#include <wx/spinctrl.h>
 #include <wx/filepicker.h>
+#include <wx/spinctrl.h>
+#include <wx/wx.h>
 
 #include "../settingsdata.hpp"
 

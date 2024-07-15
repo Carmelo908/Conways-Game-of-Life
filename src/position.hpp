@@ -1,5 +1,5 @@
-#include <vector>
 #include <cinttypes>
+#include <vector>
 
 #pragma once
 
@@ -28,10 +28,10 @@ private:
 
   bool isOutOfBounds(int16_t cellCoord, uint16_t maxCoord) const;
 
-  bool updateCell(uint16_t cellX, uint16_t cellY, data_t const &previousGen);
+  bool updateCell(uint16_t cellX, uint16_t cellY, const data_t &previousGen);
 
-  uint8_t sorroundingCellsAt(int16_t cellX, int16_t cellY, 
-                            data_t const &previousGen) const;
+  uint8_t sorroundingCellsAt(int16_t cellX, int16_t cellY,
+                             const data_t &previousGen) const;
 
   data_t _data;
 

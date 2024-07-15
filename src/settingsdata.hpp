@@ -1,6 +1,6 @@
-#include <string>
 #include <chrono>
 #include <memory>
+#include <string>
 #include <variant>
 
 #include "position.hpp"
@@ -12,14 +12,16 @@ using namespace std::chrono_literals;
 class SettingsData
 {
 public:
-  SettingsData() : SettingsData("", 0ms) {}
+  SettingsData()
+    : SettingsData("", 0ms)
+  {}
 
   SettingsData(std::string_view posFilePath,
-  std::chrono::milliseconds delay = 0ms) :
-    delay {delay}
+               std::chrono::milliseconds delay = 0ms)
+    : delay{delay}
   {
     position = posFilePath.data();
-  };
+  }
 
   std::string_view getUnopenedPath()
   {
