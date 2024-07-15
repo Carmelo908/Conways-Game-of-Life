@@ -1,6 +1,7 @@
 # Script for testing purposes. Better functionality for drawing positions will 
 # be added in the future. Use this for generating random positions given a 
-# width, a height and a rate of cells. 
+# width, a height and a rate of cells. Print the content to a file from the
+# command line. 
 from sys import argv, exit
 from json import dumps
 from random import randint
@@ -27,13 +28,10 @@ position: list[list[int]] = [
     for _ in range(height)
 ]
 
-jsonString: str = ""
-
+jsonString: str = "[\n"
 for i in range(len(position)):
   jsonString += "  " + dumps(position[i]) + (
      ",\n" if i != (len(position) - 1) else "\n")
+jsonString += "]\n"
 
-with open("../random.json", "w") as file:
-  file.write("[\n")
-  file.write(jsonString)
-  file.write("]\n")
+print(jsonString)
