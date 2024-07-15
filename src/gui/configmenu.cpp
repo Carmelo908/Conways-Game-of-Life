@@ -1,3 +1,8 @@
+#include <fstream>
+#include <utility>
+
+#include <nlohmann/json.hpp>
+
 #include "configmenu.hpp"
 #include "gameframe.hpp"
 
@@ -32,20 +37,37 @@ void ConfigMenu::createButton()
   acceptButton->SetFont(acceptButton->GetFont().Scale(1.15));
 }
 
+std::unique_ptr<Position> ConfigMenu::openPosition(std::string_view filePath)
+{
+  std::ifstream jsonFile {filePath.data()};
+  const nlohmann::json jsonObject {nlohmann::json::parse(jsonFile)};
+
+  auto openedPosition {std::make_unique<Position>
+  (jsonObject[0].template get<Position::data_t>())};
+
+  return openedPosition;
+};
+
 void ConfigMenu::OnAcceptButton(wxCommandEvent &)
 {
   SettingsData settings;
-  try
+  settings = fieldsPanel->getSettingsInput();
+  if (settings.getUnopenedPath().empty())
   {
-    settings = fieldsPanel->getSettingsInput();
-  }
-  catch(const std::invalid_argument &e)
-  {
-    wxMessageBox(e.what(), "Error");
+    wxMessageBox("No file has been selected", "Empty required field");
     return;
   }
-  
+  try
+  {
+    settings.position = openPosition(settings.getUnopenedPath());  
+  }
+  catch (const nlohmann::json::parse_error &)
+  {
+    wxMessageBox("Error parsing the file; it may contain invalid data.",
+                  "Parsing error");
+    return;
+  }
   Show(false);
-  Destroy();
-  new GameFrame();
+  Close();
+  new GameFrame(settings);
 }

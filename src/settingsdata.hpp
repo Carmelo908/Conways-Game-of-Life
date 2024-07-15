@@ -1,5 +1,9 @@
 #include <string>
 #include <chrono>
+#include <memory>
+#include <variant>
+
+#include "position.hpp"
 
 #pragma once
 
@@ -10,12 +14,27 @@ class SettingsData
 public:
   SettingsData() : SettingsData("", 0ms) {}
 
-  SettingsData(std::string_view posPath,
+  SettingsData(std::string_view posFilePath,
   std::chrono::milliseconds delay = 0ms) :
-    posPath {posPath},
     delay {delay}
-  {}
+  {
+    position = posFilePath.data();
+  };
 
-  std::string posPath;
+  std::string_view getUnopenedPath()
+  {
+    return std::string_view(std::get<std::string>(position));
+  }
+
+  std::unique_ptr<Position> releaseOpenedPosition()
+  {
+    auto posPointer = std::get<position_ptr>(position).release();
+    return position_ptr(posPointer);
+  }
+
+  std::variant<std::string, std::unique_ptr<Position>> position;
   std::chrono::milliseconds delay;
+
+private:
+  using position_ptr = std::unique_ptr<Position>;
 };

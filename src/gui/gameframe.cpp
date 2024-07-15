@@ -1,22 +1,27 @@
 #include <thread>
 #include <chrono>
-#include <fstream>
+#include <memory>
+#include <utility>
 
 #include <nlohmann/json.hpp>
 
 #include "gameframe.hpp"
 
-GameFrame::GameFrame() :
+namespace chrono = std::chrono;
+
+GameFrame::GameFrame(SettingsData &settings) :
   wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
-  position {openPosition("./positions/random.json")},
+  position {settings.releaseOpenedPosition()},
+  delay {settings.delay},
   isGameRunning {false},
   button {new wxButton(this, wxID_ANY, "Start", wxDefaultPosition)},
-  drawingPanel {new DrawingPanel(this, &position)}
+  drawingPanel {new DrawingPanel(this, position.get())}
 {
+  Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
+
   button->Bind(wxEVT_BUTTON, &GameFrame::onButtonClick, this); 
 
   wxBoxSizer *boxSizer {new wxBoxSizer(wxVERTICAL)};
-
   boxSizer->Add(drawingPanel, 0, wxFIXED_MINSIZE | wxALIGN_CENTER_HORIZONTAL);
   boxSizer->Add(button, 0, wxALIGN_CENTER_HORIZONTAL);
 
@@ -26,37 +31,27 @@ GameFrame::GameFrame() :
   Maximize();
 }
 
-Position GameFrame::openPosition(std::string filePath)
-{
-  std::ifstream jsonFile {filePath};
-
-  const nlohmann::json jsonObject {nlohmann::json::parse(jsonFile)};
-
-  auto openedPosition {jsonObject[0].template get<Position::data_t>()};
-
-  return openedPosition;
-}
-
 void GameFrame::gameLoop()
 {
-  for (size_t i = 0; i < 100000; i++)
+  while (isGameRunning)
   {
-    using namespace std::chrono;
-    auto startTime = high_resolution_clock::now();
+    auto startTime = chrono::steady_clock::now();
     
-    if (!isGameRunning)
-    {
-      break;
-    }
-    position.advanceGen();
+    position->advanceGen();
     drawingPanel->Refresh();
 
-    auto endTime = high_resolution_clock::now();
-    auto timeElapsed = duration_cast<milliseconds>(endTime - startTime);
-    std::this_thread::sleep_for(milliseconds(10) - timeElapsed);
+    std::this_thread::sleep_for(delay - timeElapsed(startTime));
   }
-  isGameRunning = false;
-};
+}
+
+chrono::milliseconds GameFrame::timeElapsed(
+  chrono::steady_clock::time_point startPoint) const
+{
+  auto endTime = chrono::steady_clock::now();
+  return chrono::duration_cast
+  <chrono::milliseconds>(chrono::steady_clock::now() - startPoint);
+}
+
 
 void GameFrame::onButtonClick(wxCommandEvent &)
 {
@@ -65,7 +60,12 @@ void GameFrame::onButtonClick(wxCommandEvent &)
     isGameRunning = false;
     return;
   }
-
   isGameRunning = true;
   std::thread(&GameFrame::gameLoop, this).detach();
-};
+}
+
+void GameFrame::onClose(wxCloseEvent &)
+{
+  isGameRunning = false;
+  Close();
+}

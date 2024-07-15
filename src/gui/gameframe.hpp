@@ -4,23 +4,29 @@
 #include <wx/wx.h>
 
 #include "../position.hpp"
+#include "../settingsdata.hpp"
 #include "drawingpanel.hpp"
 
 #pragma once
 
-class GameFrame : public wxFrame
+class GameFrame : private wxFrame
 {
 public:
-  GameFrame();
+  GameFrame(SettingsData &settings);
 
 private:
-  static Position openPosition(std::string filePath);
- 
+
   void gameLoop();
 
-  void onButtonClick(wxCommandEvent&);
+  std::chrono::milliseconds timeElapsed(
+    std::chrono::steady_clock::time_point startTime) const;
 
-  Position position;
+  void onButtonClick(wxCommandEvent &);
+
+  void onClose(wxCloseEvent &);
+
+  std::unique_ptr<Position> position;
+  std::chrono::milliseconds delay;
   std::atomic<bool> isGameRunning;
 
   wxButton *button;

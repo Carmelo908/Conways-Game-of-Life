@@ -51,26 +51,15 @@ SettingsData FieldsPanel::getSettingsInput() const
 {
   SettingsData settings;
 
-  settings.posPath = getPosPath();
+  settings.position = getPosPath();
   settings.delay = getDelay();
-
-  wxMessageBox(settings.posPath);
 
   return settings;
 }
 
 std::string FieldsPanel::getPosPath() const
 {
-  std::string filePath = pathInput->GetFileName().GetFullPath().ToStdString();
-  if (filePath == "")
-  {
-    throw std::invalid_argument("No file has been selected");
-  }
-  else
-  {
-    return filePath;
-  }
-  
+  return pathInput->GetFileName().GetFullPath().ToStdString();
 }
 
 std::chrono::milliseconds FieldsPanel::getDelay() const

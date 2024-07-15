@@ -1,3 +1,5 @@
+#include <string_view>
+
 #include <wx/wx.h>
 
 #include "fieldspanel.hpp"
@@ -14,6 +16,8 @@ private:
   void createButton();
 
   void setUpLayout();
+
+  static std::unique_ptr<Position> openPosition(std::string_view filePath);
 
   void OnAcceptButton(wxCommandEvent &);
   
