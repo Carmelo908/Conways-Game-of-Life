@@ -58,13 +58,16 @@ void GameFrame::onButtonClick(wxCommandEvent &)
   {
     isGameRunning = false;
     return;
+  } else
+  {
+    isGameRunning = true;
+    std::thread(&GameFrame::gameLoop, this).detach();
   }
-  isGameRunning = true;
-  std::thread(&GameFrame::gameLoop, this).detach();
 }
 
 void GameFrame::onClose(wxCloseEvent &)
 {
   isGameRunning = false;
-  Close();
+  Show(false);
+  Destroy();
 }
