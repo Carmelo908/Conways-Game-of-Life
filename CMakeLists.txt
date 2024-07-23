@@ -12,13 +12,16 @@ set(
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})
 
+add_compile_options("-Wall -Wextra -fsanitize=address")
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_C_STANDARD 23)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(wxWidgets CONFIG REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(tomlplusplus REQUIRED IMPORTED_TARGET tomlplusplus)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(${PROJECT_NAME} PRIVATE wx::core wx::base)
-
-add_compile_options("-Wall -Wextra")
+target_link_libraries(${PROJECT_NAME} PRIVATE PkgConfig::tomlplusplus)

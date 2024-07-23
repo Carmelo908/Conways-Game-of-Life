@@ -7,9 +7,7 @@ a grid in the GUI window. It also shows information like the generation number
 and the amount of live cells.
 
 These features are planned to be added in the future:
-- Runtime settings configuration
 - Settings saving in a TOML file
-- Position selection
 - Position creation
 - Position serialization and the removal of nlohmann_json from the project
 - Better GUI
