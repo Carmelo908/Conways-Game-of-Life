@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <string>
+#include <utility>
 #include <fstream>
 
 std::string posToString(Position &pos)
@@ -46,9 +47,7 @@ TEST_CASE("Compute fixed 10X10 position")
 {
   std::ofstream logFile {"./logs.txt"};
 
-  Position::data_t posData {10, std::vector<uint8_t>(10)};
-
-  posData = {{
+  Position::data_t posData {
     {1, 1, 0, 1, 0, 0, 0, 1, 0, 1},
     {1, 0, 1, 0, 0, 0, 1, 1, 0, 0},
     {1, 0, 1, 1, 1, 1, 0, 1, 0, 0},
@@ -59,9 +58,9 @@ TEST_CASE("Compute fixed 10X10 position")
     {0, 1, 0, 1, 1, 0, 0, 0, 1, 0},
     {0, 0, 1, 0, 0, 1, 0, 0, 0, 0},
     {0, 1, 0, 1, 0, 0, 1, 1, 0, 0},
-  }};
+  };
 
-  Position currentGen {posData};
+  Position currentGen {std::move(posData)};
 
   for (size_t i = 0; i < 11; i++)
   {
