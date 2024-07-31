@@ -1,9 +1,10 @@
 #include <string_view>
 
+#include <toml++/impl/table.hpp>
 #include <wx/wx.h>
 
-#include "fieldspanel.hpp"
 #include "../settingsdata.hpp"
+#include "fieldspanel.hpp"
 
 #pragma once
 
@@ -20,7 +21,7 @@ private:
   static std::unique_ptr<Position> openPosition(std::string_view filePath);
 
   void OnAcceptButton(wxCommandEvent &);
-  
+
   wxButton *acceptButton;
   FieldsPanel *fieldsPanel;
 };

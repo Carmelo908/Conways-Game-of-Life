@@ -24,7 +24,7 @@ void FieldsPanel::createControls()
 
   delayInput->Create(this, wxID_ANY, "50");
   delayInput->SetFont(delayInput->GetFont().Scale(1.1));
-  delayInput->SetRange(1, 10000);
+  delayInput->SetRange(0, 10000);
   delayInput->SetInitialSize(wxSize(200, 30));
 }
 
@@ -39,7 +39,7 @@ void FieldsPanel::setUpLayout()
 {
   wxGridSizer *gridSizer = new wxGridSizer(gridRows, gridColumns, 10, 100);
 
-  gridSizer->Add(createLabel("Initial position's file"));
+  gridSizer->Add(createLabel("Initial position file"));
   gridSizer->Add(createLabel("Delay between generations\n(in milliseconds):"));
   gridSizer->Add(pathInput);
   gridSizer->Add(delayInput);
@@ -51,7 +51,7 @@ SettingsData FieldsPanel::getSettingsInput() const
 {
   SettingsData settings;
 
-  settings.position = getPosPath();
+  settings.positionPath = getPosPath();
   settings.delay = getDelay();
 
   return settings;

@@ -13,6 +13,10 @@ public:
 
   SettingsData getSettingsInput() const;
 
+  std::chrono::milliseconds getDelay() const;
+
+  std::string getPosPath() const;
+
   wxFilePickerCtrl *pathInput;
   wxSpinCtrl *delayInput;
 
@@ -22,8 +26,4 @@ private:
   wxStaticText *createLabel(std::string_view labelText);
 
   void setUpLayout();
-
-  std::chrono::milliseconds getDelay() const;
-
-  std::string getPosPath() const;
 };

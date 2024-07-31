@@ -12,7 +12,7 @@
 class GameFrame : private wxFrame
 {
 public:
-  GameFrame(SettingsData &settings);
+  GameFrame(const SettingsData &settings, std::unique_ptr<Position> &&position);
 
 private:
   void gameLoop();

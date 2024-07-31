@@ -9,13 +9,14 @@
 
 namespace chrono = std::chrono;
 
-GameFrame::GameFrame(SettingsData &settings)
+GameFrame::GameFrame(const SettingsData &settings,
+                     std::unique_ptr<Position> &&position)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
-    position{settings.releaseOpenedPosition()},
+    position{std::move(position)},
     delay{settings.delay},
     isGameRunning{false},
     button{new wxButton(this, wxID_ANY, "Start", wxDefaultPosition)},
-    drawingPanel{new DrawingPanel(this, position.get())}
+    drawingPanel{new DrawingPanel(this, this->position.get())}
 {
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
 
