@@ -30,14 +30,14 @@ void Position::advanceGen()
 
 bool Position::getCellAt(uint16_t coordX, uint16_t coordY) const
 {
-  return static_cast<bool>(_data.at(coordY).at(coordX));
+  return _data.at(coordY).at(coordX);
 }
 
 uint32_t Position::getCellsQuantity() const { return cellsQuantity; }
 
 size_t Position::getGenCount() const { return genCount; }
 
-uint32_t Position::countCells()
+uint32_t Position::countCells() const 
 {
   uint32_t countedCells = 0;
   for (const row_t &row : _data)

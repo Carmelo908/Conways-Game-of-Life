@@ -20,23 +20,15 @@ public:
                std::chrono::milliseconds delay = 0ms)
     : delay{delay}
   {
-    position = posFilePath.data();
+    positionPath = posFilePath.data();
   }
 
-  std::string_view getUnopenedPath()
+  bool operator==(const SettingsData &other) const
   {
-    return std::string_view(std::get<std::string>(position));
+    return this->delay == other.delay &&
+           this->positionPath == other.positionPath;
   }
 
-  std::unique_ptr<Position> releaseOpenedPosition()
-  {
-    auto posPointer = std::get<position_ptr>(position).release();
-    return position_ptr(posPointer);
-  }
-
-  std::variant<std::string, std::unique_ptr<Position>> position;
+  std::string positionPath;
   std::chrono::milliseconds delay;
-
-private:
-  using position_ptr = std::unique_ptr<Position>;
 };

@@ -24,7 +24,7 @@ public:
   const uint16_t height, width;
 
 private:
-  uint32_t countCells();
+  uint32_t countCells() const;
 
   bool isOutOfBounds(int16_t cellCoord, uint16_t maxCoord) const;
 
