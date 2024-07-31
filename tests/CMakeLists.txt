@@ -4,6 +4,7 @@ project(TESTS)
 set(
   UNIT_TESTS 
   processing
+  toml_parsing
 )
 
 foreach(TEST_NAME IN LISTS UNIT_TESTS)

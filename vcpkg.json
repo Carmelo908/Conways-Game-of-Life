@@ -2,6 +2,7 @@
   "dependencies": [
     "catch2",
     "nlohmann-json",
-    "wxwidgets"
+    "wxwidgets",
+    "tomlplusplus"
   ]
 }

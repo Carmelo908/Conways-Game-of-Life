@@ -47,7 +47,7 @@ TEST_CASE("Compute fixed 10X10 position")
 {
   std::ofstream logFile {"./logs.txt"};
 
-  Position::data_t posData {
+  Position currentGen {{
     {1, 1, 0, 1, 0, 0, 0, 1, 0, 1},
     {1, 0, 1, 0, 0, 0, 1, 1, 0, 0},
     {1, 0, 1, 1, 1, 1, 0, 1, 0, 0},
@@ -58,9 +58,7 @@ TEST_CASE("Compute fixed 10X10 position")
     {0, 1, 0, 1, 1, 0, 0, 0, 1, 0},
     {0, 0, 1, 0, 0, 1, 0, 0, 0, 0},
     {0, 1, 0, 1, 0, 0, 1, 1, 0, 0},
-  };
-
-  Position currentGen {std::move(posData)};
+    }};
 
   for (size_t i = 0; i < 11; i++)
   {
