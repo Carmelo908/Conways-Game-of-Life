@@ -11,8 +11,6 @@ public:
 
   Position(data_t &&toCopy);
 
-  Position(const Position &) = delete;
-
   void advanceGen();
 
   bool getCellAt(uint16_t coordX, uint16_t coordY) const;

@@ -11,7 +11,7 @@
 class ConfigMenu : public wxFrame
 {
 public:
-  ConfigMenu();
+  ConfigMenu(SettingsData &initialSettings);
 
 private:
   void createButton();

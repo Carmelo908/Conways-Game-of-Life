@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <span>
 #include <utility>
 
 #include "position.hpp"

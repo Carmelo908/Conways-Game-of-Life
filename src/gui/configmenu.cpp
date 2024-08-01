@@ -1,5 +1,4 @@
 #include <fstream>
-#include <utility>
 
 #include <nlohmann/json.hpp>
 #include <toml++/toml.hpp>
@@ -14,9 +13,9 @@ constexpr auto parsingErrorMessage =
 constexpr auto missingPathFieldMessage =
     "The position file field is missing. Select a file to open";
 
-ConfigMenu::ConfigMenu()
+ConfigMenu::ConfigMenu(SettingsData &initialSettings)
   : wxFrame(nullptr, wxID_ANY, "Settings"),
-    fieldsPanel{new FieldsPanel(this)}
+    fieldsPanel{new FieldsPanel(this, initialSettings)}
 {
   createButton();
   setUpLayout();

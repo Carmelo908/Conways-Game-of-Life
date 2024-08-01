@@ -13,11 +13,11 @@ class SettingsData
 {
 public:
   SettingsData()
-    : SettingsData("", 0ms)
+    : SettingsData("", 50ms)
   {}
 
   SettingsData(std::string_view posFilePath,
-               std::chrono::milliseconds delay = 0ms)
+               std::chrono::milliseconds delay = 50ms)
     : delay{delay}
   {
     positionPath = posFilePath.data();

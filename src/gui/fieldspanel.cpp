@@ -3,26 +3,31 @@
 
 #include "fieldspanel.hpp"
 
+#include "../serialization.hpp"
+
 constexpr int gridRows = 2;
 constexpr int gridColumns = 2;
 
-FieldsPanel::FieldsPanel(wxFrame *parent)
+FieldsPanel::FieldsPanel(wxFrame *parent, SettingsData &initialSettings)
   : wxPanel(parent),
     pathInput{new wxFilePickerCtrl()},
     delayInput{new wxSpinCtrl()}
 {
-  createControls();
+  createControls(initialSettings);
   setUpLayout();
 }
 
-void FieldsPanel::createControls()
+void FieldsPanel::createControls(SettingsData &initialSettings)
 {
-  pathInput->Create(this, wxID_ANY, "", "Select the initial position's file",
-                    "*.json");
+  pathInput->Create(this, wxID_ANY, "",
+                    "Select the initial position's file", "*.json");
   pathInput->SetFont(pathInput->GetFont().Scale(1.1));
   pathInput->SetInitialSize(wxSize(200, 30));
+  pathInput->SetInitialDirectory("./positions");
+  pathInput->SetPath(initialSettings.positionPath);
 
-  delayInput->Create(this, wxID_ANY, "50");
+  delayInput->Create(this, wxID_ANY,
+                     std::to_string(initialSettings.delay.count()));
   delayInput->SetFont(delayInput->GetFont().Scale(1.1));
   delayInput->SetRange(0, 10000);
   delayInput->SetInitialSize(wxSize(200, 30));

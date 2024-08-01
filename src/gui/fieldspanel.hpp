@@ -9,7 +9,7 @@
 class FieldsPanel : public wxPanel
 {
 public:
-  FieldsPanel(wxFrame *parent);
+  FieldsPanel(wxFrame *parent, SettingsData &initialSettings);
 
   SettingsData getSettingsInput() const;
 
@@ -21,7 +21,7 @@ public:
   wxSpinCtrl *delayInput;
 
 private:
-  void createControls();
+  void createControls(SettingsData &initialSettings);
 
   wxStaticText *createLabel(std::string_view labelText);
 

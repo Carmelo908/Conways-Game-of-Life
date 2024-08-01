@@ -13,13 +13,13 @@ SettingsData parseFileSettings(std::string_view settingsFilePath)
 
 std::chrono::milliseconds getDelay(toml::table &parsingData)
 {
-  int delay = parsingData["delay"].value_or<int>(50);
+  int delay = parsingData["settings"]["delay"].value_or<int>(50);
   return std::chrono::milliseconds(delay);
 }
 
 std::string getPositionPath(toml::table &parsingData)
 {
-  return parsingData["position_path"].value_or<std::string>("");
+  return parsingData["settings"]["position_path"].value_or<std::string>("");
 }
 
 SettingsData parseSettings(toml::table &parsingData)

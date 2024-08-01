@@ -1,5 +1,8 @@
+#include <filesystem>
+
 #include <wx/wx.h>
 
+#include "serialization.hpp"
 #include "gui/configmenu.hpp"
 
 class MyApp : public wxApp
@@ -12,7 +15,12 @@ wxIMPLEMENT_APP(MyApp);
 
 bool MyApp::OnInit()
 {
-  new ConfigMenu();
+  SettingsData initialSettings;
+  if (std::filesystem::exists("./settings.toml"))
+  {
+    initialSettings = parseFileSettings("./settings.toml");
+  }
+  new ConfigMenu(initialSettings);
 
   return true;
 }
