@@ -7,7 +7,19 @@
 
 #include "gameframe.hpp"
 
-namespace chrono = std::chrono;
+template <class Rep, class Period>
+class DelayTimer
+{
+public:
+  DelayTimer(std::chrono::duration<Rep, Period> delay)
+    : elapsed{std::chrono::steady_clock::now() + delay}
+  {}
+
+  void wait() { std::this_thread::sleep_until(elapsed); }
+
+private:
+  std::chrono::steady_clock::time_point elapsed;
+};
 
 GameFrame::GameFrame(const SettingsData &settings,
                      std::unique_ptr<Position> &&position)
@@ -38,21 +50,11 @@ void GameFrame::gameLoop()
 {
   while (isGameRunning)
   {
-    auto startTime = chrono::steady_clock::now();
-
+    DelayTimer t{delay};
     position->advanceGen();
     drawingPanel->Refresh();
-
-    std::this_thread::sleep_for(delay - timeElapsed(startTime));
+    t.wait();
   }
-}
-
-chrono::milliseconds
-GameFrame::timeElapsed(chrono::steady_clock::time_point startPoint) const
-{
-  auto endTime = chrono::steady_clock::now();
-  return chrono::duration_cast<chrono::milliseconds>(
-      chrono::steady_clock::now() - startPoint);
 }
 
 void GameFrame::onButtonClick(wxCommandEvent &)

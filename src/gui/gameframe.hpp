@@ -19,9 +19,6 @@ private:
 
   void gameLoop();
 
-  std::chrono::milliseconds
-  timeElapsed(std::chrono::steady_clock::time_point startTime) const;
-
   void onButtonClick(wxCommandEvent &);
 
   void onClose(wxCloseEvent &);
