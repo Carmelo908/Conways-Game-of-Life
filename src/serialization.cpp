@@ -14,6 +14,7 @@ SettingsData parseFileSettings(std::string_view settingsFilePath)
 std::chrono::milliseconds getDelay(toml::table &parsingData)
 {
   int delay = parsingData["settings"]["delay"].value_or<int>(50);
+  delay = std::max(delay, 0);
   return std::chrono::milliseconds(delay);
 }
 

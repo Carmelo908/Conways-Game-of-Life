@@ -15,6 +15,8 @@ public:
   GameFrame(const SettingsData &settings, std::unique_ptr<Position> &&position);
 
 private:
+  void setUpLayout();
+
   void gameLoop();
 
   std::chrono::milliseconds

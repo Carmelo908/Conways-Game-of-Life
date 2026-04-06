@@ -2,8 +2,8 @@
 
 #include <wx/wx.h>
 
-#include "serialization.hpp"
 #include "gui/configmenu.hpp"
+#include "serialization.hpp"
 
 class MyApp : public wxApp
 {

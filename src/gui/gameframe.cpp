@@ -19,17 +19,19 @@ GameFrame::GameFrame(const SettingsData &settings,
     drawingPanel{new DrawingPanel(this, this->position.get())}
 {
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
-
   button->Bind(wxEVT_BUTTON, &GameFrame::onButtonClick, this);
-
-  wxBoxSizer *boxSizer{new wxBoxSizer(wxVERTICAL)};
-  boxSizer->Add(drawingPanel, 0, wxFIXED_MINSIZE | wxALIGN_CENTER_HORIZONTAL);
-  boxSizer->Add(button, 0, wxALIGN_CENTER_HORIZONTAL);
-
-  SetSizerAndFit(boxSizer);
+  setUpLayout();
   SetBackgroundColour(wxColour(255, 0, 0));
   Show(true);
   Maximize();
+}
+
+void GameFrame::setUpLayout()
+{
+  wxBoxSizer *boxSizer{new wxBoxSizer(wxVERTICAL)};
+  boxSizer->Add(drawingPanel, 0, wxFIXED_MINSIZE | wxALIGN_CENTER_HORIZONTAL);
+  boxSizer->Add(button, 0, wxALIGN_CENTER_HORIZONTAL);
+  SetSizerAndFit(boxSizer);
 }
 
 void GameFrame::gameLoop()
