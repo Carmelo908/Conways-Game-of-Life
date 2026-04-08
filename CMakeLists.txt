@@ -12,7 +12,6 @@ set(
   SOURCE_FILES
   src/main.cpp
   src/position.cpp
-  src/serialization.cpp
   src/settingsdata.cpp
   src/gui/configmenu.cpp
   src/gui/fieldspanel.cpp

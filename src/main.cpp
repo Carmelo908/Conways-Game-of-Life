@@ -1,7 +1,7 @@
 #include <wx/wx.h>
 
 #include "gui/configmenu.hpp"
-#include "serialization.hpp"
+#include "settingsdata.hpp"
 
 class MyApp : public wxApp
 {

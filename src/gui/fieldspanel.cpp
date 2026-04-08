@@ -3,8 +3,6 @@
 #include <filesystem>
 #include <stdexcept>
 
-#include "../serialization.hpp"
-
 constexpr int gridRows = 2;
 constexpr int gridColumns = 2;
 
