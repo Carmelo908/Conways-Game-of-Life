@@ -9,7 +9,7 @@ vcpkg**
 !vcpkg.json
 CMakeUserPresets.json
 
-**/settings.toml
+settings.json
 
 positions/**.json
 
