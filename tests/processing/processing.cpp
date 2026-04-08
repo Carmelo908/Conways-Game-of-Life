@@ -1,12 +1,12 @@
 #define CATCH_CONFIG_MAIN
-#include <catch2/catch.hpp>
+#include <catch2/catch_test_macros.hpp>
 
 #include <position.hpp>
 
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <utility>
-#include <fstream>
 
 std::string posToString(Position &pos)
 {
@@ -24,11 +24,11 @@ std::string posToString(Position &pos)
   return posString;
 }
 
-bool compareFiles(std::string logsPath = "./logs.txt", 
-  std::string sequencePath = "./rightSequence.txt") 
+bool compareFiles(std::string logsPath = "./logs.txt",
+                  std::string sequencePath = "./rightSequence.txt")
 {
-  std::ifstream logFile {std::ifstream(logsPath)};
-  std::ifstream sequenceFile {std::ifstream(sequencePath)};
+  std::ifstream logFile{std::ifstream(logsPath)};
+  std::ifstream sequenceFile{std::ifstream(sequencePath)};
 
   std::string logLine = "";
   std::string sequenceLine = "";
@@ -37,7 +37,7 @@ bool compareFiles(std::string logsPath = "./logs.txt",
   {
     std::getline(logFile, logLine);
     if (logLine != sequenceLine)
-     return false;   
+      return false;
   }
 
   return true;
@@ -45,26 +45,26 @@ bool compareFiles(std::string logsPath = "./logs.txt",
 
 TEST_CASE("Compute fixed 10X10 position")
 {
-  std::ofstream logFile {"./logs.txt"};
+  std::ofstream logFile{"./logs.txt"};
 
-  Position currentGen {{
-    {1, 1, 0, 1, 0, 0, 0, 1, 0, 1},
-    {1, 0, 1, 0, 0, 0, 1, 1, 0, 0},
-    {1, 0, 1, 1, 1, 1, 0, 1, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 1, 0, 0, 0, 1, 0, 0, 0},
-    {1, 1, 1, 0, 1, 0, 0, 0, 0, 0},
-    {1, 0, 1, 0, 0, 1, 0, 1, 1, 0},
-    {0, 1, 0, 1, 1, 0, 0, 0, 1, 0},
-    {0, 0, 1, 0, 0, 1, 0, 0, 0, 0},
-    {0, 1, 0, 1, 0, 0, 1, 1, 0, 0},
-    }};
+  Position currentGen{{
+      {1, 1, 0, 1, 0, 0, 0, 1, 0, 1},
+      {1, 0, 1, 0, 0, 0, 1, 1, 0, 0},
+      {1, 0, 1, 1, 1, 1, 0, 1, 0, 0},
+      {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+      {0, 0, 1, 0, 0, 0, 1, 0, 0, 0},
+      {1, 1, 1, 0, 1, 0, 0, 0, 0, 0},
+      {1, 0, 1, 0, 0, 1, 0, 1, 1, 0},
+      {0, 1, 0, 1, 1, 0, 0, 0, 1, 0},
+      {0, 0, 1, 0, 0, 1, 0, 0, 0, 0},
+      {0, 1, 0, 1, 0, 0, 1, 1, 0, 0},
+  }};
 
   for (size_t i = 0; i < 11; i++)
   {
-    std::string posString = posToString(currentGen) +
-    "gen: " + std::to_string(i) + "\n" +
-    "cells: " + std::to_string(currentGen.getCellsQuantity()) + "\n\n";
+    std::string posString =
+        posToString(currentGen) + "gen: " + std::to_string(i) + "\n" +
+        "cells: " + std::to_string(currentGen.getCellsQuantity()) + "\n\n";
 
     logFile << posString;
 

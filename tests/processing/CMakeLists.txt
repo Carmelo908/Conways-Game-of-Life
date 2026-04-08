@@ -1,18 +1,16 @@
-cmake_minimum_required(VERSION 3.29.6)
-project(processing)
-
-include(${CMAKE_SOURCE_DIR}/Settings.cmake)
-
 set(
   SOURCE_FILES
   processing.cpp 
-  ${PROJECT_SOURCE_DIR}/position.cpp
+  ${PROJECT_SOURCE_DIR}/src/position.cpp
 )
 
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
+set(CURRENT_TEST processing)
 
-add_compile_options(${TESTS_COMPILATIONS_SETTINGS})
+add_executable(${CURRENT_TEST} ${SOURCE_FILES})
+
+target_include_directories(${CURRENT_TEST} PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 find_package(Catch2 CONFIG REQUIRED)
+target_link_libraries(${CURRENT_TEST} PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)
+add_test(${CURRENT_TEST} ${CURRENT_TEST})

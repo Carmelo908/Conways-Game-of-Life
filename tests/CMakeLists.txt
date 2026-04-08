@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.29.6)
-project(TESTS)
 
 set(
   UNIT_TESTS 
   processing
-  toml_parsing
 )
 
 foreach(TEST_NAME IN LISTS UNIT_TESTS)
