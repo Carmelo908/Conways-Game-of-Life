@@ -13,6 +13,7 @@ set(
   src/main.cpp
   src/position.cpp
   src/serialization.cpp
+  src/settingsdata.cpp
   src/gui/configmenu.cpp
   src/gui/fieldspanel.cpp
   src/gui/gameframe.cpp

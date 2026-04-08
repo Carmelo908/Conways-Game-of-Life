@@ -17,17 +17,9 @@ public:
   {}
 
   SettingsData(std::string_view posFilePath,
-               std::chrono::milliseconds delay = 50ms)
-    : delay{delay}
-  {
-    positionPath = posFilePath.data();
-  }
+               std::chrono::milliseconds delay = 50ms);
 
-  bool operator==(const SettingsData &other) const
-  {
-    return this->delay == other.delay &&
-           this->positionPath == other.positionPath;
-  }
+  bool operator==(const SettingsData &other) const = default;
 
   std::string positionPath;
   std::chrono::milliseconds delay;
