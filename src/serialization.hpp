@@ -2,9 +2,9 @@
 #include <string>
 #include <string_view>
 
-#include "settingsdata.hpp"
-
 #include <nlohmann/json.hpp>
+
+#include "settingsdata.hpp"
 
 #pragma once
 

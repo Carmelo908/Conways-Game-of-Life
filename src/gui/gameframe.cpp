@@ -1,11 +1,11 @@
+#include "gameframe.hpp"
+
 #include <chrono>
 #include <memory>
 #include <thread>
 #include <utility>
 
 #include <nlohmann/json.hpp>
-
-#include "gameframe.hpp"
 
 template <class Rep, class Period>
 class DelayTimer

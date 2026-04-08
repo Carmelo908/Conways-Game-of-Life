@@ -1,7 +1,7 @@
+#include "serialization.hpp"
+
 #include <format>
 #include <fstream>
-
-#include "serialization.hpp"
 
 SettingsData parseFileSettings(std::filesystem::path settingsFilePath)
 {

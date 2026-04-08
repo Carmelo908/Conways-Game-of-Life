@@ -1,7 +1,7 @@
+#include "fieldspanel.hpp"
+
 #include <filesystem>
 #include <stdexcept>
-
-#include "fieldspanel.hpp"
 
 #include "../serialization.hpp"
 
@@ -19,8 +19,8 @@ FieldsPanel::FieldsPanel(wxFrame *parent, SettingsData &initialSettings)
 
 void FieldsPanel::createControls(SettingsData &initialSettings)
 {
-  pathInput->Create(this, wxID_ANY, "",
-                    "Select the initial position's file", "*.json");
+  pathInput->Create(this, wxID_ANY, "", "Select the initial position's file",
+                    "*.json");
   pathInput->SetFont(pathInput->GetFont().Scale(1.1));
   pathInput->SetInitialSize(wxSize(200, 30));
   pathInput->SetInitialDirectory("./positions");

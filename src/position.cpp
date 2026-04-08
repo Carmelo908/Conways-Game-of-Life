@@ -1,12 +1,12 @@
+#include "position.hpp"
+
 #include <algorithm>
 #include <utility>
 
-#include "position.hpp"
-
 Position::Position(data_t &&toCopy)
-  : _data{toCopy},
-    height{static_cast<uint16_t>(toCopy.size())},
+  : height{static_cast<uint16_t>(toCopy.size())},
     width{static_cast<uint16_t>(toCopy[0].size())},
+    _data{toCopy},
     cellsQuantity{countCells()},
     genCount{0}
 {}
@@ -36,7 +36,7 @@ uint32_t Position::getCellsQuantity() const { return cellsQuantity; }
 
 size_t Position::getGenCount() const { return genCount; }
 
-uint32_t Position::countCells() const 
+uint32_t Position::countCells() const
 {
   uint32_t countedCells = 0;
   for (const row_t &row : _data)

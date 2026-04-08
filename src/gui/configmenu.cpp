@@ -1,9 +1,10 @@
+#include "configmenu.hpp"
+
 #include <fstream>
 
 #include <nlohmann/json.hpp>
 
 #include "../serialization.hpp"
-#include "configmenu.hpp"
 #include "gameframe.hpp"
 
 constexpr auto parsingErrorMessage =
