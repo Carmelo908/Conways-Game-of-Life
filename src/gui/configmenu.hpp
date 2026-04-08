@@ -1,6 +1,5 @@
 #include <string_view>
 
-#include <toml++/impl/table.hpp>
 #include <wx/wx.h>
 
 #include "../settingsdata.hpp"

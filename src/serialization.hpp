@@ -1,21 +1,20 @@
+#include <filesystem>
 #include <string>
 #include <string_view>
 
 #include "settingsdata.hpp"
 
-#include <toml++/toml.hpp>
+#include <nlohmann/json.hpp>
 
 #pragma once
 
-constexpr char defaultSavePath[] = "./settings.toml";
+constexpr char defaultSavePath[] = "./settings.json";
 
-SettingsData
-parseFileSettings(std::string_view settingsFilePath);
+std::string settingsToJson(SettingsData settings);
 
-SettingsData parseSettings(toml::table &parsingData);
-SettingsData parseSettings(std::string_view tomlString);
+SettingsData parseFileSettings(std::filesystem::path settingsFilePath);
 
-std::string settingsToToml(SettingsData settings);
+SettingsData parseSettings(nlohmann::json &settingsJson);
 
 void saveSettings(SettingsData settings,
                   std::string_view settingsFilePath = defaultSavePath);

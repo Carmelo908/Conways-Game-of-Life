@@ -1,5 +1,3 @@
-#include <filesystem>
-
 #include <wx/wx.h>
 
 #include "gui/configmenu.hpp"
@@ -16,9 +14,9 @@ wxIMPLEMENT_APP(MyApp);
 bool MyApp::OnInit()
 {
   SettingsData initialSettings;
-  if (std::filesystem::exists("./settings.toml"))
+  if (std::filesystem::exists("./settings.json"))
   {
-    initialSettings = parseFileSettings("./settings.toml");
+    initialSettings = parseFileSettings("./settings.json");
   }
   new ConfigMenu(initialSettings);
 

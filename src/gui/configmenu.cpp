@@ -1,7 +1,6 @@
 #include <fstream>
 
 #include <nlohmann/json.hpp>
-#include <toml++/toml.hpp>
 
 #include "../serialization.hpp"
 #include "configmenu.hpp"

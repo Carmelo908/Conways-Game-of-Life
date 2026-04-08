@@ -1,49 +1,30 @@
 #include <format>
 #include <fstream>
 
-#include <toml++/toml.hpp>
-
 #include "serialization.hpp"
 
-SettingsData parseFileSettings(std::string_view settingsFilePath)
+SettingsData parseFileSettings(std::filesystem::path settingsFilePath)
 {
-  auto parsingData = toml::parse_file(settingsFilePath);
+  std::ifstream f{settingsFilePath};
+  auto parsingData = nlohmann::json::parse(f);
   return parseSettings(parsingData);
 }
 
-std::chrono::milliseconds getDelay(toml::table &parsingData)
+SettingsData parseSettings(nlohmann::json &settingsJson)
 {
-  int delay = parsingData["settings"]["delay"].value_or<int>(50);
-  delay = std::max(delay, 0);
-  return std::chrono::milliseconds(delay);
-}
-
-std::string getPositionPath(toml::table &parsingData)
-{
-  return parsingData["settings"]["position_path"].value_or<std::string>("");
-}
-
-SettingsData parseSettings(toml::table &parsingData)
-{
-  std::chrono::milliseconds delay = getDelay(parsingData);
-  std::string positionPath = getPositionPath(parsingData);
+  std::string positionPath{settingsJson["position_path"].get<std::string>()};
+  std::chrono::milliseconds delay{settingsJson["delay"].get<int>()};
   return SettingsData(positionPath, delay);
 }
 
-SettingsData parseSettings(std::string_view tomlString)
+std::string settingsToJson(SettingsData settings)
 {
-  auto parsingData = toml::parse(tomlString);
-  return parseSettings(parsingData);
-}
-
-std::string settingsToToml(SettingsData settings)
-{
-  return std::format("[settings]\ndelay = {}\nposition_path = \"{}\"",
+  return std::format("{{\"delay\": {}, \"position_path\": \"{}\"}}",
                      settings.delay.count(), settings.positionPath);
 }
 
 void saveSettings(SettingsData settings, std::string_view settingsFilePath)
 {
-  std::ofstream tomlFile{settingsFilePath.data()};
-  tomlFile << settingsToToml(settings);
+  std::ofstream jsonFile{settingsFilePath.data()};
+  jsonFile << settingsToJson(settings);
 }
