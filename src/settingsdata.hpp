@@ -15,14 +15,14 @@ constexpr char defaultSavePath[] = "./settings.json";
 
 class SettingsData;
 
-std::string settingsToJson(SettingsData settings);
+std::string settingsToJson(const SettingsData &settings);
 
 SettingsData parseFileSettings(std::filesystem::path settingsFilePath);
 
-SettingsData parseSettings(nlohmann::json &settingsJson);
+SettingsData parseSettings(const nlohmann::json &settingsJson);
 
-void saveSettings(SettingsData settings,
-                  std::string_view settingsFilePath = defaultSavePath);
+void saveSettings(const SettingsData &settings,
+                  std::filesystem::path settingsPath);
 
 class SettingsData
 {

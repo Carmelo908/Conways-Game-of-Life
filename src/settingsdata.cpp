@@ -6,26 +6,27 @@
 SettingsData parseFileSettings(std::filesystem::path settingsFilePath)
 {
   std::ifstream f{settingsFilePath};
-  auto parsingData = nlohmann::json::parse(f);
+  const auto parsingData = nlohmann::json::parse(f);
   return parseSettings(parsingData);
 }
 
-SettingsData parseSettings(nlohmann::json &settingsJson)
+SettingsData parseSettings(const nlohmann::json &settingsJson)
 {
   std::string positionPath{settingsJson["position_path"].get<std::string>()};
   std::chrono::milliseconds delay{settingsJson["delay"].get<int>()};
   return SettingsData(positionPath, delay);
 }
 
-std::string settingsToJson(SettingsData settings)
+std::string settingsToJson(const SettingsData &settings)
 {
   return std::format("{{\"delay\": {}, \"position_path\": \"{}\"}}",
                      settings.delay.count(), settings.positionPath);
 }
 
-void saveSettings(SettingsData settings, std::string_view settingsFilePath)
+void saveSettings(const SettingsData &settings,
+                  std::filesystem::path settingsPath)
 {
-  std::ofstream jsonFile{settingsFilePath.data()};
+  std::ofstream jsonFile{settingsPath};
   jsonFile << settingsToJson(settings);
 }
 

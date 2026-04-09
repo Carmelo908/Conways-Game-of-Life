@@ -43,9 +43,10 @@ void ConfigMenu::createButton()
   acceptButton->SetFont(acceptButton->GetFont().Scale(1.15));
 }
 
-std::unique_ptr<Position> ConfigMenu::openPosition(std::string_view filePath)
+std::unique_ptr<Position>
+ConfigMenu::openPosition(std::filesystem::path filePath)
 {
-  std::ifstream jsonFile{filePath.data()};
+  std::ifstream jsonFile{filePath};
   const nlohmann::json jsonObject{nlohmann::json::parse(jsonFile)};
   std::unique_ptr<Position> openedPosition;
   openedPosition = std::make_unique<Position>(
@@ -69,6 +70,6 @@ void ConfigMenu::OnAcceptButton(wxCommandEvent &)
     wxMessageBox(parsingErrorMessage, "Error opening the file");
     return;
   }
-  saveSettings(settings);
+  saveSettings(settings, "settings.json");
   Close();
 }

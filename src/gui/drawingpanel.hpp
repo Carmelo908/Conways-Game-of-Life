@@ -3,7 +3,7 @@
 class DrawingPanel : public wxPanel
 {
 public:
-  DrawingPanel(wxWindow *parent, Position *position)
+  DrawingPanel(wxWindow *parent, const Position *const position)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1000, 500),
               wxBORDER_THEME)
   {
@@ -50,11 +50,12 @@ private:
 
   struct ClientDrawingData : public wxClientData
   {
-    ClientDrawingData(Position *position, uint8_t cellSize)
+    ClientDrawingData(const Position *const position, uint8_t cellSize)
       : position{position},
-        cellSize{cellSize} {};
+        cellSize{cellSize}
+    {}
 
-    Position *position;
+    const Position *const position;
     uint8_t cellSize;
   };
 

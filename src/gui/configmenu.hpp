@@ -1,4 +1,4 @@
-#include <string_view>
+#include <filesystem>
 
 #include <wx/wx.h>
 
@@ -17,7 +17,7 @@ private:
 
   void setUpLayout();
 
-  static std::unique_ptr<Position> openPosition(std::string_view filePath);
+  static std::unique_ptr<Position> openPosition(std::filesystem::path filePath);
 
   void OnAcceptButton(wxCommandEvent &);
 
