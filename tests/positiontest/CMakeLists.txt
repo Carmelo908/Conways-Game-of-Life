@@ -1,10 +1,10 @@
 set(
   SOURCE_FILES
-  processing.cpp 
+  positiontest.cpp 
   ${PROJECT_SOURCE_DIR}/src/position.cpp
 )
 
-set(CURRENT_TEST processing)
+set(CURRENT_TEST position)
 
 add_executable(${CURRENT_TEST} ${SOURCE_FILES})
 

@@ -9,31 +9,31 @@ public:
   using row_t = std::vector<uint8_t>;
   using data_t = std::vector<row_t>;
 
+  Position(data_t &toCopy);
   Position(data_t &&toCopy);
 
   void advanceGen();
 
-  bool getCellAt(uint16_t coordX, uint16_t coordY) const;
+  bool getCellAt(int coordX, int coordY) const;
 
-  uint32_t getCellsQuantity() const;
+  int getCellsQuantity() const;
 
   size_t getGenCount() const;
 
-  const uint16_t height, width;
+  bool operator==(const Position &rhs) const;
+
+  const int height, width;
 
 private:
-  uint32_t countCells() const;
+  int countCells() const;
 
-  bool isOutOfBounds(int16_t cellCoord, uint16_t maxCoord) const;
+  bool isOutOfBounds(int cellCoord, int maxCoord) const;
 
-  bool updateCell(uint16_t cellX, uint16_t cellY, const data_t &previousGen);
+  bool updateCell(int cellX, int cellY, const data_t &previousGen);
 
-  uint8_t sorroundingCellsAt(int16_t cellX, int16_t cellY,
-                             const data_t &previousGen) const;
+  int sorroundingCellsAt(int cellX, int cellY, const data_t &previousGen) const;
 
-  data_t _data;
-
-  uint32_t cellsQuantity;
-
+  data_t data;
+  int cellsQuantity;
   size_t genCount;
 };

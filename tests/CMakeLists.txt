@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.29.6)
 
 set(
   UNIT_TESTS 
-  processing
+  positiontest
 )
 
 foreach(TEST_NAME IN LISTS UNIT_TESTS)

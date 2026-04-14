@@ -4,60 +4,65 @@
 #include <utility>
 
 Position::Position(data_t &&toCopy)
+  : Position(toCopy)
+{}
+
+Position::Position(data_t &toCopy)
   : height{static_cast<uint16_t>(toCopy.size())},
     width{static_cast<uint16_t>(toCopy[0].size())},
-    _data{toCopy},
+    data{toCopy},
     cellsQuantity{countCells()},
     genCount{0}
 {}
 
 void Position::advanceGen()
 {
-  const data_t previousGen{_data};
-
+  const data_t previousGen{data};
   for (uint16_t gameY = 0; gameY < height; gameY++)
   {
     for (uint16_t gameX = 0; gameX < width; gameX++)
     {
-      _data[gameY][gameX] = updateCell(gameX, gameY, previousGen);
+      data[gameY][gameX] = updateCell(gameX, gameY, previousGen);
     }
   }
-
   cellsQuantity = countCells();
   genCount++;
 }
 
-bool Position::getCellAt(uint16_t coordX, uint16_t coordY) const
+bool Position::getCellAt(int coordX, int coordY) const
 {
-  return _data.at(coordY).at(coordX);
+  return data.at(coordY).at(coordX);
 }
 
-uint32_t Position::getCellsQuantity() const { return cellsQuantity; }
+int Position::getCellsQuantity() const { return cellsQuantity; }
 
 size_t Position::getGenCount() const { return genCount; }
 
-uint32_t Position::countCells() const
+bool Position::operator==(const Position &rhs) const
 {
-  uint32_t countedCells = 0;
-  for (const row_t &row : _data)
+  return this->data == rhs.data;
+}
+
+int Position::countCells() const
+{
+  int countedCells = 0;
+  for (const row_t &row : data)
   {
     countedCells += std::count(row.cbegin(), row.cend(), 1);
   }
   return countedCells;
 }
 
-bool Position::isOutOfBounds(int16_t cellCoord, uint16_t maxCoord) const
+bool Position::isOutOfBounds(int cellCoord, int maxCoord) const
 {
   return (cellCoord < 0 || cellCoord >= maxCoord);
 }
 
-bool Position::updateCell(uint16_t cellX, uint16_t cellY,
-                          const data_t &previousGen)
+bool Position::updateCell(int cellX, int cellY, const data_t &previousGen)
 {
   const bool isCellAlive = previousGen[cellY][cellX];
   const uint16_t neighboursCount =
       sorroundingCellsAt(cellX, cellY, previousGen);
-
   if (isCellAlive)
   {
     return 1 < neighboursCount && neighboursCount < 4;
@@ -67,17 +72,17 @@ bool Position::updateCell(uint16_t cellX, uint16_t cellY,
   }
 }
 
-uint8_t Position::sorroundingCellsAt(int16_t cellX, int16_t cellY,
-                                     const data_t &previousGen) const
+int Position::sorroundingCellsAt(int cellX, int cellY,
+                                 const data_t &previousGen) const
 {
-  uint8_t neighboursCount = 0;
-  for (int16_t adjY = cellY - 1; adjY < cellY + 2; adjY++)
+  int neighboursCount = 0;
+  for (int adjY = cellY - 1; adjY < cellY + 2; adjY++)
   {
     if (isOutOfBounds(adjY, height))
     {
       continue;
     }
-    for (int16_t adjX = cellX - 1; adjX < cellX + 2; adjX++)
+    for (int adjX = cellX - 1; adjX < cellX + 2; adjX++)
     {
       if (isOutOfBounds(adjX, width))
       {
