@@ -5,6 +5,7 @@ set(
   configmenu.cpp
   fieldspanel.cpp
   gameframe.cpp
+  drawingpanel.cpp
 )
 
 add_library(${LIBRARY_NAME} ${SOURCE_FILES})

@@ -1,62 +1,25 @@
+#pragma once
+
 #include <wx/wx.h>
+
+#include "../position.hpp"
 
 class DrawingPanel : public wxPanel
 {
 public:
-  DrawingPanel(wxWindow *parent, const Position *const position)
-    : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1000, 500),
-              wxBORDER_THEME)
-  {
-    Bind(wxEVT_PAINT, &DrawingPanel::OnPaint, this);
-    SetBackgroundColour(wxColour(0, 0, 0));
-
-    uint8_t cellWidth, cellHeight;
-    cellWidth = maxWidth / position->width;
-    cellHeight = maxHeight / position->height;
-    uint8_t cellSize = cellWidth < cellHeight ? cellWidth : cellHeight;
-
-    wxSize panelSize{cellSize * position->width, cellSize * position->height};
-    SetClientObject(new ClientDrawingData(position, cellSize));
-    SetSize(panelSize);
-  }
+  DrawingPanel(wxWindow *parent, const Position *const position);
 
 private:
-  void OnPaint(wxPaintEvent &)
-  {
-    auto clientObject{static_cast<ClientDrawingData *>(GetClientObject())};
+  void OnPaint(wxPaintEvent &);
 
-    auto position{clientObject->position};
-    auto cellSize{clientObject->cellSize};
-
-    wxBitmap posBitmap{1000, 500};
-    wxMemoryDC bitmapDC{posBitmap};
-
-    bitmapDC.SetPen(*wxWHITE_PEN);
-
-    for (uint16_t y = 0; y < position->height; y++)
-    {
-      for (uint16_t x = 0; x < position->width; x++)
-      {
-        if (!position->getCellAt(x, y))
-        {
-          continue;
-        };
-        bitmapDC.DrawRectangle(x * cellSize, y * cellSize, cellSize, cellSize);
-      }
-    }
-
-    wxPaintDC(this).DrawBitmap(posBitmap, 0, 0);
-  }
+  static wxBitmap makePositionBitmap(const Position &position, wxSize cellSize);
 
   struct ClientDrawingData : public wxClientData
   {
-    ClientDrawingData(const Position *const position, uint8_t cellSize)
-      : position{position},
-        cellSize{cellSize}
-    {}
+    ClientDrawingData(const Position &position, wxSize cellSize);
 
-    const Position *const position;
-    uint8_t cellSize;
+    const Position &position;
+    const wxSize cellSize;
   };
 
   static constexpr int maxWidth = 1000;
