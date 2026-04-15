@@ -1,7 +1,13 @@
 #include <cinttypes>
+#include <filesystem>
+#include <memory>
 #include <vector>
 
 #pragma once
+
+class Position;
+
+std::unique_ptr<Position> openPosition(std::filesystem::path filePath);
 
 class Position
 {

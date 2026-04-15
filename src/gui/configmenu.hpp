@@ -17,8 +17,6 @@ private:
 
   void setUpLayout();
 
-  static std::unique_ptr<Position> openPosition(std::filesystem::path filePath);
-
   void OnAcceptButton(wxCommandEvent &);
 
   wxButton *acceptButton;

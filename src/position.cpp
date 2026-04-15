@@ -1,7 +1,20 @@
 #include "position.hpp"
 
 #include <algorithm>
+#include <fstream>
 #include <utility>
+
+#include <nlohmann/json.hpp>
+
+std::unique_ptr<Position> openPosition(std::filesystem::path filePath)
+{
+  std::ifstream jsonFile{filePath};
+  const nlohmann::json jsonObject{nlohmann::json::parse(jsonFile)};
+  std::unique_ptr<Position> openedPosition;
+  auto positionData = jsonObject[0].template get<Position::data_t>();
+  openedPosition = std::make_unique<Position>(positionData);
+  return openedPosition;
+}
 
 Position::Position(data_t &&toCopy)
   : Position(toCopy)

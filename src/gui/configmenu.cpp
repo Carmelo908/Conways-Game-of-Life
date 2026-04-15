@@ -43,17 +43,6 @@ void ConfigMenu::createButton()
   acceptButton->SetFont(acceptButton->GetFont().Scale(1.15));
 }
 
-std::unique_ptr<Position>
-ConfigMenu::openPosition(std::filesystem::path filePath)
-{
-  std::ifstream jsonFile{filePath};
-  const nlohmann::json jsonObject{nlohmann::json::parse(jsonFile)};
-  std::unique_ptr<Position> openedPosition;
-  openedPosition = std::make_unique<Position>(
-      jsonObject[0].template get<Position::data_t>());
-  return openedPosition;
-}
-
 void ConfigMenu::OnAcceptButton(wxCommandEvent &)
 {
   if (fieldsPanel->getPosPath() == "")
