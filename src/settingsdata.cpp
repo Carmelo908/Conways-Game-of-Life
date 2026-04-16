@@ -17,10 +17,10 @@ SettingsData parseSettings(const nlohmann::json &settingsJson)
   return SettingsData(positionPath, delay);
 }
 
-std::string settingsToJson(const SettingsData &settings)
+nlohmann::json settingsToJson(const SettingsData &settings)
 {
   return std::format("{{\"delay\": {}, \"position_path\": \"{}\"}}",
-                     settings.delay.count(), settings.positionPath);
+                     settings.delay.count(), settings.positionPath.string());
 }
 
 void saveSettings(const SettingsData &settings,
@@ -31,12 +31,12 @@ void saveSettings(const SettingsData &settings,
 }
 
 SettingsData::SettingsData()
-  : SettingsData("", 50ms)
+  : SettingsData("", std::chrono::milliseconds(50))
 {}
 
-SettingsData::SettingsData(std::string_view posFilePath,
+SettingsData::SettingsData(std::filesystem::path posFilePath,
                            std::chrono::milliseconds delay)
   : delay{delay}
 {
-  positionPath = posFilePath.data();
+  positionPath = posFilePath;
 }

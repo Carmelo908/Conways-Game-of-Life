@@ -15,7 +15,7 @@ public:
 
   std::chrono::milliseconds getDelay() const;
 
-  std::string getPosPath() const;
+  std::filesystem::path getPosPath() const;
 
   wxFilePickerCtrl *pathInput;
   wxSpinCtrl *delayInput;

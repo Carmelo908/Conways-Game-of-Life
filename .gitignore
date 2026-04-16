@@ -1,7 +1,5 @@
 build
-!vcpkg.json
 CMakeUserPresets.json
 
 settings.json
-
 positions/**.json

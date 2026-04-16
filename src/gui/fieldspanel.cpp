@@ -22,8 +22,7 @@ void FieldsPanel::createControls(SettingsData &initialSettings)
   pathInput->SetFont(pathInput->GetFont().Scale(1.1));
   pathInput->SetInitialSize(wxSize(200, 30));
   pathInput->SetInitialDirectory("./positions");
-  pathInput->SetPath(initialSettings.positionPath);
-
+  pathInput->SetPath(initialSettings.positionPath.string());
   delayInput->Create(this, wxID_ANY,
                      std::to_string(initialSettings.delay.count()));
   delayInput->SetFont(delayInput->GetFont().Scale(1.1));
@@ -60,7 +59,7 @@ SettingsData FieldsPanel::getSettingsInput() const
   return settings;
 }
 
-std::string FieldsPanel::getPosPath() const
+std::filesystem::path FieldsPanel::getPosPath() const
 {
   return pathInput->GetFileName().GetFullPath().ToStdString();
 }

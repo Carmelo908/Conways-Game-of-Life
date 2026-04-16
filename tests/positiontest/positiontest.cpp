@@ -1,17 +1,14 @@
 #define CATCH_CONFIG_MAIN
+#include <iostream>
+#include <string>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <position.hpp>
 
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <utility>
-
 std::string posToString(Position &pos)
 {
   std::string posString = "";
-
   for (int y = 0; y < pos.height; y++)
   {
     for (int x = 0; x < pos.width; x++)
@@ -43,6 +40,7 @@ TEST_CASE("Testing Position functionality")
         {0, 0, 1},
     }};
     pos.advanceGen();
+    INFO(posToString(pos));
     Position nextPos{{
         {1, 1, 0},
         {1, 1, 1},

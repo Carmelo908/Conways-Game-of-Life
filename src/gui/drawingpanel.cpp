@@ -32,9 +32,9 @@ wxBitmap DrawingPanel::makePositionBitmap(const Position &position,
   wxBitmap posBitmap{maxWidth, maxHeight};
   wxMemoryDC bitmapDC{posBitmap};
   bitmapDC.SetPen(*wxWHITE_PEN);
-  for (uint16_t y = 0; y < position.height; y++)
+  for (int y = 0; y < position.height; y++)
   {
-    for (uint16_t x = 0; x < position.width; x++)
+    for (int x = 0; x < position.width; x++)
     {
       if (!position.getCellAt(x, y))
       {
