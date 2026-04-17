@@ -1,6 +1,6 @@
 #include <filesystem>
 
-#include <wx/wx.h>
+#include <wx/button.h>
 
 #include "../settingsdata.hpp"
 #include "fieldspanel.hpp"

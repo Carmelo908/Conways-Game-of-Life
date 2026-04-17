@@ -1,8 +1,10 @@
 #include <string_view>
 
 #include <wx/filepicker.h>
+#include <wx/frame.h>
+#include <wx/panel.h>
 #include <wx/spinctrl.h>
-#include <wx/wx.h>
+#include <wx/stattext.h>
 
 #include "../settingsdata.hpp"
 

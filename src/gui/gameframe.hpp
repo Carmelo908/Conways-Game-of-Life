@@ -1,7 +1,8 @@
 #include <atomic>
 #include <string>
 
-#include <wx/wx.h>
+#include <wx/button.h>
+#include <wx/frame.h>
 
 #include "../position.hpp"
 #include "../settingsdata.hpp"

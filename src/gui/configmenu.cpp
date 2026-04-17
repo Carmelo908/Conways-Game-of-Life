@@ -3,6 +3,7 @@
 #include <fstream>
 
 #include <nlohmann/json.hpp>
+#include <wx/msgdlg.h>
 
 #include "gameframe.hpp"
 

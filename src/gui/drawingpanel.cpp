@@ -1,5 +1,8 @@
 #include "drawingpanel.hpp"
 
+#include <wx/dcclient.h>
+#include <wx/dcmemory.h>
+
 DrawingPanel::DrawingPanel(wxWindow *parent, const Position *position)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1000, 500),
             wxBORDER_THEME)

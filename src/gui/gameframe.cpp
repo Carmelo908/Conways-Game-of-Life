@@ -5,6 +5,7 @@
 #include <thread>
 #include <utility>
 
+#include <wx/sizer.h>
 #include <nlohmann/json.hpp>
 
 template <class Rep, class Period>
