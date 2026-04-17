@@ -19,8 +19,10 @@ SettingsData parseSettings(const nlohmann::json &settingsJson)
 
 nlohmann::json settingsToJson(const SettingsData &settings)
 {
-  return std::format("{{\"delay\": {}, \"position_path\": \"{}\"}}",
-                     settings.delay.count(), settings.positionPath.string());
+  nlohmann::json j;
+  j["position_path"] = settings.positionPath.string();
+  j["delay"] = settings.delay.count();
+  return j;
 }
 
 void saveSettings(const SettingsData &settings,
