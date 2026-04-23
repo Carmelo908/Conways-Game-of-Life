@@ -2,15 +2,15 @@
 
 #include <wx/button.h>
 
-#include "../settingsdata.hpp"
+#include "../settings.hpp"
 #include "fieldspanel.hpp"
 
 #pragma once
 
-class ConfigMenu : public wxFrame
+class SettingsMenu : public wxFrame
 {
 public:
-  ConfigMenu(SettingsData &initialSettings);
+  SettingsMenu(Settings &initialSettings);
 
 private:
   void createButton();

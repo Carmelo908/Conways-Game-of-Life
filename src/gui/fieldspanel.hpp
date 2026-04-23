@@ -6,14 +6,14 @@
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
 
-#include "../settingsdata.hpp"
+#include "../settings.hpp"
 
 class FieldsPanel : public wxPanel
 {
 public:
-  FieldsPanel(wxFrame *parent, SettingsData &initialSettings);
+  FieldsPanel(wxFrame *parent, Settings &initialSettings);
 
-  SettingsData getSettingsInput() const;
+  Settings getSettingsInput() const;
 
   std::chrono::milliseconds getDelay() const;
 
@@ -23,7 +23,7 @@ public:
   wxSpinCtrl *delayInput;
 
 private:
-  void createControls(SettingsData &initialSettings);
+  void createControls(Settings &initialSettings);
 
   wxStaticText *createLabel(std::string_view labelText);
 

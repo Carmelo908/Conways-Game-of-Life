@@ -6,7 +6,7 @@
 constexpr int gridRows = 2;
 constexpr int gridColumns = 2;
 
-FieldsPanel::FieldsPanel(wxFrame *parent, SettingsData &initialSettings)
+FieldsPanel::FieldsPanel(wxFrame *parent, Settings &initialSettings)
   : wxPanel(parent),
     pathInput{new wxFilePickerCtrl()},
     delayInput{new wxSpinCtrl()}
@@ -15,7 +15,7 @@ FieldsPanel::FieldsPanel(wxFrame *parent, SettingsData &initialSettings)
   setUpLayout();
 }
 
-void FieldsPanel::createControls(SettingsData &initialSettings)
+void FieldsPanel::createControls(Settings &initialSettings)
 {
   pathInput->Create(this, wxID_ANY, "", "Select the initial position's file",
                     "*.json");
@@ -49,9 +49,9 @@ void FieldsPanel::setUpLayout()
   SetSizerAndFit(gridSizer);
 }
 
-SettingsData FieldsPanel::getSettingsInput() const
+Settings FieldsPanel::getSettingsInput() const
 {
-  SettingsData settings;
+  Settings settings;
 
   settings.positionPath = getPosPath();
   settings.delay = getDelay();

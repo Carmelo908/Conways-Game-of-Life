@@ -1,13 +1,13 @@
-#include "drawingpanel.hpp"
+#include "positionpanel.hpp"
 
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 
-DrawingPanel::DrawingPanel(wxWindow *parent, const Position *position)
+PositionPanel::PositionPanel(wxWindow *parent, const Position *position)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1000, 500),
             wxBORDER_THEME)
 {
-  Bind(wxEVT_PAINT, &DrawingPanel::OnPaint, this);
+  Bind(wxEVT_PAINT, &PositionPanel::OnPaint, this);
   SetBackgroundColour(wxColour(0, 0, 0));
   int cellWidth, cellHeight;
   cellWidth = maxWidth / position->width;
@@ -20,7 +20,7 @@ DrawingPanel::DrawingPanel(wxWindow *parent, const Position *position)
   SetSize(panelSize);
 }
 
-void DrawingPanel::OnPaint(wxPaintEvent &)
+void PositionPanel::OnPaint(wxPaintEvent &)
 {
   auto clientData{static_cast<ClientDrawingData *>(GetClientObject())};
   auto position{clientData->position};
@@ -29,8 +29,8 @@ void DrawingPanel::OnPaint(wxPaintEvent &)
   wxPaintDC(this).DrawBitmap(posBitmap, 0, 0);
 }
 
-wxBitmap DrawingPanel::makePositionBitmap(const Position &position,
-                                          wxSize cellSize)
+wxBitmap PositionPanel::makePositionBitmap(const Position &position,
+                                           wxSize cellSize)
 {
   wxBitmap posBitmap{maxWidth, maxHeight};
   wxMemoryDC bitmapDC{posBitmap};
@@ -50,8 +50,8 @@ wxBitmap DrawingPanel::makePositionBitmap(const Position &position,
   return posBitmap;
 }
 
-DrawingPanel::ClientDrawingData::ClientDrawingData(const Position &position,
-                                                   wxSize cellSize)
+PositionPanel::ClientDrawingData::ClientDrawingData(const Position &position,
+                                                    wxSize cellSize)
   : position{position},
     cellSize{cellSize}
 {}

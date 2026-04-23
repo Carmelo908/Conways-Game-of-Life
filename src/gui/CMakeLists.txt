@@ -2,10 +2,10 @@ set(LIBRARY_NAME gui)
 
 set(
   SOURCE_FILES
-  configmenu.cpp
+  settingsmenu.cpp
   fieldspanel.cpp
   gameframe.cpp
-  drawingpanel.cpp
+  positionpanel.cpp
 )
 
 add_library(${LIBRARY_NAME} ${SOURCE_FILES})

@@ -1,4 +1,4 @@
-#include "configmenu.hpp"
+#include "settingsmenu.hpp"
 
 #include <fstream>
 
@@ -13,7 +13,7 @@ constexpr auto parsingErrorMessage =
 constexpr auto missingPathFieldMessage =
     "The position file field is missing. Select a file to open";
 
-ConfigMenu::ConfigMenu(SettingsData &initialSettings)
+SettingsMenu::SettingsMenu(Settings &initialSettings)
   : wxFrame(nullptr, wxID_ANY, "Settings"),
     fieldsPanel{new FieldsPanel(this, initialSettings)}
 {
@@ -25,7 +25,7 @@ ConfigMenu::ConfigMenu(SettingsData &initialSettings)
   Show(true);
 }
 
-void ConfigMenu::setUpLayout()
+void SettingsMenu::setUpLayout()
 {
   wxBoxSizer *verticalSizer{new wxBoxSizer(wxVERTICAL)};
   verticalSizer->AddSpacer(20);
@@ -36,22 +36,22 @@ void ConfigMenu::setUpLayout()
   SetSizerAndFit(verticalSizer);
 }
 
-void ConfigMenu::createButton()
+void SettingsMenu::createButton()
 {
   acceptButton = new wxButton(this, wxID_ANY, "Accept");
   acceptButton->SetInitialSize(wxSize(180, 50));
-  acceptButton->Bind(wxEVT_BUTTON, &ConfigMenu::OnAcceptButton, this);
+  acceptButton->Bind(wxEVT_BUTTON, &SettingsMenu::OnAcceptButton, this);
   acceptButton->SetFont(acceptButton->GetFont().Scale(1.15));
 }
 
-void ConfigMenu::OnAcceptButton(wxCommandEvent &)
+void SettingsMenu::OnAcceptButton(wxCommandEvent &)
 {
   if (fieldsPanel->getPosPath() == "")
   {
     wxMessageBox(missingPathFieldMessage, "Missing required field");
     return;
   }
-  SettingsData settings{fieldsPanel->getSettingsInput()};
+  Settings settings{fieldsPanel->getSettingsInput()};
   try
   {
     new GameFrame(settings, openPosition(settings.positionPath));

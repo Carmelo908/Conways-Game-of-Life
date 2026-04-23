@@ -6,10 +6,10 @@
 
 #include "../position.hpp"
 
-class DrawingPanel : public wxPanel
+class PositionPanel : public wxPanel
 {
 public:
-  DrawingPanel(wxWindow *parent, const Position *const position);
+  PositionPanel(wxWindow *parent, const Position *const position);
 
 private:
   void OnPaint(wxPaintEvent &);

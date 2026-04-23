@@ -2,7 +2,7 @@ set(
   SOURCE_FILES
   main.cpp
   position.cpp
-  settingsdata.cpp
+  settings.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCE_FILES})

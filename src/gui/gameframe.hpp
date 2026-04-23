@@ -5,15 +5,15 @@
 #include <wx/frame.h>
 
 #include "../position.hpp"
-#include "../settingsdata.hpp"
-#include "drawingpanel.hpp"
+#include "../settings.hpp"
+#include "positionpanel.hpp"
 
 #pragma once
 
 class GameFrame : private wxFrame
 {
 public:
-  GameFrame(const SettingsData &settings, std::unique_ptr<Position> &&position);
+  GameFrame(const Settings &settings, std::unique_ptr<Position> &&position);
 
 private:
   void setUpLayout();
@@ -29,5 +29,5 @@ private:
   std::atomic<bool> isGameRunning;
 
   wxButton *button;
-  DrawingPanel *drawingPanel;
+  PositionPanel *drawingPanel;
 };

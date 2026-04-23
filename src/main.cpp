@@ -1,24 +1,24 @@
-#include <wx/wx.h>
+#include <wx/app.h>
 
-#include "gui/configmenu.hpp"
-#include "settingsdata.hpp"
+#include "gui/settingsmenu.hpp"
+#include "settings.hpp"
 
-class MyApp : public wxApp
+class App : public wxApp
 {
 public:
   virtual bool OnInit() override;
 };
 
-wxIMPLEMENT_APP(MyApp);
+wxIMPLEMENT_APP(App);
 
-bool MyApp::OnInit()
+bool App::OnInit()
 {
-  SettingsData initialSettings;
+  Settings initialSettings;
   if (std::filesystem::exists("./settings.json"))
   {
     initialSettings = parseFileSettings("./settings.json");
   }
-  new ConfigMenu(initialSettings);
+  new SettingsMenu(initialSettings);
 
   return true;
 }

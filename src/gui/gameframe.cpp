@@ -5,8 +5,8 @@
 #include <thread>
 #include <utility>
 
-#include <wx/sizer.h>
 #include <nlohmann/json.hpp>
+#include <wx/sizer.h>
 
 template <class Rep, class Period>
 class DelayTimer
@@ -22,14 +22,14 @@ private:
   std::chrono::steady_clock::time_point elapsed;
 };
 
-GameFrame::GameFrame(const SettingsData &settings,
+GameFrame::GameFrame(const Settings &settings,
                      std::unique_ptr<Position> &&position)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
     position{std::move(position)},
     delay{settings.delay},
     isGameRunning{false},
     button{new wxButton(this, wxID_ANY, "Start", wxDefaultPosition)},
-    drawingPanel{new DrawingPanel(this, this->position.get())}
+    drawingPanel{new PositionPanel(this, this->position.get())}
 {
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
   button->Bind(wxEVT_BUTTON, &GameFrame::onButtonClick, this);
