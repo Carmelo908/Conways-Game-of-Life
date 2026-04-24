@@ -3,6 +3,7 @@
 
 #include <wx/button.h>
 #include <wx/frame.h>
+#include <wx/stattext.h>
 
 #include "../position.hpp"
 #include "../settings.hpp"
@@ -26,8 +27,10 @@ private:
 
   std::unique_ptr<Position> position;
   std::chrono::milliseconds delay;
-  std::atomic<bool> isGameRunning;
+  std::atomic_bool isGameRunning;
 
-  wxButton *button;
+  wxButton *startButton;
   PositionPanel *drawingPanel;
+  wxStaticText *generationLabel;
+  wxStaticText *cellAmountLabel;
 };

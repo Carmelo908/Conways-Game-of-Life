@@ -23,10 +23,10 @@ void FieldsPanel::createControls(Settings &initialSettings)
   pathInput->SetInitialSize(wxSize(200, 30));
   pathInput->SetInitialDirectory("./positions");
   pathInput->SetPath(initialSettings.positionPath.string());
-  delayInput->Create(this, wxID_ANY,
-                     std::to_string(initialSettings.delay.count()));
+  delayInput->Create(this, wxID_ANY);
+  delayInput->SetValue(initialSettings.delay.count());
   delayInput->SetFont(delayInput->GetFont().Scale(1.1));
-  delayInput->SetRange(0, 10000);
+  delayInput->SetRange(0, 200);
   delayInput->SetInitialSize(wxSize(200, 30));
 }
 
