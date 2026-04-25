@@ -3,7 +3,7 @@ set(LIBRARY_NAME gui)
 set(
   SOURCE_FILES
   settingsmenu.cpp
-  fieldspanel.cpp
+  settingspanel.cpp
   gameframe.cpp
   positionpanel.cpp
 )

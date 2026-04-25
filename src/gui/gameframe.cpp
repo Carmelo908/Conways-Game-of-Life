@@ -25,38 +25,39 @@ GameFrame::GameFrame(const Settings &settings, std::unique_ptr<Position> &&pos)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
     position{std::move(pos)},
     delay{settings.delay},
-    isGameRunning{false},
-    startButton{new wxButton(this, wxID_ANY, "Start")},
-    drawingPanel{new PositionPanel(this, this->position.get())},
-    generationLabel{new wxStaticText(this, wxID_ANY, "")},
-    cellAmountLabel{new wxStaticText(this, wxID_ANY, "")}
+    isGameRunning{false}
 {
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
-  startButton->Bind(wxEVT_BUTTON, &GameFrame::onButtonClick, this);
-  startButton->SetFont(startButton->GetFont().Scale(1.2));
-  generationLabel->SetLabel("Alive cells: " +
-                            std::to_string(position->getCellsQuantity()));
-  cellAmountLabel->SetLabel("Generation: " +
-                            std::to_string(position->getGenCount()));
+  SetFont(GetFont().Scale(1.3));
+  createControls();
   setUpLayout();
   Show(true);
   Maximize();
 }
 
+void GameFrame::createControls()
+{
+  startButton = new wxButton(this, wxID_ANY, "Start");
+  positionPanel = new PositionPanel(this, *position);
+  generationLabel = new wxStaticText(this, wxID_ANY, "");
+  cellsQuantityLabel = new wxStaticText(this, wxID_ANY, "");
+  startButton->Bind(wxEVT_BUTTON, &GameFrame::onButtonClick, this);
+  updatePositionLabels();
+}
+
 void GameFrame::setUpLayout()
 {
-  auto verticalSizer{new wxBoxSizer(wxVERTICAL)};
+  auto mainSizer{new wxBoxSizer(wxVERTICAL)};
   auto controlSizer{new wxBoxSizer(wxHORIZONTAL)};
   controlSizer->Add(generationLabel, wxALIGN_CENTER_VERTICAL);
-  controlSizer->AddSpacer(30);
+  controlSizer->AddSpacer(20);
   controlSizer->Add(startButton, wxALIGN_CENTER_VERTICAL);
-  controlSizer->AddSpacer(30);
-  controlSizer->Add(cellAmountLabel, wxALIGN_CENTER_VERTICAL);
-  verticalSizer->Add(drawingPanel, 0,
-                     wxFIXED_MINSIZE | wxALIGN_CENTER_HORIZONTAL);
-  verticalSizer->AddSpacer(30);
-  verticalSizer->Add(controlSizer, 0, wxALIGN_CENTER_HORIZONTAL);
-  SetSizerAndFit(verticalSizer);
+  controlSizer->AddSpacer(20);
+  controlSizer->Add(cellsQuantityLabel, wxALIGN_CENTER_VERTICAL);
+  mainSizer->Add(positionPanel, 0, wxFIXED_MINSIZE | wxALIGN_CENTER_HORIZONTAL);
+  mainSizer->AddSpacer(20);
+  mainSizer->Add(controlSizer, 0, wxALIGN_CENTER_HORIZONTAL);
+  SetSizerAndFit(mainSizer);
 }
 
 void GameFrame::gameLoop()
@@ -65,13 +66,8 @@ void GameFrame::gameLoop()
   {
     DelayTimer t{delay};
     position->advanceGen();
-    drawingPanel->Refresh();
-    auto generationText = std::string("Generation: ") +=
-        std::to_string(position->getGenCount());
-    auto cellAmountText = std::string("Alive cells: ") +=
-        std::to_string(position->getCellsQuantity());
-    generationLabel->SetLabelText(generationText);
-    cellAmountLabel->SetLabelText(cellAmountText);
+    positionPanel->Refresh();
+    updatePositionLabels();
     wxYield();
     t.wait();
   }
@@ -81,7 +77,7 @@ void GameFrame::onButtonClick(wxCommandEvent &)
 {
   if (isGameRunning)
   {
-    startButton->SetLabel("Start");
+    startButton->SetLabelText("Start");
     isGameRunning = false;
   } else
   {
@@ -89,6 +85,16 @@ void GameFrame::onButtonClick(wxCommandEvent &)
     startButton->SetLabelText("Stop");
     gameLoop();
   }
+}
+
+void GameFrame::updatePositionLabels()
+{
+  auto value = std::to_string(position->getGenCount());
+  auto generationText = std::string("Generation: ") + value;
+  generationLabel->SetLabelText(generationText);
+  value = std::to_string(position->getCellsQuantity());
+  auto cellsQuantityText = std::string("Cells amount: ") + value;
+  cellsQuantityLabel->SetLabelText(cellsQuantityText);
 }
 
 void GameFrame::onClose(wxCloseEvent &)

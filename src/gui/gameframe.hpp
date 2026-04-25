@@ -3,6 +3,7 @@
 
 #include <wx/button.h>
 #include <wx/frame.h>
+#include <wx/spinctrl.h>
 #include <wx/stattext.h>
 
 #include "../position.hpp"
@@ -17,11 +18,15 @@ public:
   GameFrame(const Settings &settings, std::unique_ptr<Position> &&position);
 
 private:
+  void createControls();
+
   void setUpLayout();
 
   void gameLoop();
 
   void onButtonClick(wxCommandEvent &);
+
+  void updatePositionLabels();
 
   void onClose(wxCloseEvent &);
 
@@ -30,7 +35,8 @@ private:
   std::atomic_bool isGameRunning;
 
   wxButton *startButton;
-  PositionPanel *drawingPanel;
+  PositionPanel *positionPanel;
   wxStaticText *generationLabel;
-  wxStaticText *cellAmountLabel;
+  wxStaticText *cellsQuantityLabel;
+  wxSpinCtrl *delayControl;
 };

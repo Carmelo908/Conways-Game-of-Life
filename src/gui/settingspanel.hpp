@@ -8,10 +8,10 @@
 
 #include "../settings.hpp"
 
-class FieldsPanel : public wxPanel
+class SettingsPanel : public wxPanel
 {
 public:
-  FieldsPanel(wxFrame *parent, Settings &initialSettings);
+  SettingsPanel(wxFrame *parent, Settings &initialSettings);
 
   Settings getSettingsInput() const;
 

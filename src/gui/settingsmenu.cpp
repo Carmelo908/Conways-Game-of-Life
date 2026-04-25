@@ -15,7 +15,7 @@ constexpr auto missingPathFieldMessage =
 
 SettingsMenu::SettingsMenu(Settings &initialSettings)
   : wxFrame(nullptr, wxID_ANY, "Settings"),
-    fieldsPanel{new FieldsPanel(this, initialSettings)}
+    fieldsPanel{new SettingsPanel(this, initialSettings)}
 {
   createButton();
   setUpLayout();

@@ -3,7 +3,7 @@
 #include <wx/button.h>
 
 #include "../settings.hpp"
-#include "fieldspanel.hpp"
+#include "settingspanel.hpp"
 
 #pragma once
 
@@ -20,5 +20,5 @@ private:
   void OnAcceptButton(wxCommandEvent &);
 
   wxButton *acceptButton;
-  FieldsPanel *fieldsPanel;
+  SettingsPanel *fieldsPanel;
 };

@@ -9,10 +9,12 @@
 class PositionPanel : public wxPanel
 {
 public:
-  PositionPanel(wxWindow *parent, const Position *const position);
+  PositionPanel(wxWindow *parent, const Position &position);
 
 private:
   void OnPaint(wxPaintEvent &);
+
+  static int getCellSizeUnits(const Position &pos);
 
   static wxBitmap makePositionBitmap(const Position &position, wxSize cellSize);
 
