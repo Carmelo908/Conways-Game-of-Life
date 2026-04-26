@@ -1,5 +1,4 @@
 #define CATCH_CONFIG_MAIN
-#include <iostream>
 #include <string>
 
 #include <catch2/catch_test_macros.hpp>
@@ -28,8 +27,7 @@ TEST_CASE("Testing Position functionality")
     Position pos1{data};
     Position pos2{data};
 
-    bool equal = pos1 == pos2;
-    REQUIRE(equal);
+    CHECK(pos1 == pos2);
   }
 
   SECTION("Advance generation")
@@ -40,13 +38,12 @@ TEST_CASE("Testing Position functionality")
         {0, 0, 1},
     }};
     pos.advanceGen();
-    INFO(posToString(pos));
     Position nextPos{{
         {1, 1, 0},
         {1, 1, 1},
         {0, 1, 0},
     }};
-    bool equal = pos == nextPos;
-    REQUIRE(equal);
+    INFO(posToString(pos));
+    CHECK(pos == nextPos);
   }
 }

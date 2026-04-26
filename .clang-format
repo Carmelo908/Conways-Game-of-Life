@@ -10,6 +10,7 @@ AlignConsecutiveShortCaseStatements:
   AcrossComments: true
   AlignCaseColons: false
 AlignOperands: Align
+AlignAfterOpenBracket: Align
 AllowShortCaseLabelsOnASingleLine: false
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowAllArgumentsOnNextLine: true
@@ -39,4 +40,4 @@ PointerAlignment: Right
 QualifierAlignment: Left
 ReferenceAlignment: Right
 RemoveSemicolon: true
-AlignAfterOpenBracket: Align
+SpaceAfterTemplateKeyword: false

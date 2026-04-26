@@ -15,9 +15,11 @@ These features are planned to be added in the future:
 
 - [vcpkg](https://vcpkg.io/) as dependency manager
 - [CMake](https://cmake.org/) as build system
-- [wxWidgets](https://www.wxwidgets.org) as GUI framework
+- [wxWidgets](https://www.wxwidgets.org) as GUI framework (managed by vcpkg)
 - [nlohmann_json](https://github.com/nlohmann/json) for serialization and
   deserialization of JSON files which contains the positions information
+  (managed by vcpkg)
 - [Catch2](https://github.com/catchorg/Catch2) as testing framework
+  (managed by vcpkg)
 - [Python](https://www.python.org/) for the temporal positions generation
   scripts but not strictly necessary though

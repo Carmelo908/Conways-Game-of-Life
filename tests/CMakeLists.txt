@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.29.6)
 set(
   UNIT_TESTS 
   positiontest
+  settingstest
 )
 
 foreach(TEST_NAME IN LISTS UNIT_TESTS)
