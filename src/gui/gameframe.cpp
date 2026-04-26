@@ -7,7 +7,7 @@
 
 #include <wx/sizer.h>
 
-template <class Rep, class Period>
+template<class Rep, class Period>
 class DelayTimer
 {
 public:
@@ -24,7 +24,7 @@ private:
 GameFrame::GameFrame(const Settings &settings, std::unique_ptr<Position> &&pos)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
     position{std::move(pos)},
-    delay{settings.delay},
+    delay{settings.getDelay()},
     isGameRunning{false}
 {
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);

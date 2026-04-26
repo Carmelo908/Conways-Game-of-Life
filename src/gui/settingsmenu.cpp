@@ -1,11 +1,10 @@
-#include "settingsmenu.hpp"
-
 #include <fstream>
 
-#include <nlohmann/json.hpp>
 #include <wx/msgdlg.h>
+#include <wx/sizer.h>
 
 #include "gameframe.hpp"
+#include "settingsmenu.hpp"
 
 constexpr auto parsingErrorMessage =
     "An error ocurred parsing the file. It may contain invalid data.";
@@ -54,7 +53,7 @@ void SettingsMenu::OnAcceptButton(wxCommandEvent &)
   Settings settings{fieldsPanel->getSettingsInput()};
   try
   {
-    new GameFrame(settings, openPosition(settings.positionPath));
+    new GameFrame(settings, openPosition(settings.getPositionPath()));
   } catch (const nlohmann::json::parse_error &e)
   {
     wxMessageBox(parsingErrorMessage, "Error opening the file");

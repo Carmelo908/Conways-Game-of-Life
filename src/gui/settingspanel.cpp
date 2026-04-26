@@ -3,13 +3,18 @@
 #include <filesystem>
 #include <stdexcept>
 
+#include <wx/filepicker.h>
+#include <wx/radiobut.h>
+#include <wx/spinctrl.h>
+#include <wx/stattext.h>
+
 constexpr int gridRows = 2;
 constexpr int gridColumns = 2;
 
 SettingsPanel::SettingsPanel(wxFrame *parent, Settings &initialSettings)
   : wxPanel(parent),
-    pathInput{new wxFilePickerCtrl()},
-    delayInput{new wxSpinCtrl()}
+    pathCtrl{new wxFilePickerCtrl()},
+    delayCtrl{new wxSpinCtrl()}
 {
   SetFont(GetFont().Scale(1.1));
   createControls(initialSettings);
@@ -18,47 +23,46 @@ SettingsPanel::SettingsPanel(wxFrame *parent, Settings &initialSettings)
 
 void SettingsPanel::createControls(Settings &initialSettings)
 {
-  pathInput->Create(this, wxID_ANY, "", "Select the initial position's file",
-                    "*.json");
-  pathInput->SetInitialSize(wxSize(200, 30));
-  pathInput->SetInitialDirectory("./positions");
-  pathInput->SetPath(initialSettings.positionPath.string());
-  delayInput->Create(this, wxID_ANY);
-  delayInput->SetValue(initialSettings.delay.count());
-  delayInput->SetRange(0, 200);
-  delayInput->SetInitialSize(wxSize(200, 30));
+  pathCtrl->Create(this, wxID_ANY, "", "Select the initial position's file",
+                   "*.json");
+  pathCtrl->SetInitialSize(wxSize(200, 30));
+  pathCtrl->SetInitialDirectory("./positions");
+  pathCtrl->SetPath(initialSettings.getPositionPath().string());
+  delayCtrl->Create(this, wxID_ANY);
+  delayCtrl->SetInitialSize(wxSize(200, 30));
+  delayCtrl->SetValue(initialSettings.getDelay().count());
+  delayCtrl->SetRange(0, 1000);
 }
 
 wxStaticText *SettingsPanel::createLabel(std::string_view labelText)
 {
-  wxStaticText *label = new wxStaticText(this, wxID_ANY, labelText.data());
-  return label;
+  return new wxStaticText(this, wxID_ANY, labelText.data());
 }
 
 void SettingsPanel::setUpLayout()
 {
-  wxGridSizer *gridSizer = new wxGridSizer(gridRows, gridColumns, 10, 100);
-  gridSizer->Add(createLabel("Initial position file"));
-  gridSizer->Add(createLabel("Delay between generations\n(in milliseconds):"));
-  gridSizer->Add(pathInput);
-  gridSizer->Add(delayInput);
-  SetSizerAndFit(gridSizer);
+  wxGridSizer *mainSizer = new wxGridSizer(gridRows, gridColumns, 10, 100);
+  mainSizer->Add(createLabel("Initial position file"));
+  mainSizer->Add(createLabel("Delay between generations\n(in milliseconds):"));
+  mainSizer->Add(pathCtrl);
+  mainSizer->Add(delayCtrl);
+  SetSizerAndFit(mainSizer);
 }
 
 Settings SettingsPanel::getSettingsInput() const
 {
   Settings settings;
-  settings.positionPath = getPosPath();
-  settings.delay = getDelay();
+  settings.setPositionPath(getPosPath());
+  settings.setDelay(getDelay());
   return settings;
 }
 
 std::filesystem::path SettingsPanel::getPosPath() const
 {
-  return pathInput->GetFileName().GetFullPath().ToStdString();
+  return pathCtrl->GetFileName().GetFullPath().ToStdString();
 }
 
 std::chrono::milliseconds SettingsPanel::getDelay() const
 {
-  return std::chrono::milliseconds(delayInput->GetValue());
+  return std::chrono::milliseconds(delayCtrl->GetValue());
 }

@@ -19,13 +19,13 @@ public:
 
   std::filesystem::path getPosPath() const;
 
-  wxFilePickerCtrl *pathInput;
-  wxSpinCtrl *delayInput;
-
 private:
   void createControls(Settings &initialSettings);
 
   wxStaticText *createLabel(std::string_view labelText);
 
   void setUpLayout();
+
+  wxFilePickerCtrl *pathCtrl;
+  wxSpinCtrl *delayCtrl;
 };
