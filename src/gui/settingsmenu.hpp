@@ -1,11 +1,11 @@
-#include <filesystem>
-
-#include <wx/button.h>
-
-#include "../settings.hpp"
-#include "settingspanel.hpp"
-
 #pragma once
+
+#include <wx/frame.h>
+
+class Settings;
+class SettingsPanel;
+class wxButton;
+class wxCommandEvent;
 
 class SettingsMenu : public wxFrame
 {

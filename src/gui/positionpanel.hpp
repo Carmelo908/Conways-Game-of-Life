@@ -1,10 +1,10 @@
 #pragma once
 
-#include <wx/bitmap.h>
-#include <wx/event.h>
 #include <wx/panel.h>
 
-#include "../position.hpp"
+class Position;
+class wxBitmap;
+class wxPaintEvent;
 
 class PositionPanel : public wxPanel
 {

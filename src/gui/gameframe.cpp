@@ -1,11 +1,16 @@
 #include "gameframe.hpp"
 
-#include <chrono>
 #include <memory>
 #include <thread>
 #include <utility>
 
+#include <wx/button.h>
 #include <wx/sizer.h>
+#include <wx/stattext.h>
+
+#include "../position.hpp"
+#include "../settings.hpp"
+#include "positionpanel.hpp"
 
 template<class Rep, class Period>
 class DelayTimer

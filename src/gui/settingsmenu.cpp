@@ -1,10 +1,14 @@
+#include "settingsmenu.hpp"
+
 #include <fstream>
 
+#include <wx/button.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 
+#include "../settings.hpp"
 #include "gameframe.hpp"
-#include "settingsmenu.hpp"
+#include "settingspanel.hpp"
 
 constexpr auto parsingErrorMessage =
     "An error ocurred parsing the file. It may contain invalid data.";

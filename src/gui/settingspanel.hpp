@@ -1,17 +1,21 @@
+#pragma once
+
+#include <chrono>
+#include <filesystem>
 #include <string_view>
 
-#include <wx/filepicker.h>
-#include <wx/frame.h>
 #include <wx/panel.h>
-#include <wx/spinctrl.h>
-#include <wx/stattext.h>
 
-#include "../settings.hpp"
+class Settings;
+class wxFilePickerCtrl;
+class wxSpinCtrl;
+class wxStaticText;
+class wxWindow;
 
 class SettingsPanel : public wxPanel
 {
 public:
-  SettingsPanel(wxFrame *parent, Settings &initialSettings);
+  SettingsPanel(wxWindow *parent, Settings &initialSettings);
 
   Settings getSettingsInput() const;
 

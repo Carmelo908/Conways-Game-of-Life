@@ -1,7 +1,10 @@
 #include "positionpanel.hpp"
 
+#include <wx/bitmap.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
+
+#include "../position.hpp"
 
 PositionPanel::PositionPanel(wxWindow *parent, const Position &position)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1000, 500),

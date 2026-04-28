@@ -1,9 +1,9 @@
+#pragma once
+
 #include <cinttypes>
 #include <filesystem>
 #include <memory>
 #include <vector>
-
-#pragma once
 
 class Position;
 

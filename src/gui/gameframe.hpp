@@ -1,16 +1,17 @@
+#pragma once
+
 #include <atomic>
+#include <chrono>
 #include <string>
 
-#include <wx/button.h>
 #include <wx/frame.h>
-#include <wx/spinctrl.h>
-#include <wx/stattext.h>
 
-#include "../position.hpp"
-#include "../settings.hpp"
-#include "positionpanel.hpp"
-
-#pragma once
+class Position;
+class PositionPanel;
+class Settings;
+class wxButton;
+class wxSpinCtrl;
+class wxStaticText;
 
 class GameFrame : private wxFrame
 {
@@ -38,5 +39,4 @@ private:
   PositionPanel *positionPanel;
   wxStaticText *generationLabel;
   wxStaticText *cellsQuantityLabel;
-  wxSpinCtrl *delayControl;
 };

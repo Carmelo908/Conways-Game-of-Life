@@ -1,6 +1,5 @@
 #include "settings.hpp"
 
-#include <format>
 #include <fstream>
 
 bool validatePath(const std::filesystem::path &p)

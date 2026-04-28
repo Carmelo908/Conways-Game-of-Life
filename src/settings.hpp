@@ -1,11 +1,11 @@
+#pragma once
+
 #include <chrono>
 #include <filesystem>
 
 #include <nlohmann/json.hpp>
 
 #include "position.hpp"
-
-#pragma once
 
 class Settings
 {

@@ -1,17 +1,17 @@
 #include "settingspanel.hpp"
 
-#include <filesystem>
-#include <stdexcept>
-
 #include <wx/filepicker.h>
 #include <wx/radiobut.h>
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
+#include <wx/window.h>
+
+#include "../settings.hpp"
 
 constexpr int gridRows = 2;
 constexpr int gridColumns = 2;
 
-SettingsPanel::SettingsPanel(wxFrame *parent, Settings &initialSettings)
+SettingsPanel::SettingsPanel(wxWindow *parent, Settings &initialSettings)
   : wxPanel(parent),
     pathCtrl{new wxFilePickerCtrl()},
     delayCtrl{new wxSpinCtrl()}
