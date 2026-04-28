@@ -6,11 +6,24 @@ set(
   settingstest
 )
 
-foreach(TEST_NAME IN LISTS UNIT_TESTS)
-    add_subdirectory(${TEST_NAME})
-endforeach()
+find_package(Catch2 CONFIG REQUIRED)
+find_package(nlohmann_json CONFIG REQUIRED)
 
-message("Configurated tests:")
+add_executable(
+  positiontest 
+  positiontest.cpp
+  ${CMAKE_SOURCE_DIR}/src/position.cpp
+)
+
+add_executable(
+  settingstest
+  settingstest.cpp
+  ${CMAKE_SOURCE_DIR}/src/settings.cpp
+)
+target_link_libraries(settingstest PRIVATE nlohmann_json::nlohmann_json)
+
 foreach(TEST_NAME IN LISTS UNIT_TESTS)
-  message("- ${TEST_NAME}")
+  add_test(${TEST_NAME} ${TEST_NAME})
+  target_include_directories(${TEST_NAME} PRIVATE ${PROJECT_SOURCE_DIR}/src)  
+  target_link_libraries(${TEST_NAME} PRIVATE Catch2::Catch2 Catch2::Catch2WithMain)
 endforeach()
