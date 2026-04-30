@@ -2,7 +2,6 @@ set(LIBRARY_NAME gui)
 
 set(
   SOURCE_FILES
-  settingsmenu.cpp
   settingspanel.cpp
   gameframe.cpp
   positionpanel.cpp

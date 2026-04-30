@@ -9,7 +9,9 @@ class wxPaintEvent;
 class PositionPanel : public wxPanel
 {
 public:
-  PositionPanel(wxWindow *parent, const Position &position);
+  PositionPanel(wxWindow *parent);
+
+  void showPosition(Position &position);
 
 private:
   void OnPaint(wxPaintEvent &);

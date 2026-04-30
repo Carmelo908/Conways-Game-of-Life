@@ -1,16 +1,42 @@
 #include "gameframe.hpp"
 
-#include <memory>
+#include <filesystem>
+#include <fstream>
 #include <thread>
 #include <utility>
 
 #include <wx/button.h>
+#include <wx/filepicker.h>
+#include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
 #include "../position.hpp"
 #include "../settings.hpp"
 #include "positionpanel.hpp"
+#include "settingspanel.hpp"
+
+constexpr auto parsingErrorMessage =
+    "An error ocurred parsing the file. It may contain invalid data.";
+
+constexpr auto missingPathFieldMessage =
+    "The position file field is missing. Select a file to open";
+
+std::unique_ptr<Position> openPosition(const std::filesystem::path &path)
+{
+  if (path.empty())
+  {
+    return nullptr;
+  }
+  try
+  {
+    return std::make_unique<Position>(Position::parseJsonFile(path));
+  } catch (const nlohmann::json::exception &e)
+  {
+    wxMessageBox(parsingErrorMessage, "Error opening the file");
+    return nullptr;
+  }
+}
 
 template<class Rep, class Period>
 class DelayTimer
@@ -26,42 +52,56 @@ private:
   std::chrono::steady_clock::time_point elapsed;
 };
 
-GameFrame::GameFrame(const Settings &settings, std::unique_ptr<Position> &&pos)
+GameFrame::GameFrame(Settings &settings)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
-    position{std::move(pos)},
-    delay{settings.getDelay()},
-    isGameRunning{false}
+    position{},
+    isGameRunning{false},
+    settingsPanel{new SettingsPanel(this, settings)}
 {
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
+  Bind(wxEVT_BUTTON, &GameFrame::onStartButtonClick, this);
+  Bind(wxEVT_FILEPICKER_CHANGED, &GameFrame::onPositionChanged, this);
   SetFont(GetFont().Scale(1.3));
-  createControls();
+  createComponents();
   setUpLayout();
   Show(true);
   Maximize();
 }
 
-void GameFrame::createControls()
+void GameFrame::createComponents()
 {
   startButton = new wxButton(this, wxID_ANY, "Start");
-  positionPanel = new PositionPanel(this, *position);
+  startButton->Disable();
+  positionPanel = new PositionPanel(this);
   generationLabel = new wxStaticText(this, wxID_ANY, "");
   cellsQuantityLabel = new wxStaticText(this, wxID_ANY, "");
-  startButton->Bind(wxEVT_BUTTON, &GameFrame::onButtonClick, this);
-  updatePositionLabels();
+  startButton->Bind(wxEVT_BUTTON, &GameFrame::onStartButtonClick, this);
 }
 
-void GameFrame::setUpLayout()
+wxSizer *GameFrame::createControlSizer() const
 {
-  auto mainSizer{new wxBoxSizer(wxVERTICAL)};
   auto controlSizer{new wxBoxSizer(wxHORIZONTAL)};
   controlSizer->Add(generationLabel, wxALIGN_CENTER_VERTICAL);
   controlSizer->AddSpacer(20);
   controlSizer->Add(startButton, wxALIGN_CENTER_VERTICAL);
   controlSizer->AddSpacer(20);
   controlSizer->Add(cellsQuantityLabel, wxALIGN_CENTER_VERTICAL);
-  mainSizer->Add(positionPanel, 0, wxFIXED_MINSIZE | wxALIGN_CENTER_HORIZONTAL);
+  return controlSizer;
+}
+
+void GameFrame::setUpLayout()
+{
+  auto mainSizer{new wxBoxSizer(wxHORIZONTAL)};
+  mainSizer->Add(settingsPanel);
   mainSizer->AddSpacer(20);
-  mainSizer->Add(controlSizer, 0, wxALIGN_CENTER_HORIZONTAL);
+  auto centerColumnSizer{new wxBoxSizer(wxVERTICAL)};
+  auto controlSizer = createControlSizer();
+  centerColumnSizer->Add(positionPanel, 0,
+                         wxRESERVE_SPACE_EVEN_IF_HIDDEN | wxFIXED_MINSIZE |
+                             wxALIGN_CENTER_HORIZONTAL);
+  centerColumnSizer->AddSpacer(20);
+  centerColumnSizer->Add(controlSizer, 0, wxALIGN_CENTER_HORIZONTAL);
+  mainSizer->Add(centerColumnSizer, 0, wxFIXED_MINSIZE);
   SetSizerAndFit(mainSizer);
 }
 
@@ -69,7 +109,7 @@ void GameFrame::gameLoop()
 {
   while (isGameRunning)
   {
-    DelayTimer t{delay};
+    DelayTimer t{settings.getDelay()};
     position->advanceGen();
     positionPanel->Refresh();
     updatePositionLabels();
@@ -78,7 +118,7 @@ void GameFrame::gameLoop()
   }
 }
 
-void GameFrame::onButtonClick(wxCommandEvent &)
+void GameFrame::onStartButtonClick(wxCommandEvent &)
 {
   if (isGameRunning)
   {
@@ -90,6 +130,18 @@ void GameFrame::onButtonClick(wxCommandEvent &)
     startButton->SetLabelText("Stop");
     gameLoop();
   }
+}
+
+void GameFrame::onPositionChanged(wxFileDirPickerEvent &event)
+{
+  position = openPosition(event.GetPath().ToStdString());
+  if (position == nullptr)
+  {
+    return;
+  }
+  updatePositionLabels();
+  startButton->Enable();
+  positionPanel->showPosition(*position);
 }
 
 void GameFrame::updatePositionLabels()

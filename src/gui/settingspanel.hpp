@@ -21,7 +21,7 @@ public:
 
   std::chrono::milliseconds getDelay() const;
 
-  std::filesystem::path getPosPath() const;
+  std::filesystem::path getPositionPath() const;
 
 private:
   void createControls(Settings &initialSettings);

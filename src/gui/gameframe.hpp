@@ -6,37 +6,45 @@
 
 #include <wx/frame.h>
 
+#include "../settings.hpp"
+
 class Position;
 class PositionPanel;
 class Settings;
+class SettingsPanel;
 class wxButton;
-class wxSpinCtrl;
 class wxStaticText;
+class wxFileDirPickerEvent;
 
 class GameFrame : private wxFrame
 {
 public:
-  GameFrame(const Settings &settings, std::unique_ptr<Position> &&position);
+  GameFrame(Settings &settings);
 
 private:
-  void createControls();
+  void createComponents();
+
+  wxSizer *createControlSizer() const;
 
   void setUpLayout();
 
   void gameLoop();
 
-  void onButtonClick(wxCommandEvent &);
+  void onStartButtonClick(wxCommandEvent &);
+
+  void onPositionChanged(wxFileDirPickerEvent &event);
 
   void updatePositionLabels();
 
   void onClose(wxCloseEvent &);
 
   std::unique_ptr<Position> position;
-  std::chrono::milliseconds delay;
   std::atomic_bool isGameRunning;
+  Settings settings;
 
   wxButton *startButton;
   PositionPanel *positionPanel;
+  SettingsPanel *settingsPanel;
   wxStaticText *generationLabel;
   wxStaticText *cellsQuantityLabel;
 };

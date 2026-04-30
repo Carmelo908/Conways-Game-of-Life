@@ -8,8 +8,8 @@
 
 #include "../settings.hpp"
 
-constexpr int gridRows = 2;
-constexpr int gridColumns = 2;
+constexpr int gridRows = 4;
+constexpr int gridColumns = 1;
 
 SettingsPanel::SettingsPanel(wxWindow *parent, Settings &initialSettings)
   : wxPanel(parent),
@@ -23,8 +23,7 @@ SettingsPanel::SettingsPanel(wxWindow *parent, Settings &initialSettings)
 
 void SettingsPanel::createControls(Settings &initialSettings)
 {
-  pathCtrl->Create(this, wxID_ANY, "", "Select the initial position's file",
-                   "*.json");
+  pathCtrl->Create(this, wxID_ANY, "", "Open position file", "*.json");
   pathCtrl->SetInitialSize(wxSize(200, 30));
   pathCtrl->SetInitialDirectory("./positions");
   pathCtrl->SetPath(initialSettings.getPositionPath().string());
@@ -43,8 +42,8 @@ void SettingsPanel::setUpLayout()
 {
   wxGridSizer *mainSizer = new wxGridSizer(gridRows, gridColumns, 10, 100);
   mainSizer->Add(createLabel("Initial position file"));
-  mainSizer->Add(createLabel("Delay between generations\n(in milliseconds):"));
   mainSizer->Add(pathCtrl);
+  mainSizer->Add(createLabel("Delay between generations\n(in milliseconds):"));
   mainSizer->Add(delayCtrl);
   SetSizerAndFit(mainSizer);
 }
@@ -52,12 +51,12 @@ void SettingsPanel::setUpLayout()
 Settings SettingsPanel::getSettingsInput() const
 {
   Settings settings;
-  settings.setPositionPath(getPosPath());
+  settings.setPositionPath(getPositionPath());
   settings.setDelay(getDelay());
   return settings;
 }
 
-std::filesystem::path SettingsPanel::getPosPath() const
+std::filesystem::path SettingsPanel::getPositionPath() const
 {
   return pathCtrl->GetFileName().GetFullPath().ToStdString();
 }

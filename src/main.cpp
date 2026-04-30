@@ -1,6 +1,6 @@
 #include <wx/app.h>
 
-#include "gui/settingsmenu.hpp"
+#include "gui/gameframe.hpp"
 #include "settings.hpp"
 
 class App : public wxApp
@@ -18,7 +18,7 @@ bool App::OnInit()
   {
     initialSettings = parseFileSettings("./settings.json");
   }
-  new SettingsMenu(initialSettings);
+  new GameFrame(initialSettings);
 
   return true;
 }

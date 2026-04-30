@@ -3,11 +3,8 @@
 #include <cinttypes>
 #include <filesystem>
 #include <memory>
+#include <nlohmann/json.hpp>
 #include <vector>
-
-class Position;
-
-std::unique_ptr<Position> openPosition(std::filesystem::path filePath);
 
 class Position
 {
@@ -17,6 +14,10 @@ public:
 
   Position(data_t &toCopy);
   Position(data_t &&toCopy);
+
+  static Position parseJsonFile(const std::filesystem::path &file);
+  static Position parseJsonFile(std::ifstream &file);
+  static Position parseJson(const nlohmann::json &jsonObject);
 
   void advanceGen();
 
