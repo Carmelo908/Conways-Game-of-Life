@@ -23,7 +23,7 @@ TEST_CASE("Testing Position functionality")
 {
   SECTION("Comparision operator")
   {
-    Position::data_t data{{{0, 1}, {1, 0}}};
+    Position::Inputdata data{{{0, 1}, {1, 0}}};
     Position pos1{data};
     Position pos2{data};
 

@@ -3,10 +3,6 @@
 #include <algorithm>
 #include <fstream>
 
-Position::Position(data_t &&toCopy)
-  : Position(toCopy)
-{}
-
 Position Position::parseJsonFile(const std::filesystem::path &filepath)
 {
   std::ifstream file{filepath};
@@ -21,38 +17,61 @@ Position Position::parseJsonFile(std::ifstream &file)
 
 Position Position::parseJson(const nlohmann::json &jsonObject)
 {
-  auto positionData = jsonObject.template get<Position::data_t>();
+  auto positionData = jsonObject.template get<Position::Inputdata>();
   return Position(positionData);
 }
 
-Position::Position(data_t &toCopy)
-  : height{static_cast<uint16_t>(toCopy.size())},
-    width{static_cast<uint16_t>(toCopy[0].size())},
-    data{toCopy},
-    cellsQuantity{countCells()},
+Position::Position(Inputdata &toCopy)
+  : height{static_cast<int>(toCopy.size())},
+    width{static_cast<int>(toCopy[0].size())},
+    data{},
     genCount{0}
+{
+  for (int y = 0; y < height; y++)
+  {
+    for (int x = 0; x < width; x++)
+    {
+      if (toCopy[y][x])
+      {
+        data.emplace(x, y);
+      }
+    }
+  }
+}
+
+Position::Position(Inputdata &&toCopy)
+  : Position(toCopy)
 {}
 
 void Position::advanceGen()
 {
-  const data_t previousGen{data};
-  for (uint16_t gameY = 0; gameY < height; gameY++)
+  const CellSet previousGen{data};
+  data.clear();
+  for (int y = 0; y < height; y++)
   {
-    for (uint16_t gameX = 0; gameX < width; gameX++)
+    for (int x = 0; x < width; x++)
     {
-      data[gameY][gameX] = updateCell(gameX, gameY, previousGen);
+      const CellCoords cell{x, y};
+      if (updateCell(cell, previousGen))
+      {
+        data.insert(cell);
+      } else
+      {
+        data.erase(cell);
+      }
     }
   }
-  cellsQuantity = countCells();
   genCount++;
 }
 
+bool Position::getCellAt(CellCoords c) const { return data.contains(c); }
+
 bool Position::getCellAt(int coordX, int coordY) const
 {
-  return data.at(coordY).at(coordX);
+  return data.contains({coordX, coordY});
 }
 
-int Position::getCellsQuantity() const { return cellsQuantity; }
+int Position::getCellsQuantity() const { return data.size(); }
 
 size_t Position::getGenCount() const { return genCount; }
 
@@ -61,26 +80,17 @@ bool Position::operator==(const Position &rhs) const
   return this->data == rhs.data;
 }
 
-int Position::countCells() const
-{
-  int countedCells = 0;
-  for (const row_t &row : data)
-  {
-    countedCells += std::count(row.cbegin(), row.cend(), 1);
-  }
-  return countedCells;
-}
+int Position::countCells() const { return data.size(); }
 
 bool Position::isOutOfBounds(int cellCoord, int maxCoord) const
 {
   return (cellCoord < 0 || cellCoord >= maxCoord);
 }
 
-bool Position::updateCell(int cellX, int cellY, const data_t &previousGen)
+bool Position::updateCell(CellCoords cell, const CellSet &previousGen)
 {
-  const bool isCellAlive = previousGen[cellY][cellX];
-  const uint16_t neighboursCount =
-      sorroundingCellsAt(cellX, cellY, previousGen);
+  const bool isCellAlive = previousGen.contains(cell);
+  const uint16_t neighboursCount = sorroundingCellsAt(cell, previousGen);
   if (isCellAlive)
   {
     return 1 < neighboursCount && neighboursCount < 4;
@@ -90,24 +100,16 @@ bool Position::updateCell(int cellX, int cellY, const data_t &previousGen)
   }
 }
 
-int Position::sorroundingCellsAt(int cellX, int cellY,
-                                 const data_t &previousGen) const
+int Position::sorroundingCellsAt(CellCoords cell,
+                                 const CellSet &previousGen) const
 {
   int neighboursCount = 0;
-  for (int adjY = cellY - 1; adjY < cellY + 2; adjY++)
+  for (int adjY = cell.y - 1; adjY < cell.y + 2; adjY++)
   {
-    if (isOutOfBounds(adjY, height))
+    for (int adjX = cell.x - 1; adjX < cell.x + 2; adjX++)
     {
-      continue;
-    }
-    for (int adjX = cellX - 1; adjX < cellX + 2; adjX++)
-    {
-      if (isOutOfBounds(adjX, width))
-      {
-        continue;
-      }
-      neighboursCount += previousGen[adjY][adjX];
+      neighboursCount += previousGen.contains({adjX, adjY});
     }
   }
-  return neighboursCount - previousGen[cellY][cellX];
+  return neighboursCount - previousGen.contains(cell);
 }
