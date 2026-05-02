@@ -39,5 +39,4 @@ PackConstructorInitializers: Never
 PointerAlignment: Right
 QualifierAlignment: Left
 ReferenceAlignment: Right
-RemoveSemicolon: true
 SpaceAfterTemplateKeyword: false
