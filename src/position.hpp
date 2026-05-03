@@ -18,12 +18,7 @@ struct CellCoords
 
 struct CellCoordsHash
 {
-  size_t operator()(const CellCoords &cell) const
-  {
-    auto h1 = std::hash<int>()(cell.x);
-    auto h2 = std::hash<int>()(cell.y);
-    return h1 ^ (h2 << 1);
-  }
+  size_t operator()(const CellCoords &cell) const;
 };
 
 class Position
@@ -58,9 +53,13 @@ public:
 private:
   int countCells() const;
 
-  bool isOutOfBounds(int cellCoord, int maxCoord) const;
+  bool insideBounds(int cellCoord, int maxCoord) const;
 
-  bool updateCell(CellCoords c, const CellSet &previousGen);
+  void doOnSorrondingCells(CellCoords cell,
+                           const Position::CellSet &previousGen,
+                           auto action) const;
+
+  bool determineCell(CellCoords c, const CellSet &previousGen);
 
   int sorroundingCellsAt(CellCoords c, const CellSet &previousGen) const;
 

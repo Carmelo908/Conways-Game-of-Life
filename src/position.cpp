@@ -2,6 +2,14 @@
 
 #include <algorithm>
 #include <fstream>
+#include <utility>
+
+size_t CellCoordsHash::operator()(const CellCoords &cell) const
+{
+  auto h1 = std::hash<int>()(cell.x);
+  auto h2 = std::hash<int>()(cell.y);
+  return h1 ^ (h2 << 1);
+};
 
 Position Position::parseJsonFile(const std::filesystem::path &filepath)
 {
@@ -45,21 +53,22 @@ Position::Position(Inputdata &&toCopy)
 
 void Position::advanceGen()
 {
-  const CellSet previousGen{data};
-  data.clear();
-  for (int y = 0; y < height; y++)
+  CellSet previousGen{data};
+  previousGen.reserve(data.size() * 1.5);
+  for (const CellCoords cell : previousGen)
   {
-    for (int x = 0; x < width; x++)
-    {
-      const CellCoords cell{x, y};
-      if (updateCell(cell, previousGen))
+    auto updateCell = [&](const CellCoords adjacentCell,
+                          const CellSet &previousGen) -> void {
+      bool cellNextState = determineCell(adjacentCell, previousGen);
+      if (cellNextState)
       {
-        data.insert(cell);
+        data.insert(adjacentCell);
       } else
       {
-        data.erase(cell);
+        data.erase(adjacentCell);
       }
-    }
+    };
+    doOnSorrondingCells(cell, previousGen, updateCell);
   }
   genCount++;
 }
@@ -82,12 +91,34 @@ bool Position::operator==(const Position &rhs) const
 
 int Position::countCells() const { return data.size(); }
 
-bool Position::isOutOfBounds(int cellCoord, int maxCoord) const
+bool Position::insideBounds(int cellCoord, int maxCoord) const
 {
-  return (cellCoord < 0 || cellCoord >= maxCoord);
+  return (cellCoord >= 0 && cellCoord < maxCoord);
 }
 
-bool Position::updateCell(CellCoords cell, const CellSet &previousGen)
+void Position::doOnSorrondingCells(CellCoords cell,
+                                   const Position::CellSet &previousGen,
+                                   auto action) const
+{
+  for (int adjY = cell.y - 1; adjY < cell.y + 2; adjY++)
+  {
+    if (!insideBounds(adjY, height))
+    {
+      continue;
+    }
+    for (int adjX = cell.x - 1; adjX < cell.x + 2; adjX++)
+    {
+      if (!insideBounds(adjX, width))
+      {
+        continue;
+      }
+      const CellCoords adjacentCell{adjX, adjY};
+      action(adjacentCell, previousGen);
+    }
+  }
+}
+
+bool Position::determineCell(CellCoords cell, const CellSet &previousGen)
 {
   const bool isCellAlive = previousGen.contains(cell);
   const uint16_t neighboursCount = sorroundingCellsAt(cell, previousGen);
@@ -103,13 +134,14 @@ bool Position::updateCell(CellCoords cell, const CellSet &previousGen)
 int Position::sorroundingCellsAt(CellCoords cell,
                                  const CellSet &previousGen) const
 {
-  int neighboursCount = 0;
-  for (int adjY = cell.y - 1; adjY < cell.y + 2; adjY++)
-  {
-    for (int adjX = cell.x - 1; adjX < cell.x + 2; adjX++)
+  int cellsCount = 0;
+  auto countCells = [this, &cellsCount](const CellCoords adjacentCell,
+                                        const CellSet &previousGen) mutable {
+    if (previousGen.contains(adjacentCell))
     {
-      neighboursCount += previousGen.contains({adjX, adjY});
+      cellsCount++;
     }
-  }
-  return neighboursCount - previousGen.contains(cell);
+  };
+  doOnSorrondingCells(cell, previousGen, countCells);
+  return cellsCount - previousGen.contains(cell);
 }
