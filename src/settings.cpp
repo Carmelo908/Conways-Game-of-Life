@@ -2,6 +2,8 @@
 
 #include <fstream>
 
+#include <nlohmann/json.hpp>
+
 bool validatePath(const std::filesystem::path &p)
 {
   return std::filesystem::exists(p);

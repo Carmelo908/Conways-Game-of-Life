@@ -1,6 +1,5 @@
 #pragma once
 
-#include <atomic>
 #include <chrono>
 #include <string>
 
@@ -39,7 +38,7 @@ private:
   void onClose(wxCloseEvent &);
 
   std::unique_ptr<Position> position;
-  std::atomic_bool isGameRunning;
+  bool isGameRunning;
   Settings settings;
 
   wxButton *startButton;

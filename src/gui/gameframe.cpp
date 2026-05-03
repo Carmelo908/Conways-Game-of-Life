@@ -11,6 +11,8 @@
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
+#include <nlohmann/json.hpp>
+
 #include "../position.hpp"
 #include "../settings.hpp"
 #include "positionpanel.hpp"

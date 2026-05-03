@@ -5,7 +5,7 @@
 #include <unordered_set>
 #include <vector>
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 struct CellCoords
 {

@@ -1,5 +1,7 @@
 #include "position.hpp"
 
+#include <nlohmann/json.hpp>
+
 Position::Position(Inputdata &toCopy)
   : height{static_cast<int>(toCopy.size())},
     width{static_cast<int>(toCopy[0].size())},
