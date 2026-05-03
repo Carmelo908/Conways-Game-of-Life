@@ -1,13 +1,11 @@
 #pragma once
 
-#include <cinttypes>
 #include <filesystem>
 #include <fstream>
-#include <memory>
-#include <nlohmann/json.hpp>
 #include <unordered_set>
-#include <utility>
 #include <vector>
+
+#include <nlohmann/json.hpp>
 
 struct CellCoords
 {
@@ -16,15 +14,12 @@ struct CellCoords
   bool operator==(const CellCoords &) const = default;
 };
 
-struct CellCoordsHash
-{
-  size_t operator()(const CellCoords &cell) const;
-};
-
 class Position
 {
+  struct CellCoordsHash;
+
 public:
-  using Row = std::vector<uint8_t>;
+  using Row = std::vector<char>;
   using Inputdata = std::vector<Row>;
   using CellSet = std::unordered_set<CellCoords, CellCoordsHash>;
 
@@ -51,6 +46,11 @@ public:
   const int height, width;
 
 private:
+  struct CellCoordsHash
+  {
+    size_t operator()(const CellCoords cell) const;
+  };
+
   int countCells() const;
 
   bool insideBounds(int cellCoord, int maxCoord) const;
@@ -59,9 +59,9 @@ private:
                            const Position::CellSet &previousGen,
                            auto action) const;
 
-  bool determineCell(CellCoords c, const CellSet &previousGen);
+  bool determineCell(CellCoords cell, const CellSet &previousGen);
 
-  int sorroundingCellsAt(CellCoords c, const CellSet &previousGen) const;
+  int sorroundingCellsAt(CellCoords cell, const CellSet &previousGen) const;
 
   CellSet data;
   size_t genCount;

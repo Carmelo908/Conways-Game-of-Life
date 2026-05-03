@@ -1,34 +1,5 @@
 #include "position.hpp"
 
-#include <algorithm>
-#include <fstream>
-#include <utility>
-
-size_t CellCoordsHash::operator()(const CellCoords &cell) const
-{
-  auto h1 = std::hash<int>()(cell.x);
-  auto h2 = std::hash<int>()(cell.y);
-  return h1 ^ (h2 << 1);
-};
-
-Position Position::parseJsonFile(const std::filesystem::path &filepath)
-{
-  std::ifstream file{filepath};
-  return parseJsonFile(file);
-}
-
-Position Position::parseJsonFile(std::ifstream &file)
-{
-  auto jsonObject = nlohmann::json::parse(file);
-  return parseJson(jsonObject);
-}
-
-Position Position::parseJson(const nlohmann::json &jsonObject)
-{
-  auto positionData = jsonObject.template get<Position::Inputdata>();
-  return Position(positionData);
-}
-
 Position::Position(Inputdata &toCopy)
   : height{static_cast<int>(toCopy.size())},
     width{static_cast<int>(toCopy[0].size())},
@@ -50,6 +21,24 @@ Position::Position(Inputdata &toCopy)
 Position::Position(Inputdata &&toCopy)
   : Position(toCopy)
 {}
+
+Position Position::parseJsonFile(const std::filesystem::path &filepath)
+{
+  std::ifstream file{filepath};
+  return parseJsonFile(file);
+}
+
+Position Position::parseJsonFile(std::ifstream &file)
+{
+  auto jsonObject = nlohmann::json::parse(file);
+  return parseJson(jsonObject);
+}
+
+Position Position::parseJson(const nlohmann::json &jsonObject)
+{
+  auto positionData = jsonObject.template get<Position::Inputdata>();
+  return Position(positionData);
+}
 
 void Position::advanceGen()
 {
@@ -88,6 +77,13 @@ bool Position::operator==(const Position &rhs) const
 {
   return this->data == rhs.data;
 }
+
+size_t Position::CellCoordsHash::operator()(const CellCoords cell) const
+{
+  auto h1 = std::hash<int>()(cell.x);
+  auto h2 = std::hash<int>()(cell.y);
+  return h1 ^ (h2 << 1);
+};
 
 int Position::countCells() const { return data.size(); }
 
