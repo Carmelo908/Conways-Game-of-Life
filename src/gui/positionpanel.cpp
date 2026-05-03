@@ -22,7 +22,7 @@ void PositionPanel::showPosition(Position &position)
   SetClientObject(new ClientDrawingData(position, cellDisplaySize));
   wxSize panelSize{cellSizeUnits * position.width + 1,
                    cellSizeUnits * position.height + 1};
-  SetMinSize(panelSize);
+  SetSize(panelSize);
   Show();
 }
 

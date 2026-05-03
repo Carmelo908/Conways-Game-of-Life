@@ -42,14 +42,14 @@ Position Position::parseJson(const nlohmann::json &jsonObject)
 
 void Position::advanceGen()
 {
-  CellSet previousGen{data};
+  CellSet previousGen;
   previousGen.reserve(data.size() * 1.5);
+  previousGen.insert(data.begin(), data.end());
   for (const CellCoords cell : previousGen)
   {
     auto updateCell = [&](const CellCoords adjacentCell,
                           const CellSet &previousGen) -> void {
-      bool cellNextState = determineCell(adjacentCell, previousGen);
-      if (cellNextState)
+      if (determineCell(adjacentCell, previousGen))
       {
         data.insert(adjacentCell);
       } else
