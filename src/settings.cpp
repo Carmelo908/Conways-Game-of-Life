@@ -9,7 +9,7 @@ bool validatePath(const std::filesystem::path &p)
   return std::filesystem::exists(p);
 }
 
-bool validateDelay(std::chrono::milliseconds d)
+bool validateDelay(std::chrono::milliseconds &d)
 {
   return d.count() > 0 && d.count() < 1000;
 }

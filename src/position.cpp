@@ -5,7 +5,7 @@
 Position::Position(Inputdata &toCopy)
   : height{static_cast<int>(toCopy.size())},
     width{static_cast<int>(toCopy[0].size())},
-    data{},
+    aliveCells{},
     genCount{0}
 {
   for (int y = 0; y < height; y++)
@@ -14,7 +14,7 @@ Position::Position(Inputdata &toCopy)
     {
       if (toCopy[y][x])
       {
-        data.emplace(x, y);
+        aliveCells.emplace(x, y);
       }
     }
   }
@@ -44,40 +44,40 @@ Position Position::parseJson(const nlohmann::json &jsonObject)
 
 void Position::advanceGen()
 {
-  CellSet previousGen;
-  previousGen.reserve(data.size() * 1.5);
-  previousGen.insert(data.begin(), data.end());
+  static CellSet previousGen{};
+  previousGen.reserve(aliveCells.size() * 1.5);
+  previousGen = aliveCells;
+  auto updateCell = [&](const CellCoords adjacentCell,
+                        const CellSet &previousGen) -> void {
+    if (determineCell(adjacentCell, previousGen))
+    {
+      aliveCells.insert(adjacentCell);
+    } else
+    {
+      aliveCells.erase(adjacentCell);
+    }
+  };
   for (const CellCoords cell : previousGen)
   {
-    auto updateCell = [&](const CellCoords adjacentCell,
-                          const CellSet &previousGen) -> void {
-      if (determineCell(adjacentCell, previousGen))
-      {
-        data.insert(adjacentCell);
-      } else
-      {
-        data.erase(adjacentCell);
-      }
-    };
     doOnSorrondingCells(cell, previousGen, updateCell);
   }
   genCount++;
 }
 
-bool Position::getCellAt(CellCoords c) const { return data.contains(c); }
+bool Position::getCellAt(CellCoords c) const { return aliveCells.contains(c); }
 
 bool Position::getCellAt(int coordX, int coordY) const
 {
-  return data.contains({coordX, coordY});
+  return aliveCells.contains({coordX, coordY});
 }
 
-int Position::getCellsQuantity() const { return data.size(); }
+int Position::getCellsQuantity() const { return aliveCells.size(); }
 
 size_t Position::getGenCount() const { return genCount; }
 
 bool Position::operator==(const Position &rhs) const
 {
-  return this->data == rhs.data;
+  return this->aliveCells == rhs.aliveCells;
 }
 
 size_t Position::CellCoordsHash::operator()(const CellCoords cell) const
@@ -87,7 +87,7 @@ size_t Position::CellCoordsHash::operator()(const CellCoords cell) const
   return h1 ^ (h2 << 1);
 };
 
-int Position::countCells() const { return data.size(); }
+int Position::countCells() const { return aliveCells.size(); }
 
 bool Position::insideBounds(int cellCoord, int maxCoord) const
 {

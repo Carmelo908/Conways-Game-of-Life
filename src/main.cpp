@@ -3,9 +3,15 @@
 #include "gui/gameframe.hpp"
 #include "settings.hpp"
 
+/// @brief Project's App class
 class App : public wxApp
 {
 public:
+  /// @brief Entry point of the program.
+  ///
+  /// It tries to open the settings file if it exists and parse them
+  ///
+  /// @return Wether or not the program was started sucessfully.
   virtual bool OnInit() override;
 };
 

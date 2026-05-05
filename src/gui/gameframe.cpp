@@ -40,6 +40,7 @@ std::unique_ptr<Position> openPosition(const std::filesystem::path &path)
   }
 }
 
+/// @brief Class made to wait a minimun time
 template<class Rep, class Period>
 class DelayTimer
 {
@@ -77,7 +78,6 @@ void GameFrame::createComponents()
   positionPanel = new PositionPanel(this);
   generationLabel = new wxStaticText(this, wxID_ANY, "");
   cellsQuantityLabel = new wxStaticText(this, wxID_ANY, "");
-  startButton->Bind(wxEVT_BUTTON, &GameFrame::onStartButtonClick, this);
 }
 
 wxSizer *GameFrame::createControlSizer() const
