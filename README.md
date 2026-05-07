@@ -33,20 +33,20 @@ create the folder `<root>/build/<preset-name>`. The project has presets for the
 compilers Clang, GCC and MSV; for both release and debug builds. Once in the
 output directory, execute:
 
-~~~ shell
+~~~bash
 vcpkg install
 ~~~
 
 After all the project dependencies are installed, you can return to the project
 root as the presets set the output directory. Configure with CMake:
 
-~~~ shell
+~~~bash
 cmake . --preset <your-preset> -DCMAKE_TOOLCHAIN_FILE="<your-path-to>/vcpkg/scripts/buildsystems/vcpkg.cmake"
 ~~~
 
 Note that the toolchain file can be also passed in with a user preset. After
 The project dependencies are installed and it was configured, execute:
 
-~~~ shell
+~~~bash
 cmake --build build/default --target all --
 ~~~

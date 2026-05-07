@@ -5,8 +5,6 @@
 
 #include <nlohmann/json_fwd.hpp>
 
-#include "position.hpp"
-
 class Settings
 {
 public:

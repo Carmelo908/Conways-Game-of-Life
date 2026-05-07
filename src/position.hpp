@@ -102,5 +102,7 @@ private:
   int sorroundingCellsAt(CellCoords cell, const CellSet &previousGen) const;
 
   CellSet aliveCells;
+  CellSet previousGen;
+  // Cache member for better performance, specially in large positions
   size_t genCount;
 };

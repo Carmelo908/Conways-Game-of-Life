@@ -39,13 +39,11 @@ Position Position::parseJsonFile(std::ifstream &file)
 Position Position::parseJson(const nlohmann::json &jsonObject)
 {
   auto positionData = jsonObject.template get<Position::Inputdata>();
-  return Position(positionData);
+  return {positionData};
 }
 
 void Position::advanceGen()
 {
-  static CellSet previousGen{};
-  previousGen.reserve(aliveCells.size() * 1.5);
   previousGen = aliveCells;
   auto updateCell = [&](const CellCoords adjacentCell,
                         const CellSet &previousGen) -> void {
