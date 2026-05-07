@@ -15,8 +15,12 @@ public:
   /// @param parent: the parent windows (GameFrame).
   PositionPanel(wxWindow *parent);
 
-  /// @brief Set client data to hold the Position reference and sends a
-  /// wxPaintEvent whose handler generates a wxBitmap and shows it on the panel.
+  /// @brief shows the Position on the panel in a monochromatic wxBitmap every
+  /// time a wxPaintEvent is processed.
+  ///
+  /// If it's the first time this method was called since widget creation,
+  /// unhides it
+  ///
   /// @param position: the Position to be shown.
   void showPosition(Position &position);
 

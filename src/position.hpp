@@ -38,7 +38,7 @@ public:
 
   /// @brief Move constructor. Delegates to Position(InputData &)
   Position(Inputdata &&toCopy);
-  // TODO: change the way input is created so that it matches the
+  // \todo change the way input is created so that it matches the
   // new implementation using set of coordinates instead of 2D vector
 
   /// @brief Creates a position from a JSON file
@@ -64,6 +64,8 @@ public:
   /// @param c the cell coordinates
   /// @return Wether the cell is or not alive
   bool getCellAt(CellCoords c) const;
+
+  /// \overload
   bool getCellAt(int coordX, int coordY) const;
 
   /// @return how much alive cells there are in the Position.

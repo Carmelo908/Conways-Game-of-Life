@@ -51,4 +51,6 @@ Settings parseFileSettings(std::filesystem::path settingsFilePath);
 /// instead.
 Settings parseSettings(const nlohmann::json &settingsJson);
 
+/// @param settings the saved Settings
+/// @param settingsPath The file's path where settings is saved
 void saveSettings(const Settings &settings, std::filesystem::path settingsPath);

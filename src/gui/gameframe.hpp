@@ -15,7 +15,7 @@ class wxButton;
 class wxStaticText;
 class wxFileDirPickerEvent;
 
-/// @brief The window in which the game is runned.
+/// @brief The window in which the Conway's Game of life is runned.
 ///
 /// It contains all the controls, creates it's own layout and controls the game.
 class GameFrame : private wxFrame
