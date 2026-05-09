@@ -1,10 +1,8 @@
 #include "settingspanel.hpp"
 
 #include <wx/filepicker.h>
-#include <wx/radiobut.h>
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
-#include <wx/window.h>
 
 #include "../settings.hpp"
 

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <chrono>
-#include <string>
-
 #include <wx/frame.h>
 
 #include "../settings.hpp"

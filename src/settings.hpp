@@ -17,7 +17,8 @@ public:
   /// arguments if they accomplish specific conditions.
   /// @param posFilePath must be an existing JSON file.
   /// @param delay count() must be in range (0, 1000).
-  Settings(std::filesystem::path posFilePath, std::chrono::milliseconds delay);
+  Settings(const std::filesystem::path &positionPath,
+           std::chrono::milliseconds delay);
 
   bool operator==(const Settings &other) const = default;
 
@@ -42,7 +43,7 @@ nlohmann::json settingsToJson(const Settings &settings);
 /// @return a Settings object which can have some or all of its fields set to
 /// their default values if a valid value couldn't be found in the settings
 /// file.
-Settings parseFileSettings(std::filesystem::path settingsFilePath);
+Settings parseFileSettings(const std::filesystem::path &settingsFilePath);
 
 /// @brief converts a nlohmann::json object to a Settings object.
 ///
@@ -53,4 +54,5 @@ Settings parseSettings(const nlohmann::json &settingsJson);
 
 /// @param settings the saved Settings
 /// @param settingsPath The file's path where settings is saved
-void saveSettings(const Settings &settings, std::filesystem::path settingsPath);
+void saveSettings(const Settings &settings,
+                  const std::filesystem::path &settingsPath);

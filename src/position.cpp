@@ -4,15 +4,14 @@
 
 Position::Position(Inputdata &toCopy)
   : height{static_cast<int>(toCopy.size())},
-    width{static_cast<int>(toCopy[0].size())},
-    aliveCells{},
+    width{static_cast<int>(toCopy.at(0).size())},
     genCount{0}
 {
   for (int y = 0; y < height; y++)
   {
     for (int x = 0; x < width; x++)
     {
-      if (toCopy[y][x])
+      if (toCopy.at(y).at(x))
       {
         aliveCells.emplace(x, y);
       }
@@ -66,7 +65,7 @@ bool Position::getCellAt(CellCoords c) const { return aliveCells.contains(c); }
 
 bool Position::getCellAt(int coordX, int coordY) const
 {
-  return aliveCells.contains({coordX, coordY});
+  return aliveCells.contains({.x = coordX, .y = coordY});
 }
 
 int Position::getCellsQuantity() const { return aliveCells.size(); }
@@ -112,7 +111,7 @@ void Position::doOnSorrondingCells(CellCoords cell,
       {
         continue;
       }
-      const CellCoords adjacentCell{adjX, adjY};
+      const CellCoords adjacentCell{.x = adjX, .y = adjY};
       action(adjacentCell, previousGen);
     }
   }
@@ -135,8 +134,8 @@ int Position::sorroundingCellsAt(CellCoords cell,
                                  const CellSet &previousGen) const
 {
   int cellsCount = 0;
-  auto countCells = [this, &cellsCount](const CellCoords adjacentCell,
-                                        const CellSet &previousGen) mutable {
+  auto countCells = [&cellsCount](const CellCoords adjacentCell,
+                                  const CellSet &previousGen) mutable {
     if (previousGen.contains(adjacentCell))
     {
       cellsCount++;

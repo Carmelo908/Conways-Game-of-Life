@@ -9,12 +9,12 @@ bool validatePath(const std::filesystem::path &p)
   return std::filesystem::exists(p);
 }
 
-bool validateDelay(std::chrono::milliseconds &d)
+bool validateDelay(const std::chrono::milliseconds &d)
 {
   return d.count() > 0 && d.count() < 1000;
 }
 
-Settings parseFileSettings(std::filesystem::path settingsFilePath)
+Settings parseFileSettings(const std::filesystem::path &settingsFilePath)
 {
   std::ifstream f{settingsFilePath};
   const auto parsingData = nlohmann::json::parse(f);
@@ -25,13 +25,14 @@ Settings parseSettings(const nlohmann::json &settingsJson)
 {
   Settings settings{};
   if (settingsJson.contains("position_path") &&
-      settingsJson["position_path"].is_string())
+      settingsJson.at("position_path").is_string())
   {
-    settings.setPositionPath(settingsJson["position_path"].get<std::string>());
+    settings.setPositionPath(
+        settingsJson.at("position_path").get<std::string>());
   }
-  if (settingsJson.contains("delay") && settingsJson["delay"].is_number())
+  if (settingsJson.contains("delay") && settingsJson.at("delay").is_number())
   {
-    auto delayms = settingsJson["delay"].get<int>();
+    auto delayms = settingsJson.at("delay").get<int>();
     settings.setDelay(std::chrono::milliseconds(delayms));
   }
   return settings;
@@ -40,12 +41,13 @@ Settings parseSettings(const nlohmann::json &settingsJson)
 nlohmann::json settingsToJson(const Settings &settings)
 {
   nlohmann::json j;
-  j["position_path"] = settings.getPositionPath().string();
-  j["delay"] = settings.getDelay().count();
+  j.at("position_path") = settings.getPositionPath().string();
+  j.at("delay") = settings.getDelay().count();
   return j;
 }
 
-void saveSettings(const Settings &settings, std::filesystem::path settingsPath)
+void saveSettings(const Settings &settings,
+                  const std::filesystem::path &settingsPath)
 {
   std::ofstream jsonFile{settingsPath};
   jsonFile << settingsToJson(settings).dump(2);
@@ -56,7 +58,7 @@ Settings::Settings()
     delay{50}
 {}
 
-Settings::Settings(std::filesystem::path positionPath,
+Settings::Settings(const std::filesystem::path &positionPath,
                    std::chrono::milliseconds delay)
   : Settings()
 {

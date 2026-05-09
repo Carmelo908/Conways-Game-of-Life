@@ -8,18 +8,18 @@
 
 #include <position.hpp>
 
-auto benchmarkFilename = "benchmark_position.json";
+const auto benchmarkFilename = "benchmark_position.json";
 
-std::string posToString(Position &pos)
+std::string posToString(const Position &pos)
 {
-  std::string posString = "";
-  for (int y = 0; y < pos.height; y++)
+  std::string posString;
+  for (int y = 0; y < pos.getHeight(); y++)
   {
-    for (int x = 0; x < pos.width; x++)
+    for (int x = 0; x < pos.getWidth(); x++)
     {
       posString += pos.getCellAt(x, y) ? " #" : " -";
     }
-    posString += "\n";
+    posString += '\n';
   }
   return posString;
 }

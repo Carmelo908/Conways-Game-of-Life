@@ -1,7 +1,6 @@
 #include "gameframe.hpp"
 
 #include <filesystem>
-#include <fstream>
 #include <thread>
 #include <utility>
 
@@ -20,9 +19,6 @@
 
 constexpr auto parsingErrorMessage =
     "An error ocurred parsing the file. It may contain invalid data.";
-
-constexpr auto missingPathFieldMessage =
-    "The position file field is missing. Select a file to open";
 
 std::unique_ptr<Position> openPosition(const std::filesystem::path &path)
 {
@@ -57,7 +53,6 @@ private:
 
 GameFrame::GameFrame(Settings &settings)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
-    position{},
     isGameRunning{false},
     settingsPanel{new SettingsPanel(this, settings)}
 {

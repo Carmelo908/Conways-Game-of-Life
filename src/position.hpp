@@ -87,7 +87,7 @@ public:
 private:
   struct CellCoordsHash
   {
-    size_t operator()(const CellCoords cell) const;
+    size_t operator()(CellCoords cell) const;
   };
 
   int countCells() const;

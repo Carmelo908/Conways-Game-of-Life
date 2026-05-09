@@ -10,7 +10,6 @@ class Settings;
 class wxFilePickerCtrl;
 class wxSpinCtrl;
 class wxStaticText;
-class wxWindow;
 
 /// @brief Panel which contains controls to change the settings of the program,
 /// open a position file and contains methods for accesing those fields
