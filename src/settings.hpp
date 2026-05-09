@@ -36,22 +36,26 @@ private:
   std::chrono::milliseconds delay;
 };
 
+/// \related Settings
 /// @brief Converts a Settings object to a nlohmann::json object.
 nlohmann::json settingsToJson(const Settings &settings);
 
+/// \related Settings
 /// @param settingsFilePath a file which is expected to exist.
 /// @return a Settings object which can have some or all of its fields set to
 /// their default values if a valid value couldn't be found in the settings
 /// file.
 Settings parseFileSettings(const std::filesystem::path &settingsFilePath);
 
+/// \related Settings
 /// @brief converts a nlohmann::json object to a Settings object.
 ///
 /// It tries to find values in the JSON object and in case it
-/// doesn't find a field the Settings will the default value for the field
+/// doesn't find a field the Settings will set the default value for the field
 /// instead.
 Settings parseSettings(const nlohmann::json &settingsJson);
 
+/// \related Settings
 /// @param settings the saved Settings
 /// @param settingsPath The file's path where settings is saved
 void saveSettings(const Settings &settings,
