@@ -36,7 +36,43 @@ std::unique_ptr<Position> openPosition(const std::filesystem::path &path)
   }
 }
 
-/// @brief Class made to wait a minimun time
+class GameFrame::Layout : public wxBoxSizer
+{
+public:
+  Layout(GameFrame *frame)
+    : wxBoxSizer(wxHORIZONTAL)
+  {
+    Add(frame->settingsPanel);
+    AddSpacer(20);
+    auto centerColumnSizer{new wxBoxSizer(wxVERTICAL)};
+    auto controlSizer = createControlSizer(frame);
+    centerColumnSizer->Add(frame->positionPanel, PositionPanelFlags());
+    centerColumnSizer->AddSpacer(20);
+    centerColumnSizer->Add(controlSizer, 0, wxALIGN_CENTER_HORIZONTAL);
+    Add(centerColumnSizer, 0, wxFIXED_MINSIZE);
+  }
+
+private:
+  static wxSizer *createControlSizer(GameFrame *frame)
+  {
+    auto controlSizer{new wxBoxSizer(wxHORIZONTAL)};
+    controlSizer->Add(frame->generationLabel, wxALIGN_CENTER_VERTICAL);
+    controlSizer->AddSpacer(20);
+    controlSizer->Add(frame->startButton, wxALIGN_CENTER_VERTICAL);
+    controlSizer->AddSpacer(20);
+    controlSizer->Add(frame->cellsQuantityLabel, wxALIGN_CENTER_VERTICAL);
+    return controlSizer;
+  }
+
+  static wxSizerFlags PositionPanelFlags()
+  {
+    return wxSizerFlags()
+        .Align(wxALIGN_CENTER_HORIZONTAL)
+        .ReserveSpaceEvenIfHidden()
+        .FixedMinSize();
+  }
+};
+
 template<class Rep, class Period>
 class DelayTimer
 {
@@ -61,7 +97,7 @@ GameFrame::GameFrame(Settings &settings)
   Bind(wxEVT_FILEPICKER_CHANGED, &GameFrame::onPositionChanged, this);
   SetFont(GetFont().Scale(1.3));
   createComponents();
-  setUpLayout();
+  SetSizerAndFit(new Layout(this));
   Show(true);
   Maximize();
 }
@@ -73,33 +109,6 @@ void GameFrame::createComponents()
   positionPanel = new PositionPanel(this);
   generationLabel = new wxStaticText(this, wxID_ANY, "");
   cellsQuantityLabel = new wxStaticText(this, wxID_ANY, "");
-}
-
-wxSizer *GameFrame::createControlSizer() const
-{
-  auto controlSizer{new wxBoxSizer(wxHORIZONTAL)};
-  controlSizer->Add(generationLabel, wxALIGN_CENTER_VERTICAL);
-  controlSizer->AddSpacer(20);
-  controlSizer->Add(startButton, wxALIGN_CENTER_VERTICAL);
-  controlSizer->AddSpacer(20);
-  controlSizer->Add(cellsQuantityLabel, wxALIGN_CENTER_VERTICAL);
-  return controlSizer;
-}
-
-void GameFrame::setUpLayout()
-{
-  auto mainSizer{new wxBoxSizer(wxHORIZONTAL)};
-  mainSizer->Add(settingsPanel);
-  mainSizer->AddSpacer(20);
-  auto centerColumnSizer{new wxBoxSizer(wxVERTICAL)};
-  auto controlSizer = createControlSizer();
-  centerColumnSizer->Add(positionPanel, 0,
-                         wxRESERVE_SPACE_EVEN_IF_HIDDEN | wxFIXED_MINSIZE |
-                             wxALIGN_CENTER_HORIZONTAL);
-  centerColumnSizer->AddSpacer(20);
-  centerColumnSizer->Add(controlSizer, 0, wxALIGN_CENTER_HORIZONTAL);
-  mainSizer->Add(centerColumnSizer, 0, wxFIXED_MINSIZE);
-  SetSizerAndFit(mainSizer);
 }
 
 void GameFrame::gameLoop()

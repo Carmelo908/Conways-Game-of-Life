@@ -24,11 +24,9 @@ public:
   GameFrame(Settings &settings);
 
 private:
+  class Layout;
+
   void createComponents();
-
-  wxSizer *createControlSizer() const;
-
-  void setUpLayout();
 
   void gameLoop();
 
