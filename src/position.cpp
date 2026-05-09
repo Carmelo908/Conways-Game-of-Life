@@ -73,6 +73,10 @@ int Position::getCellsQuantity() const { return aliveCells.size(); }
 
 size_t Position::getGenCount() const { return genCount; }
 
+int Position::getWidth() const { return width; }
+
+int Position::getHeight() const { return height; }
+
 bool Position::operator==(const Position &rhs) const
 {
   return this->aliveCells == rhs.aliveCells;

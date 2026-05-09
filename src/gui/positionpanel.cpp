@@ -20,8 +20,8 @@ void PositionPanel::showPosition(Position &position)
   int cellSizeUnits = getCellSizeUnits(position);
   auto cellDisplaySize = wxSize(cellSizeUnits, cellSizeUnits);
   SetClientObject(new ClientDrawingData(position, cellDisplaySize));
-  wxSize panelSize{cellSizeUnits * position.width + 1,
-                   cellSizeUnits * position.height + 1};
+  wxSize panelSize{cellSizeUnits * position.getWidth() + 1,
+                   cellSizeUnits * position.getHeight() + 1};
   SetSize(panelSize);
   Show();
 }
@@ -37,8 +37,8 @@ void PositionPanel::OnPaint(wxPaintEvent &)
 int PositionPanel::getCellSizeUnits(const Position &pos)
 {
   int cellWidth, cellHeight;
-  cellWidth = maxWidth / pos.width;
-  cellHeight = maxHeight / pos.height;
+  cellWidth = maxWidth / pos.getWidth();
+  cellHeight = maxHeight / pos.getHeight();
   return std::min(cellWidth, cellHeight);
 }
 
@@ -48,9 +48,9 @@ wxBitmap PositionPanel::makePositionBitmap(const Position &position,
   wxBitmap posBitmap{maxWidth, maxHeight};
   wxMemoryDC bitmapDC{posBitmap};
   bitmapDC.SetPen(*wxWHITE_PEN);
-  for (int y = 0; y < position.height; y++)
+  for (int y = 0; y < position.getHeight(); y++)
   {
-    for (int x = 0; x < position.width; x++)
+    for (int x = 0; x < position.getWidth(); x++)
     {
       if (!position.getCellAt(x, y))
       {

@@ -25,10 +25,12 @@ public:
   /// @brief Type alias for a row in a 2d vector which contains the data to
   /// construct a Position.
   using Row = std::vector<char>;
+
   /// @brief Type alias for the data that the constructors recieve to create the
   /// Position. A patch to match the constructions with the current way cells
   /// are stores is pending.
   using Inputdata = std::vector<Row>;
+
   /// @brief Type alias for a set of cells.
   using CellSet = std::unordered_set<CellCoords, CellCoordsHash>;
 
@@ -46,6 +48,7 @@ public:
   /// Delegates to parseJsonFile(const std::ifstream &).
   /// @return The openned Position
   static Position parseJsonFile(const std::filesystem::path &file);
+
   /// @brief Delegates actual parsing of file's contents to parseJson(const
   /// nlohmann::json &).
   /// @return The openned Position
@@ -64,26 +67,22 @@ public:
   /// @param c the cell coordinates
   /// @return Wether the cell is or not alive
   bool getCellAt(CellCoords c) const;
-
   /// \overload
   bool getCellAt(int coordX, int coordY) const;
-
   /// @return how much alive cells there are in the Position.
   int getCellsQuantity() const;
-
   /// @return how much times has advanceGen() been executed.
   size_t getGenCount() const;
+  /// @return the width of the Position determined on creation.
+  int getWidth() const;
+  /// @return the height of the Position determined on creation.
+  int getHeight() const;
 
   /// @brief Compares 2 Positions
   /// @param rhs the other object to compare
   /// @return wether the two Positions have the same alive cells. Doesn't
   /// compare other properties
   bool operator==(const Position &rhs) const;
-
-  /// @brief Position's max height determined on construction.
-  const int height;
-  /// @brief Position's max width determined on construction.
-  const int width;
 
 private:
   struct CellCoordsHash
@@ -103,6 +102,8 @@ private:
 
   int sorroundingCellsAt(CellCoords cell, const CellSet &previousGen) const;
 
+  int height;
+  int width;
   CellSet aliveCells;
   CellSet previousGen;
   // Cache member for better performance, specially in large positions
