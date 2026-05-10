@@ -94,10 +94,13 @@ GameFrame::GameFrame(Settings &settings)
 {
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
   Bind(wxEVT_BUTTON, &GameFrame::onStartButtonClick, this);
-  Bind(wxEVT_FILEPICKER_CHANGED, &GameFrame::onPositionChanged, this);
+  Bind(wxEVT_FILEPICKER_CHANGED, &GameFrame::onPositionOpened, this);
   SetFont(GetFont().Scale(1.3));
   createComponents();
   SetSizerAndFit(new Layout(this));
+  auto openingEvent = wxFileDirPickerEvent();
+  openingEvent.SetPath(settings.getPositionPath().string());
+  onPositionOpened(openingEvent);
   Show(true);
   Maximize();
 }
@@ -138,7 +141,7 @@ void GameFrame::onStartButtonClick(wxCommandEvent &)
   }
 }
 
-void GameFrame::onPositionChanged(wxFileDirPickerEvent &event)
+void GameFrame::onPositionOpened(wxFileDirPickerEvent &event)
 {
   position = openPosition(event.GetPath().ToStdString());
   if (position == nullptr)

@@ -32,7 +32,7 @@ private:
 
   void onStartButtonClick(wxCommandEvent &);
 
-  void onPositionChanged(wxFileDirPickerEvent &event);
+  void onPositionOpened(wxFileDirPickerEvent &event);
 
   void updatePositionLabels();
 
