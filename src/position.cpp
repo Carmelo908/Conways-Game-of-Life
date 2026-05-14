@@ -43,15 +43,14 @@ Position Position::parseJson(const nlohmann::json &jsonObject)
 
 void Position::advanceGen()
 {
-  previousGen = aliveCells;
+  CellSet previousGen;
+  std::swap(aliveCells, previousGen);
+  aliveCells.reserve(aliveCells.size() * 1.5);
   auto updateCell = [&](const CellCoords adjacentCell,
                         const CellSet &previousGen) -> void {
     if (determineCell(adjacentCell, previousGen))
     {
       aliveCells.insert(adjacentCell);
-    } else
-    {
-      aliveCells.erase(adjacentCell);
     }
   };
   for (const CellCoords cell : previousGen)
@@ -85,15 +84,10 @@ size_t Position::CellCoordsHash::operator()(const CellCoords cell) const
 {
   auto h1 = std::hash<int>()(cell.x);
   auto h2 = std::hash<int>()(cell.y);
-  return h1 ^ (h2 << 1);
+  return h1 ^ (h2 << 1U);
 };
 
 int Position::countCells() const { return aliveCells.size(); }
-
-bool Position::insideBounds(int cellCoord, int maxCoord) const
-{
-  return (cellCoord >= 0 && cellCoord < maxCoord);
-}
 
 void Position::doOnSorrondingCells(CellCoords cell,
                                    const Position::CellSet &previousGen,
@@ -101,16 +95,8 @@ void Position::doOnSorrondingCells(CellCoords cell,
 {
   for (int adjY = cell.y - 1; adjY < cell.y + 2; adjY++)
   {
-    if (!insideBounds(adjY, height))
-    {
-      continue;
-    }
     for (int adjX = cell.x - 1; adjX < cell.x + 2; adjX++)
     {
-      if (!insideBounds(adjX, width))
-      {
-        continue;
-      }
       const CellCoords adjacentCell{.x = adjX, .y = adjY};
       action(adjacentCell, previousGen);
     }

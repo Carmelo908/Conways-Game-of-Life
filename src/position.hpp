@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cinttypes>
 #include <filesystem>
 #include <fstream>
 #include <unordered_set>
@@ -10,7 +11,8 @@
 /// @brief Represents the coordinates of a cell, generally an alive one.
 struct CellCoords
 {
-  int x, y;
+  int64_t x;
+  int64_t y;
 
   bool operator==(const CellCoords &) const = default;
 };
@@ -19,7 +21,7 @@ struct CellCoords
 /// dimensions.
 class Position
 {
-  struct CellCoordsHash;
+  struct CellCoordsHash; // Needed for the unordered_set of CellCoords
 
 public:
   /// @brief Type alias for a row in a 2d vector which contains the data to
@@ -92,8 +94,6 @@ private:
 
   int countCells() const;
 
-  bool insideBounds(int cellCoord, int maxCoord) const;
-
   void doOnSorrondingCells(CellCoords cell,
                            const Position::CellSet &previousGen,
                            auto action) const;
@@ -105,7 +105,5 @@ private:
   int height;
   int width;
   CellSet aliveCells;
-  CellSet previousGen;
-  // Cache member for better performance, specially in large positions
   size_t genCount;
 };

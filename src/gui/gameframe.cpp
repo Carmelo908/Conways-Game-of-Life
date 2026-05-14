@@ -39,7 +39,7 @@ std::unique_ptr<Position> openPosition(const std::filesystem::path &path)
 class GameFrame::Layout : public wxBoxSizer
 {
 public:
-  Layout(GameFrame *frame)
+  explicit Layout(GameFrame *frame)
     : wxBoxSizer(wxHORIZONTAL)
   {
     Add(frame->settingsPanel);
@@ -77,7 +77,7 @@ template<class Rep, class Period>
 class DelayTimer
 {
 public:
-  DelayTimer(std::chrono::duration<Rep, Period> delay)
+  explicit DelayTimer(std::chrono::duration<Rep, Period> delay)
     : elapsed{std::chrono::steady_clock::now() + delay}
   {}
 
@@ -90,6 +90,7 @@ private:
 GameFrame::GameFrame(Settings &settings)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
     isGameRunning{false},
+    positionPanel{new PositionPanel(this)},
     settingsPanel{new SettingsPanel(this, settings)}
 {
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
@@ -109,7 +110,6 @@ void GameFrame::createComponents()
 {
   startButton = new wxButton(this, wxID_ANY, "Start");
   startButton->Disable();
-  positionPanel = new PositionPanel(this);
   generationLabel = new wxStaticText(this, wxID_ANY, "");
   cellsQuantityLabel = new wxStaticText(this, wxID_ANY, "");
 }

@@ -39,6 +39,6 @@ private:
     const wxSize cellSize;
   };
 
-  static constexpr int maxWidth = 1000;
+  static constexpr int maxWidth = 500;
   static constexpr int maxHeight = 500;
 };

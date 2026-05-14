@@ -73,13 +73,13 @@ TEST_CASE("Position functionality")
           std::filesystem::path(__FILE__).remove_filename().append(
               benchmarkFilename);
       Position benchmarkPosition{Position::parseJsonFile(benchmarkFilepath)};
-      auto advance100Times = [&]() {
+      auto advance100Times = [&] {
         for (int i = 0; i < 100; i++)
         {
           benchmarkPosition.advanceGen();
         }
       };
-      meter.measure([&]() {
+      meter.measure([&] {
         return advance100Times();
       });
     };

@@ -12,6 +12,8 @@ PositionPanel::PositionPanel(wxWindow *parent)
 {
   Bind(wxEVT_PAINT, &PositionPanel::OnPaint, this);
   SetBackgroundColour(wxColour(0, 0, 0));
+  const wxSize panelSize{maxWidth, maxHeight};
+  SetSize(panelSize);
   Hide();
 }
 
@@ -20,11 +22,6 @@ void PositionPanel::showPosition(Position &position)
   const int cellSizeUnits = getCellSizeUnits(position);
   auto cellDisplaySize = wxSize(cellSizeUnits, cellSizeUnits);
   SetClientObject(new ClientDrawingData(position, cellDisplaySize));
-  const wxSize panelSize{
-      cellSizeUnits * position.getWidth() + 1,
-      cellSizeUnits * position.getHeight() + 1,
-  };
-  SetSize(panelSize);
   Show();
 }
 
