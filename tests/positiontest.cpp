@@ -51,37 +51,40 @@ TEST_CASE("Position functionality")
     CHECK(pos1 == pos2);
   }
 
-  SECTION("Advance generation", "[!benchmark]")
+  SECTION("Advance generation")
   {
     Position pos{{
         {0, 1, 0},
         {1, 1, 0},
         {0, 0, 1},
     }};
+    INFO("intial position =\n" << posToString(pos));
     pos.advanceGen();
     Position nextPos{{
         {1, 1, 0},
         {1, 1, 1},
         {0, 1, 0},
     }};
-    INFO(posToString(pos));
+    INFO("result =\n" << posToString(pos));
+    INFO("expected =\n" << posToString(nextPos));
     REQUIRE(pos == nextPos);
-    BENCHMARK_ADVANCED("Advance 50x50 generation 100 times")
-    (Catch::Benchmark::Chronometer meter)
-    {
-      auto benchmarkFilepath =
-          std::filesystem::path(__FILE__).remove_filename().append(
-              benchmarkFilename);
-      Position benchmarkPosition{Position::parseJsonFile(benchmarkFilepath)};
-      auto advance100Times = [&] {
-        for (int i = 0; i < 100; i++)
-        {
-          benchmarkPosition.advanceGen();
-        }
-      };
-      meter.measure([&] {
-        return advance100Times();
-      });
+  };
+
+  BENCHMARK_ADVANCED("Advance fixed Position with 1000 cells 100 times")
+  (Catch::Benchmark::Chronometer meter)
+  {
+    auto benchmarkFilepath =
+        std::filesystem::path(__FILE__).remove_filename().append(
+            benchmarkFilename);
+    Position benchmarkPosition{Position::parseJsonFile(benchmarkFilepath)};
+    auto advance100Times = [&] {
+      for (int i = 0; i < 100; i++)
+      {
+        benchmarkPosition.advanceGen();
+      }
     };
-  }
+    meter.measure([&] {
+      return advance100Times();
+    });
+  };
 }

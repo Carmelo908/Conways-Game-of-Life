@@ -21,7 +21,10 @@ struct CellCoords
 /// dimensions.
 class Position
 {
-  struct CellCoordsHash; // Needed for the unordered_set of CellCoords
+  struct CellCoordsHash // Needed for the unordered_set of CellCoords
+  {
+    size_t operator()(const CellCoords &cell) const;
+  };
 
 public:
   /// @brief Type alias for a row in a 2d vector which contains the data to
@@ -48,7 +51,7 @@ public:
   /// @brief Creates a position from a JSON file
   /// @param file: file path expected to be non empty and refer to a json file.
   /// Delegates to parseJsonFile(const std::ifstream &).
-  /// @return The openned Position
+  /// @return The opened Position
   static Position parseJsonFile(const std::filesystem::path &file);
 
   /// @brief Delegates actual parsing of file's contents to parseJson(const
@@ -62,17 +65,22 @@ public:
   /// @return The openned Position.
   static Position parseJson(const nlohmann::json &jsonObject);
 
-  /// @brief Advances the generation following the Conway's Game of Life rules.
+  /// @brief Advances the Position's generation following the Conway's Game of
+  /// Life rules.
   void advanceGen();
 
-  /// @brief Searchs for a cell in the current Position's state
-  /// @param c the cell coordinates
-  /// @return Wether the cell is or not alive
-  bool getCellAt(CellCoords c) const;
+  /// @return Wether the cell is or not alive in the Position
+  bool getCellAt(const CellCoords &cell) const;
   /// \overload
-  bool getCellAt(int coordX, int coordY) const;
+  bool getCellAt(int64_t coordX, int64_t coordY) const;
+
+  /// @return an const iterator to the first cell.
+  CellSet::const_iterator begin() const;
+  /// @return an const iterator to the last cell.
+  CellSet::const_iterator end() const;
+
   /// @return how much alive cells there are in the Position.
-  int getCellsQuantity() const;
+  size_t getCellsQuantity() const;
   /// @return how much times has advanceGen() been executed.
   size_t getGenCount() const;
   /// @return the width of the Position determined on creation.
@@ -81,26 +89,20 @@ public:
   int getHeight() const;
 
   /// @brief Compares 2 Positions
-  /// @param rhs the other object to compare
-  /// @return wether the two Positions have the same alive cells. Doesn't
+  /// @return wether the two Positions have the same cells. Doesn't
   /// compare other properties
   bool operator==(const Position &rhs) const;
 
 private:
-  struct CellCoordsHash
-  {
-    size_t operator()(CellCoords cell) const;
-  };
+  using CellRef = const CellCoords &;
+  using CellSetRef = const CellSet &;
 
-  int countCells() const;
-
-  void doOnSorrondingCells(CellCoords cell,
-                           const Position::CellSet &previousGen,
+  void doOnSorrondingCells(CellRef cell, CellSetRef previousGen,
                            auto action) const;
 
-  bool determineCell(CellCoords cell, const CellSet &previousGen);
+  bool determineCell(CellRef cell, CellSetRef previousGen) const;
 
-  int sorroundingCellsAt(CellCoords cell, const CellSet &previousGen) const;
+  uint8_t sorroundingCellsAt(CellRef cell, CellSetRef previousGen) const;
 
   int height;
   int width;
