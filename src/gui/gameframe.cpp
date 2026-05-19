@@ -150,7 +150,7 @@ void GameFrame::onPositionOpened(wxFileDirPickerEvent &event)
   }
   updatePositionLabels();
   startButton->Enable();
-  positionPanel->showPosition(*position);
+  positionPanel->showPosition(position.get());
 }
 
 void GameFrame::updatePositionLabels()

@@ -14,22 +14,32 @@ PositionPanel::PositionPanel(wxWindow *parent)
   SetBackgroundColour(wxColour(0, 0, 0));
   const wxSize panelSize{maxWidth, maxHeight};
   SetSize(panelSize);
-  Hide();
 }
 
-void PositionPanel::showPosition(Position &position)
+void PositionPanel::showPosition(Position *position)
 {
-  const int cellSizeUnits = getCellSizeUnits(position);
+  int cellSizeUnits;
+  if (position == nullptr)
+  {
+    cellSizeUnits = 0;
+  } else
+  {
+    cellSizeUnits = getCellSizeUnits(*position);
+  }
   auto cellDisplaySize = wxSize(cellSizeUnits, cellSizeUnits);
-  SetClientObject(new ClientDrawingData(position, cellDisplaySize));
-  Show();
+  SetClientObject(new DrawingData(position, cellDisplaySize));
 }
 
 void PositionPanel::OnPaint(wxPaintEvent &)
 {
-  auto clientData{dynamic_cast<ClientDrawingData *>(GetClientObject())};
+  auto clientData{dynamic_cast<DrawingData *>(GetClientObject())};
+  if (clientData == nullptr || clientData->position == nullptr)
+  {
+    wxPaintDC(this).Clear();
+    return;
+  }
   auto posBitmap =
-      makePositionBitmap(clientData->position, clientData->cellSize);
+      makePositionBitmap(*clientData->position, clientData->cellSize);
   wxPaintDC(this).DrawBitmap(posBitmap, 0, 0);
 }
 
@@ -61,8 +71,8 @@ wxBitmap PositionPanel::makePositionBitmap(const Position &position,
   return posBitmap;
 }
 
-PositionPanel::ClientDrawingData::ClientDrawingData(const Position &position,
-                                                    wxSize cellSize)
+PositionPanel::DrawingData::DrawingData(const Position *position,
+                                        wxSize cellSize)
   : position{position},
     cellSize{cellSize}
 {}

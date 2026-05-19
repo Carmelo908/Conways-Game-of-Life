@@ -15,14 +15,11 @@ public:
   /// @param parent: the parent windows (GameFrame).
   PositionPanel(wxWindow *parent);
 
-  /// @brief shows the Position on the panel in a monochromatic wxBitmap every
-  /// time a wxPaintEvent is processed.
+  /// @brief shows the Position on the panel in a monochromatic wxBitmap
   ///
-  /// If it's the first time this method was called since widget creation,
-  /// unhides it
-  ///
-  /// @param position: the Position to be shown.
-  void showPosition(Position &position);
+  /// @param position: the Position to be shown. if null, the panel just get
+  /// black
+  void showPosition(Position *position);
 
 private:
   void OnPaint(wxPaintEvent &);
@@ -31,11 +28,11 @@ private:
 
   static wxBitmap makePositionBitmap(const Position &position, wxSize cellSize);
 
-  struct ClientDrawingData : public wxClientData
+  struct DrawingData : public wxClientData
   {
-    ClientDrawingData(const Position &position, wxSize cellSize);
+    DrawingData(const Position *position, wxSize cellSize);
 
-    const Position &position;
+    const Position *position;
     const wxSize cellSize;
   };
 
