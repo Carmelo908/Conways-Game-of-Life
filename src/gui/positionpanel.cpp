@@ -3,6 +3,7 @@
 #include <wx/bitmap.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
+#include <wx/gdicmn.h>
 
 #include "../position.hpp"
 
@@ -18,16 +19,8 @@ PositionPanel::PositionPanel(wxWindow *parent)
 
 void PositionPanel::showPosition(Position *position)
 {
-  int cellSizeUnits;
-  if (position == nullptr)
-  {
-    cellSizeUnits = 0;
-  } else
-  {
-    cellSizeUnits = getCellSizeUnits(*position);
-  }
-  auto cellDisplaySize = wxSize(cellSizeUnits, cellSizeUnits);
-  SetClientObject(new DrawingData(position, cellDisplaySize));
+  SetClientObject(new DrawingData(position));
+  Refresh();
 }
 
 void PositionPanel::OnPaint(wxPaintEvent &)
@@ -38,41 +31,30 @@ void PositionPanel::OnPaint(wxPaintEvent &)
     wxPaintDC(this).Clear();
     return;
   }
-  auto posBitmap =
-      makePositionBitmap(*clientData->position, clientData->cellSize);
+  auto posBitmap = makePositionBitmap(*clientData->position);
   wxPaintDC(this).DrawBitmap(posBitmap, 0, 0);
 }
 
-int PositionPanel::getCellSizeUnits(const Position &pos)
-{
-  const int cellWidth = maxWidth / pos.getWidth();
-  const int cellHeight = maxHeight / pos.getHeight();
-  return std::min(cellWidth, cellHeight);
-}
-
-wxBitmap PositionPanel::makePositionBitmap(const Position &position,
-                                           wxSize cellSize)
+wxBitmap PositionPanel::makePositionBitmap(const Position &position)
 {
   wxBitmap posBitmap{maxWidth, maxHeight};
   wxMemoryDC bitmapDC{posBitmap};
   bitmapDC.SetPen(*wxWHITE_PEN);
-  for (int y = 0; y < position.getHeight(); y++)
+  for (int y = -maxHeight / 2; y < maxHeight / 2; y++)
   {
-    for (int x = 0; x < position.getWidth(); x++)
+    for (int x = -maxWidth / 2; x < maxWidth / 2; x++)
     {
       if (!position.getCellAt(x, y))
       {
         continue;
       };
-      auto cellPoint = wxPoint(x * cellSize.GetX(), y * cellSize.GetY());
-      bitmapDC.DrawRectangle(cellPoint, cellSize);
+      auto cellPoint = wxPoint(x * 5, y * 5);
+      bitmapDC.DrawRectangle(cellPoint, wxSize(5, 5));
     }
   }
   return posBitmap;
 }
 
-PositionPanel::DrawingData::DrawingData(const Position *position,
-                                        wxSize cellSize)
-  : position{position},
-    cellSize{cellSize}
+PositionPanel::DrawingData::DrawingData(const Position *position)
+  : position{position}
 {}

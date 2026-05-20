@@ -26,14 +26,13 @@ private:
 
   static int getCellSizeUnits(const Position &pos);
 
-  static wxBitmap makePositionBitmap(const Position &position, wxSize cellSize);
+  static wxBitmap makePositionBitmap(const Position &position);
 
   struct DrawingData : public wxClientData
   {
-    DrawingData(const Position *position, wxSize cellSize);
+    DrawingData(const Position *position);
 
     const Position *position;
-    const wxSize cellSize;
   };
 
   static constexpr int maxWidth = 500;
