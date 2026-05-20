@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cinttypes>
 #include <filesystem>
 #include <fstream>
 #include <unordered_set>
@@ -31,39 +30,43 @@ public:
   /// construct a Position.
   using Row = std::vector<char>;
 
-  /// @brief Type alias for the data that the constructors recieve to create the
-  /// Position. A patch to match the constructions with the current way cells
-  /// are stores is pending.
-  using Inputdata = std::vector<Row>;
-
-  /// @brief Type alias for a set of cells.
+  /// @brief Type alias for a set of cells with custom hash.
   using CellSet = std::unordered_set<CellCoords, CellCoordsHash>;
 
-  /// @brief Creates a Position from generation 0 with a Inputdata. Sets the
-  /// width and height depending on the input size
-  Position(Inputdata &toCopy);
+  /// @brief Creates a Position from generation 0 copying a CellSet.
+  Position(CellSet &cellSet);
 
-  /// @brief Move constructor. Delegates to Position(InputData &)
-  Position(Inputdata &&toCopy);
-  // \todo change the way input is created so that it matches the
-  // new implementation using set of coordinates instead of 2D vector
+  /// @brief Creates a Position from generation 0 moving a CellSet.
+  Position(CellSet &&cellSet);
+
+  /// @brief Default copy operator.
+  Position(Position &) = default;
+  Position(Position &&) = default;
+  Position &operator=(const Position &) = default;
+  Position &operator=(Position &&) = default;
+  ~Position() = default;
+
+  /// @brief Compares 2 Positions
+  /// @return wether the two Positions have the same cells. Doesn't
+  /// compare other properties
+  bool operator==(const Position &rhs) const;
 
   /// @brief Creates a position from a JSON file
   /// @param file: file path expected to be non empty and refer to a json file.
   /// Delegates to parseJsonFile(const std::ifstream &).
   /// @return The opened Position
-  static Position parseJsonFile(const std::filesystem::path &file);
+  static CellSet parseJsonFile(const std::filesystem::path &file);
 
   /// @brief Delegates actual parsing of file's contents to parseJson(const
   /// nlohmann::json &).
   /// @return The openned Position
-  static Position parseJsonFile(std::ifstream &file);
+  static CellSet parseJsonFile(std::ifstream &file);
 
   /// @brief Open a Position from a nlohmann::json object whose data is expected
   /// to be valid.
   /// @throws nlohmann::exception if the JSON data is invalid.
   /// @return The openned Position.
-  static Position parseJson(const nlohmann::json &jsonObject);
+  static CellSet parseJson(const nlohmann::json &jsonObject);
 
   /// @brief Advances the Position's generation following the Conway's Game of
   /// Life rules.
@@ -83,15 +86,6 @@ public:
   size_t getCellsQuantity() const;
   /// @return how much times has advanceGen() been executed.
   size_t getGenCount() const;
-  /// @return the width of the Position determined on creation.
-  int getWidth() const;
-  /// @return the height of the Position determined on creation.
-  int getHeight() const;
-
-  /// @brief Compares 2 Positions
-  /// @return wether the two Positions have the same cells. Doesn't
-  /// compare other properties
-  bool operator==(const Position &rhs) const;
 
 private:
   using CellRef = const CellCoords &;
@@ -104,8 +98,6 @@ private:
 
   uint8_t sorroundingCellsAt(CellRef cell, CellSetRef previousGen) const;
 
-  int height;
-  int width;
   CellSet aliveCells;
   size_t genCount;
 };

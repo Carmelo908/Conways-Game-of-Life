@@ -2,43 +2,41 @@
 
 #include <nlohmann/json.hpp>
 
-Position::Position(Inputdata &toCopy)
-  : height{static_cast<int>(toCopy.size())},
-    width{static_cast<int>(toCopy.at(0).size())},
+Position::Position(CellSet &cellSet)
+  : aliveCells{cellSet},
     genCount{}
-{
-  for (int y = 0; y < height; y++)
-  {
-    for (int x = 0; x < width; x++)
-    {
-      if (toCopy.at(y).at(x))
-      {
-        aliveCells.emplace(x, y);
-      }
-    }
-  }
-}
-
-Position::Position(Inputdata &&toCopy)
-  : Position(toCopy)
 {}
 
-Position Position::parseJsonFile(const std::filesystem::path &filepath)
+Position::Position(CellSet &&cellSet)
+  : aliveCells{cellSet},
+    genCount{}
+{}
+
+bool Position::operator==(const Position &rhs) const
+{
+  return this->aliveCells == rhs.aliveCells;
+}
+
+Position::CellSet Position::parseJsonFile(const std::filesystem::path &filepath)
 {
   std::ifstream file{filepath};
   return parseJsonFile(file);
 }
 
-Position Position::parseJsonFile(std::ifstream &file)
+Position::CellSet Position::parseJsonFile(std::ifstream &file)
 {
   auto jsonObject = nlohmann::json::parse(file);
   return parseJson(jsonObject);
 }
 
-Position Position::parseJson(const nlohmann::json &jsonObject)
+Position::CellSet Position::parseJson(const nlohmann::json &jsonObject)
 {
-  auto positionData = jsonObject.template get<Position::Inputdata>();
-  return {positionData};
+  CellSet cellSet{};
+  for (auto &cell : jsonObject)
+  {
+    cellSet.insert(CellCoords(cell.at(0), cell.at(1)));
+  };
+  return cellSet;
 }
 
 void Position::advanceGen()
@@ -64,6 +62,7 @@ bool Position::getCellAt(const CellCoords &cell) const
 {
   return aliveCells.contains(cell);
 }
+
 bool Position::getCellAt(int64_t coordX, int64_t coordY) const
 {
   return aliveCells.contains({.x = coordX, .y = coordY});
@@ -73,20 +72,15 @@ Position::CellSet::const_iterator Position::begin() const
 {
   return aliveCells.begin();
 }
+
 Position::CellSet::const_iterator Position::end() const
 {
   return aliveCells.end();
 }
 
 size_t Position::getCellsQuantity() const { return aliveCells.size(); }
-size_t Position::getGenCount() const { return genCount; }
-int Position::getWidth() const { return width; }
-int Position::getHeight() const { return height; }
 
-bool Position::operator==(const Position &rhs) const
-{
-  return this->aliveCells == rhs.aliveCells;
-}
+size_t Position::getGenCount() const { return genCount; }
 
 size_t Position::CellCoordsHash::operator()(const CellCoords &cell) const
 {

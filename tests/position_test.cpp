@@ -1,3 +1,4 @@
+#include <vector>
 #define CATCH_CONFIG_MAIN
 #include <filesystem>
 #include <string>
@@ -8,14 +9,17 @@
 
 #include <position.hpp>
 
-const auto benchmarkFilename = "benchmark_position.json";
+const auto positionFilename = "testing_position.json";
 
-std::string posToString(const Position &pos)
+using namespace std::string_literals;
+
+// for 3x3 samples only
+std::string positionToString(const Position &pos)
 {
   std::string posString;
-  for (int y = 0; y < pos.getHeight(); y++)
+  for (int y = -1; y < 2; y++)
   {
-    for (int x = 0; x < pos.getWidth(); x++)
+    for (int x = -1; x < 2; x++)
     {
       posString += pos.getCellAt(x, y) ? " #" : " -";
     }
@@ -24,58 +28,64 @@ std::string posToString(const Position &pos)
   return posString;
 }
 
+Position stringToPosition(std::vector<std::string> &&posStringsSpan)
+{
+  Position::CellSet cellSet{};
+  for (uint y = 0; y < posStringsSpan.size(); y++)
+  {
+    for (uint x = 0; x < posStringsSpan.at(y).size(); x++)
+    {
+      if (posStringsSpan.at(y).at(x) == '#')
+      {
+        cellSet.insert(CellCoords(x, y));
+      }
+    }
+  }
+  return {cellSet};
+}
+
 TEST_CASE("Opening a position from json")
 {
   auto json = nlohmann::json::parse(R"([
-    [0, 1, 0],
-    [1, 1, 1],
-    [0, 1, 0]
+    [0, -1], [0, 0], [0, 1]
   ])");
-  Position pos = Position::parseJson(json);
-  Position expected{{
-      {0, 1, 0},
-      {1, 1, 1},
-      {0, 1, 0},
-  }};
+  Position pos{Position::parseJson(json)};
+  Position::CellSet expectedCells{};
+  expectedCells.insert({.x = 0, .y = -1});
+  expectedCells.insert({.x = 0, .y = 0});
+  expectedCells.insert({.x = 0, .y = 1});
+  Position expected{expectedCells};
   REQUIRE(pos == expected);
 }
 
 TEST_CASE("Position functionality")
 {
-  SECTION("Comparision operator")
-  {
-    Position::Inputdata data{{{0, 1}, {1, 0}}};
-    Position pos1{data};
-    Position pos2{data};
-
-    CHECK(pos1 == pos2);
-  }
-
   SECTION("Advance generation")
   {
-    Position pos{{
-        {0, 1, 0},
-        {1, 1, 0},
-        {0, 0, 1},
-    }};
-    INFO("intial position =\n" << posToString(pos));
+    Position pos{stringToPosition({
+        "-#-"s,
+        "##-"s,
+        "--#"s,
+    })};
+    INFO("intial position =\n" << positionToString(pos));
     pos.advanceGen();
-    Position nextPos{{
-        {1, 1, 0},
-        {1, 1, 1},
-        {0, 1, 0},
-    }};
-    INFO("result =\n" << posToString(pos));
-    INFO("expected =\n" << posToString(nextPos));
+
+    Position nextPos{stringToPosition({
+        "##-"s,
+        "###"s,
+        "-#-"s,
+    })};
+    INFO("result =\n" << positionToString(pos));
+    INFO("expected =\n" << positionToString(nextPos));
     REQUIRE(pos == nextPos);
   };
 
-  BENCHMARK_ADVANCED("Advance fixed Position with 1000 cells 100 times")
+  BENCHMARK_ADVANCED("Advance fixed Position 100 times")
   (Catch::Benchmark::Chronometer meter)
   {
     auto benchmarkFilepath =
         std::filesystem::path(__FILE__).remove_filename().append(
-            benchmarkFilename);
+            positionFilename);
     Position benchmarkPosition{Position::parseJsonFile(benchmarkFilepath)};
     auto advance100Times = [&] {
       for (int i = 0; i < 100; i++)
