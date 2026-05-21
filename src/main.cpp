@@ -19,12 +19,14 @@ wxIMPLEMENT_APP(App);
 
 bool App::OnInit()
 {
-  Settings initialSettings;
   if (std::filesystem::exists("./settings.json"))
   {
-    initialSettings = parseFileSettings("./settings.json");
+    auto a = std::make_unique<Settings>(parseFileSettings("./settings.json"));
+    new GameFrame(std::move(a));
+  } else
+  {
+    new GameFrame(std::make_unique<Settings>());
   }
-  new GameFrame(initialSettings);
 
   return true;
 }

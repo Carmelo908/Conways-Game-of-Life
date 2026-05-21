@@ -1,7 +1,9 @@
 #include "settings.hpp"
 
+#include <filesystem>
 #include <fstream>
 
+#include <nlohmann/detail/exceptions.hpp>
 #include <nlohmann/json.hpp>
 
 bool validatePath(const std::filesystem::path &p)
@@ -17,8 +19,14 @@ bool validateDelay(const std::chrono::milliseconds &d)
 Settings parseFileSettings(const std::filesystem::path &settingsFilePath)
 {
   std::ifstream f{settingsFilePath};
-  const auto parsingData = nlohmann::json::parse(f);
-  return parseSettings(parsingData);
+  try
+  {
+    const auto parsingData = nlohmann::json::parse(f);
+    return parseSettings(parsingData);
+  } catch (const nlohmann::detail::exception &)
+  {
+    return Settings();
+  }
 }
 
 Settings parseSettings(const nlohmann::json &settingsJson)
@@ -40,9 +48,9 @@ Settings parseSettings(const nlohmann::json &settingsJson)
 
 nlohmann::json settingsToJson(const Settings &settings)
 {
-  nlohmann::json j;
-  j.at("position_path") = settings.getPositionPath().string();
-  j.at("delay") = settings.getDelay().count();
+  nlohmann::json j{};
+  j["position_path"] = settings.getPositionPath().string();
+  j["delay"] = settings.getDelay().count();
   return j;
 }
 

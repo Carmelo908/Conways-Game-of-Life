@@ -5,6 +5,13 @@
 
 #include <nlohmann/json_fwd.hpp>
 
+/// @brief represents a user Settings container.
+///
+/// It can be loaded and saved in JSON format and its values are used in the
+/// program runtime. Its fields are:
+/// positionPath = a file path to the last opened position file.
+/// delay = a duration in milliseconds for which the UI should pause between
+/// every generation.
 class Settings
 {
 public:
@@ -44,7 +51,8 @@ nlohmann::json settingsToJson(const Settings &settings);
 /// @param settingsFilePath a file which is expected to exist.
 /// @return a Settings object which can have some or all of its fields set to
 /// their default values if a valid value couldn't be found in the settings
-/// file.
+/// file. If the input file is empty, it will return a default constructed
+/// Settings object.
 Settings parseFileSettings(const std::filesystem::path &settingsFilePath);
 
 /// \related Settings
@@ -58,5 +66,6 @@ Settings parseSettings(const nlohmann::json &settingsJson);
 /// \related Settings
 /// @param settings the saved Settings
 /// @param settingsPath The file's path where settings is saved
-void saveSettings(const Settings &settings,
-                  const std::filesystem::path &settingsPath);
+void saveSettings(
+    const Settings &settings,
+    const std::filesystem::path &settingsPath = "./settings.json");

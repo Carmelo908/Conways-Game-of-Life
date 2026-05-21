@@ -7,6 +7,7 @@ Checks: >-
   -bugprone-easily-swappable-parameters,
   -bugprone-unchecked-optional-access,
   -bugprone-suspicious-stringview-data-usage,
+  -bugprone-throwing-static-initialization, # False positives while declaring custom GUI events,
 
   cppcoreguidelines-*,
   -cppcoreguidelines-avoid-magic-numbers,
@@ -14,6 +15,7 @@ Checks: >-
   -cppcoreguidelines-narrowing-conversions,
   -cppcoreguidelines-owning-memory, # Because of false positives using wxWidgets,
   -cppcoreguidelines-pro-type-member-init, 
+  -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access, # False positives with nlohmann_json
 
   # disabled until Position(Inputdata &&) is deleted,
   -cppcoreguidelines-rvalue-reference-param-not-moved,

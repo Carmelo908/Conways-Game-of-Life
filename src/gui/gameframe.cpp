@@ -69,22 +69,21 @@ private:
   }
 };
 
-GameFrame::GameFrame(Settings &settings)
+GameFrame::GameFrame(std::unique_ptr<Settings> &&initialSettings)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
+    settings{std::move(initialSettings)},
     gameTimer{new wxTimer(this)},
-    positionPanel{new PositionPanel(this)},
-    settingsPanel{new SettingsPanel(this, settings)}
+    positionPanel{new PositionPanel(this)}
 {
+  assert(settings != nullptr);
+  settingsPanel = new SettingsPanel(this, *settings);
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
   Bind(wxEVT_BUTTON, &GameFrame::onStartButtonClick, this);
-  Bind(wxEVT_FILEPICKER_CHANGED, &GameFrame::onPositionOpened, this);
   Bind(wxEVT_TIMER, &GameFrame::onGameTimer, this);
+  Bind(EVT_SETTINGS_UPDATED, &GameFrame::onSettingsChanged, this);
   SetFont(GetFont().Scale(1.3));
   createComponents();
   SetSizerAndFit(new Layout(this));
-  auto openingEvent = wxFileDirPickerEvent();
-  openingEvent.SetPath(settings.getPositionPath().string());
-  onPositionOpened(openingEvent);
   Show(true);
   Maximize();
 }
@@ -102,7 +101,7 @@ void GameFrame::onGameTimer(wxTimerEvent &)
   position->advanceGen();
   positionPanel->showPosition(position.get());
   updatePositionLabels();
-  gameTimer->StartOnce(settings.getDelay().count());
+  gameTimer->StartOnce(settings->getDelay().count());
 }
 
 void GameFrame::onStartButtonClick(wxCommandEvent &)
@@ -113,14 +112,24 @@ void GameFrame::onStartButtonClick(wxCommandEvent &)
     gameTimer->Stop();
   } else
   {
-    gameTimer->StartOnce(settings.getDelay().count());
+    gameTimer->StartOnce(settings->getDelay().count());
     startButton->SetLabelText("Stop");
   }
 }
 
-void GameFrame::onPositionOpened(wxFileDirPickerEvent &event)
+void GameFrame::onSettingsChanged(SettingsUpdateEvent &e)
 {
-  position = openPosition(event.GetPath().ToStdString());
+  auto newSettings = e.get();
+  if (settings->getPositionPath() != newSettings->getPositionPath())
+  {
+    changePosition(openPosition(settings->getPositionPath()));
+  }
+  settings = std::move(newSettings);
+}
+
+void GameFrame::changePosition(std::unique_ptr<Position> &&newPosition)
+{
+  position = std::move(newPosition);
   if (position == nullptr)
   {
     return;
@@ -142,7 +151,7 @@ void GameFrame::updatePositionLabels()
 
 void GameFrame::onClose(wxCloseEvent &)
 {
-  saveSettings(settings);
+  saveSettings(*settings);
   Show(false);
   Destroy();
 }

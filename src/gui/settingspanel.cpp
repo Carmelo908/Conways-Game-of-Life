@@ -1,5 +1,7 @@
 #include "settingspanel.hpp"
 
+#include <memory>
+#include <wx/event.h>
 #include <wx/filepicker.h>
 #include <wx/spinctrl.h>
 #include <wx/stattext.h>
@@ -9,7 +11,21 @@
 constexpr int gridRows = 4;
 constexpr int gridColumns = 1;
 
-SettingsPanel::SettingsPanel(wxWindow *parent, Settings &initialSettings)
+wxDEFINE_EVENT(EVT_SETTINGS_UPDATED, SettingsUpdateEvent);
+
+SettingsUpdateEvent::SettingsUpdateEvent(std::shared_ptr<Settings> &&settings)
+  : wxCommandEvent(EVT_SETTINGS_UPDATED, wxID_ANY),
+    settings{std::move(settings)}
+{}
+
+std::shared_ptr<Settings> SettingsUpdateEvent::get() { return settings; }
+
+wxEvent *SettingsUpdateEvent::Clone() const
+{
+  return new SettingsUpdateEvent(*this);
+}
+
+SettingsPanel::SettingsPanel(wxWindow *parent, const Settings &initialSettings)
   : wxPanel(parent),
     pathCtrl{new wxFilePickerCtrl()},
     delayCtrl{new wxSpinCtrl()}
@@ -17,9 +33,11 @@ SettingsPanel::SettingsPanel(wxWindow *parent, Settings &initialSettings)
   SetFont(GetFont().Scale(1.1));
   createControls(initialSettings);
   setUpLayout();
+  Bind(wxEVT_FILEPICKER_CHANGED, &SettingsPanel::onSettingsChanged, this);
+  Bind(wxEVT_SPINCTRL, &SettingsPanel::onSettingsChanged, this);
 }
 
-void SettingsPanel::createControls(Settings &initialSettings)
+void SettingsPanel::createControls(const Settings &initialSettings)
 {
   pathCtrl->Create(this, wxID_ANY, "", "Open position file", "*.json");
   pathCtrl->SetInitialSize(wxSize(200, 30));
@@ -46,10 +64,11 @@ void SettingsPanel::setUpLayout()
   SetSizerAndFit(mainSizer);
 }
 
-Settings SettingsPanel::getSettingsInput() const
+Settings SettingsPanel::getSettings() const
 {
-  Settings settings;
-  settings.setPositionPath(getPositionPath());
+  Settings settings{};
+  auto positionPath = getPositionPath();
+  settings.setPositionPath(positionPath);
   settings.setDelay(getDelay());
   return settings;
 }
@@ -62,4 +81,10 @@ std::filesystem::path SettingsPanel::getPositionPath() const
 std::chrono::milliseconds SettingsPanel::getDelay() const
 {
   return std::chrono::milliseconds(delayCtrl->GetValue());
+}
+
+void SettingsPanel::onSettingsChanged(wxCommandEvent &)
+{
+  wxPostEvent(GetParent(),
+              SettingsUpdateEvent(std::make_shared<Settings>(getSettings())));
 }

@@ -3,6 +3,7 @@
 #include <wx/frame.h>
 
 #include "../settings.hpp"
+#include "settingspanel.hpp"
 
 class Position;
 class PositionPanel;
@@ -23,7 +24,7 @@ public:
   /// @brief GameFrame constructor.
   /// @param settings: settings object which is provided in the OnInit() of the.
   /// app
-  GameFrame(Settings &settings);
+  GameFrame(std::unique_ptr<Settings> &&settings);
 
 private:
   class Layout;
@@ -34,15 +35,18 @@ private:
 
   void onStartButtonClick(wxCommandEvent &);
 
-  void onPositionOpened(wxFileDirPickerEvent &event);
+  void onSettingsChanged(SettingsUpdateEvent &e);
 
   void updatePositionLabels();
+
+  void changePosition(std::unique_ptr<Position> &&position);
 
   void onClose(wxCloseEvent &);
 
   std::unique_ptr<Position> position;
+  std::shared_ptr<Settings> settings;
+
   wxTimer *gameTimer;
-  Settings settings;
 
   wxButton *startButton;
   PositionPanel *positionPanel;
