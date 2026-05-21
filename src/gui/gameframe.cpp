@@ -1,14 +1,13 @@
 #include "gameframe.hpp"
 
 #include <filesystem>
-#include <thread>
-#include <utility>
 
 #include <wx/button.h>
 #include <wx/filepicker.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
+#include <wx/timer.h>
 
 #include <nlohmann/json.hpp>
 
@@ -66,36 +65,20 @@ private:
 
   static wxSizerFlags PositionPanelFlags()
   {
-    return wxSizerFlags()
-        .Align(wxALIGN_CENTER_HORIZONTAL)
-        .ReserveSpaceEvenIfHidden()
-        .FixedMinSize();
+    return wxSizerFlags().Align(wxALIGN_CENTER_HORIZONTAL).FixedMinSize();
   }
-};
-
-template<class Rep, class Period>
-class DelayTimer
-{
-public:
-  explicit DelayTimer(std::chrono::duration<Rep, Period> delay)
-    : elapsed{std::chrono::steady_clock::now() + delay}
-  {}
-
-  void wait() { std::this_thread::sleep_until(elapsed); }
-
-private:
-  std::chrono::steady_clock::time_point elapsed;
 };
 
 GameFrame::GameFrame(Settings &settings)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
-    isGameRunning{false},
+    gameTimer{new wxTimer(this)},
     positionPanel{new PositionPanel(this)},
     settingsPanel{new SettingsPanel(this, settings)}
 {
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
   Bind(wxEVT_BUTTON, &GameFrame::onStartButtonClick, this);
   Bind(wxEVT_FILEPICKER_CHANGED, &GameFrame::onPositionOpened, this);
+  Bind(wxEVT_TIMER, &GameFrame::onGameTimer, this);
   SetFont(GetFont().Scale(1.3));
   createComponents();
   SetSizerAndFit(new Layout(this));
@@ -114,30 +97,24 @@ void GameFrame::createComponents()
   cellsQuantityLabel = new wxStaticText(this, wxID_ANY, "");
 }
 
-void GameFrame::gameLoop()
+void GameFrame::onGameTimer(wxTimerEvent &)
 {
-  while (isGameRunning)
-  {
-    DelayTimer t{settings.getDelay()};
-    position->advanceGen();
-    positionPanel->Refresh();
-    updatePositionLabels();
-    wxYield();
-    t.wait();
-  }
+  position->advanceGen();
+  positionPanel->showPosition(position.get());
+  updatePositionLabels();
+  gameTimer->StartOnce(settings.getDelay().count());
 }
 
 void GameFrame::onStartButtonClick(wxCommandEvent &)
 {
-  if (isGameRunning)
+  if (gameTimer->IsRunning())
   {
     startButton->SetLabelText("Start");
-    isGameRunning = false;
+    gameTimer->Stop();
   } else
   {
-    isGameRunning = true;
+    gameTimer->StartOnce(settings.getDelay().count());
     startButton->SetLabelText("Stop");
-    gameLoop();
   }
 }
 
@@ -165,7 +142,7 @@ void GameFrame::updatePositionLabels()
 
 void GameFrame::onClose(wxCloseEvent &)
 {
-  isGameRunning = false;
+  saveSettings(settings);
   Show(false);
   Destroy();
 }

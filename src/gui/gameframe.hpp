@@ -9,8 +9,10 @@ class PositionPanel;
 class Settings;
 class SettingsPanel;
 class wxButton;
-class wxStaticText;
 class wxFileDirPickerEvent;
+class wxTimer;
+class wxTimerEvent;
+class wxStaticText;
 
 /// @brief The window in which the Conway's Game of life is runned.
 ///
@@ -28,7 +30,7 @@ private:
 
   void createComponents();
 
-  void gameLoop();
+  void onGameTimer(wxTimerEvent &);
 
   void onStartButtonClick(wxCommandEvent &);
 
@@ -39,7 +41,7 @@ private:
   void onClose(wxCloseEvent &);
 
   std::unique_ptr<Position> position;
-  bool isGameRunning;
+  wxTimer *gameTimer;
   Settings settings;
 
   wxButton *startButton;
