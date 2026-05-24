@@ -102,11 +102,15 @@ void GameFrame::createComponents()
 
 void GameFrame::onGameTimer(wxTimerEvent &)
 {
+  namespace chr = std::chrono;
+
+  auto start = chr::steady_clock::now();
   const std::shared_ptr position = gameManager->yieldPosition();
-  position->advanceGen();
   positionPanel->showPosition(position);
   updatePositionLabels(*position);
-  gameTimer->StartOnce(settings->getDelay().count());
+  auto elapsed = chr::steady_clock::now() - start;
+  auto elapsedms = chr::duration_cast<chr::milliseconds>(elapsed).count();
+  gameTimer->StartOnce(settings->getDelay().count() - elapsedms);
 }
 
 void GameFrame::onStartButtonClick(wxCommandEvent &)
@@ -134,6 +138,7 @@ void GameFrame::onSettingsChanged(SettingsUpdateEvent &e)
 
 void GameFrame::changePosition(std::unique_ptr<Position> &&newPosition)
 {
+  gameTimer->Stop();
   gameManager->reset(std::move(newPosition));
   if (gameManager->empty())
   {
