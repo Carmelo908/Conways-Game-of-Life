@@ -7,14 +7,26 @@
 
 #include "position.hpp"
 
-/// @brief represents a manager that advances a position in a separate thread,
-/// puts every copy in a queue and can pop the queue and return the next
-/// Position on request.
+/// @brief represents a work manager for Position that process them
+/// asynchronously and puts them in a queue for the user to consume them.
+///
+/// The queue has a maximun size of 256 and has to have at least one element to
+/// process from.
 class GameManager
 {
 public:
+  /// @brief constructs the GameManager, creates the thread and starts
+  /// processing from position.
+  /// @param position the starting position to process. if null, the constructor
+  /// doesn't start processing.
   GameManager(std::unique_ptr<Position> &&position);
+
+  /// @brief defaults constructs the GameManager and creates the worker thread.
+  /// Doesn't start processing until restart() is called with a non null
+  /// argument.
   GameManager();
+
+  /// @brief signals the working thread to stop.
   ~GameManager();
 
   GameManager(const GameManager &) = delete;
@@ -22,10 +34,18 @@ public:
   GameManager &operator=(const GameManager &) = delete;
   GameManager &operator=(GameManager &&) = delete;
 
+  /// @return the next position in the queue, may lock the current thread if the
+  /// queue size equals 1.
+  /// @throw std::runtime_error if called while empty equals true.
   std::unique_ptr<Position> yieldPosition();
 
+  /// @brief Makes the GameManager clear its queue and start processing another
+  /// position.
+  /// @param position the new position to manage and own.
   void reset(std::unique_ptr<Position> &&position);
 
+  /// @return wether the queue is empty, which would mean the Manager isn't
+  /// processing any Position.
   bool empty() const;
 
 private:

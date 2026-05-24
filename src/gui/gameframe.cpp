@@ -75,11 +75,11 @@ private:
 GameFrame::GameFrame(std::unique_ptr<Settings> &&initialSettings)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
     gameManager{std::make_unique<GameManager>()},
-    delay{initialSettings->getDelay()},
     gameTimer{new wxTimer(this)},
     positionPanel{new PositionPanel(this)}
 {
   assert(initialSettings != nullptr);
+  delay = initialSettings->getDelay(),
   settingsPanel = new SettingsPanel(this, *initialSettings);
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
   Bind(wxEVT_BUTTON, &GameFrame::onStartButtonClick, this);

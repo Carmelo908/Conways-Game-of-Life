@@ -13,6 +13,7 @@ struct CellCoords
   int64_t x;
   int64_t y;
 
+  /// @brief default comparision operator.
   bool operator==(const CellCoords &) const = default;
 };
 
@@ -39,14 +40,18 @@ public:
   /// @brief Creates a Position from generation 0 moving a CellSet.
   Position(CellSet &&cellSet);
 
-  /// @brief Default copy operator.
+  /// @brief Default copy constructor.
   Position(const Position &) = default;
+  /// @brief Default move constructor.
   Position(Position &&) = default;
+  /// @brief Default copy assignment.
   Position &operator=(const Position &) = default;
+  /// @brief Default move assignment.
   Position &operator=(Position &&) = default;
+  /// @brief Default destructor.
   ~Position() = default;
 
-  /// @brief Compares 2 Positions
+  /// @brief Compares 2 Positions' cells.
   /// @return wether the two Positions have the same cells. Doesn't
   /// compare other properties
   bool operator==(const Position &rhs) const;
@@ -77,9 +82,9 @@ public:
   /// \overload
   bool getCellAt(int64_t coordX, int64_t coordY) const;
 
-  /// @return an const iterator to the first cell.
+  /// @return a const iterator of the underlying set to the first cell.
   CellSet::const_iterator begin() const;
-  /// @return an const iterator to the last cell.
+  /// @return a const iterator of the underlying set to the last cell.
   CellSet::const_iterator end() const;
 
   /// @return how much alive cells there are in the Position.

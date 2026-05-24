@@ -8,19 +8,18 @@
 #include <utility>
 
 GameManager::GameManager(std::unique_ptr<Position> &&position)
+  : workerThread{std::jthread(&GameManager::processPositions, this)}
 {
   if (position == nullptr)
   {
     return;
   }
   positionsQueue.pushBack(std::move(position));
-  workerThread = std::jthread(&GameManager::processPositions, this);
 }
 
 GameManager::GameManager()
-{
-  workerThread = std::jthread(&GameManager::processPositions, this);
-}
+  : workerThread{std::jthread(&GameManager::processPositions, this)}
+{}
 
 GameManager::~GameManager() { stopFlag = true; }
 

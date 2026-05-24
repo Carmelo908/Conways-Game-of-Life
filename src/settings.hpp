@@ -27,9 +27,13 @@ public:
   Settings(const std::filesystem::path &positionPath,
            std::chrono::milliseconds delay);
 
+  /// @brief default comparision operator.
   bool operator==(const Settings &other) const = default;
 
+  /// @return the positionPath field.
   const std::filesystem::path &getPositionPath() const;
+
+  /// @return the delay field.
   std::chrono::milliseconds getDelay() const;
 
   /// @param d only sets the value if it's a existing file.
@@ -64,8 +68,8 @@ Settings parseFileSettings(const std::filesystem::path &settingsFilePath);
 Settings parseSettings(const nlohmann::json &settingsJson);
 
 /// \related Settings
-/// @param settings the saved Settings
-/// @param settingsPath The file's path where settings is saved
+/// @param settings the Settings to save.
+/// @param settingsPath The file's path where settings is saved.
 void saveSettings(
     const Settings &settings,
     const std::filesystem::path &settingsPath = "./settings.json");

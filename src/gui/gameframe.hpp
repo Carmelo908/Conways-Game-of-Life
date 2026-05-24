@@ -23,8 +23,8 @@ class GameFrame : private wxFrame
 {
 public:
   /// @brief GameFrame constructor.
-  /// @param settings: settings object which is provided in the OnInit() of the.
-  /// appSettingsUpdateEvent
+  /// @param settings: settings object which is provided in the OnInit() of the
+  /// appSettingsUpdateEvent. Must be non null.
   GameFrame(std::unique_ptr<Settings> &&settings);
 
 private:
