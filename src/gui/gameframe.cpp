@@ -1,5 +1,6 @@
 #include "gameframe.hpp"
 
+#include <chrono>
 #include <filesystem>
 
 #include <memory>
@@ -128,12 +129,11 @@ void GameFrame::onStartButtonClick(wxCommandEvent &)
 
 void GameFrame::onSettingsChanged(SettingsUpdateEvent &e)
 {
-  auto newSettings = e.get();
-  if (settings->getPositionPath() != newSettings->getPositionPath())
+  settings = e.getSettings();
+  if (e.hasPositionChanged())
   {
     changePosition(openPosition(settings->getPositionPath()));
   }
-  settings = std::move(newSettings);
 }
 
 void GameFrame::changePosition(std::unique_ptr<Position> &&newPosition)

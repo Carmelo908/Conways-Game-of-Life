@@ -13,12 +13,20 @@ constexpr int gridColumns = 1;
 
 wxDEFINE_EVENT(EVT_SETTINGS_UPDATED, SettingsUpdateEvent);
 
-SettingsUpdateEvent::SettingsUpdateEvent(std::shared_ptr<Settings> &&settings)
+SettingsUpdateEvent::SettingsUpdateEvent(std::shared_ptr<Settings> &&settings,
+                                         bool positionChanged)
   : wxCommandEvent(EVT_SETTINGS_UPDATED, wxID_ANY),
-    settings{std::move(settings)}
+    settings{std::move(settings)},
+    positionChanged{positionChanged}
+
 {}
 
-std::shared_ptr<Settings> SettingsUpdateEvent::get() { return settings; }
+std::shared_ptr<Settings> SettingsUpdateEvent::getSettings()
+{
+  return settings;
+}
+
+bool SettingsUpdateEvent::hasPositionChanged() const { return positionChanged; }
 
 wxEvent *SettingsUpdateEvent::Clone() const
 {
@@ -83,8 +91,10 @@ std::chrono::milliseconds SettingsPanel::getDelay() const
   return std::chrono::milliseconds(delayCtrl->GetValue());
 }
 
-void SettingsPanel::onSettingsChanged(wxCommandEvent &)
+void SettingsPanel::onSettingsChanged(wxCommandEvent &event)
 {
-  wxPostEvent(GetParent(),
-              SettingsUpdateEvent(std::make_shared<Settings>(getSettings())));
+  const bool positionChanged = event.GetEventType() == wxEVT_FILEPICKER_CHANGED;
+  SettingsUpdateEvent updateEvent{std::make_shared<Settings>(getSettings()),
+                                  positionChanged};
+  GetParent()->ProcessWindowEvent(updateEvent);
 }

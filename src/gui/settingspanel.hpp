@@ -17,14 +17,18 @@ class wxStaticText;
 class SettingsUpdateEvent : public wxCommandEvent
 {
 public:
-  SettingsUpdateEvent(std::shared_ptr<Settings> &&settings);
+  SettingsUpdateEvent(std::shared_ptr<Settings> &&settings,
+                      bool positionChanged);
 
-  std::shared_ptr<Settings> get();
+  std::shared_ptr<Settings> getSettings();
+
+  bool hasPositionChanged() const;
 
   virtual wxEvent *Clone() const;
 
 private:
   std::shared_ptr<Settings> settings;
+  bool positionChanged;
 };
 
 wxDECLARE_EVENT(EVT_SETTINGS_UPDATED, SettingsUpdateEvent);
@@ -52,7 +56,7 @@ private:
 
   void setUpLayout();
 
-  void onSettingsChanged(wxCommandEvent &);
+  void onSettingsChanged(wxCommandEvent &event);
 
   wxFilePickerCtrl *pathCtrl;
   wxSpinCtrl *delayCtrl;
