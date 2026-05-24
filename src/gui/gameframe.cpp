@@ -127,13 +127,14 @@ void GameFrame::onStartButtonClick(wxCommandEvent &)
   }
 }
 
-void GameFrame::onSettingsChanged(SettingsUpdateEvent &e)
+void GameFrame::onSettingsChanged(SettingsUpdateEvent &event)
 {
-  auto settings = e.getSettings();
-  if (e.hasPositionChanged())
+  auto settings = event.getSettings();
+  if (event.hasPositionChanged())
   {
     changePosition(openPosition(settings->getPositionPath()));
   }
+  delay = settings->getDelay();
 }
 
 void GameFrame::changePosition(std::unique_ptr<Position> &&newPosition)

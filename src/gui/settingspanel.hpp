@@ -24,7 +24,7 @@ public:
 
   bool hasPositionChanged() const;
 
-  virtual wxEvent *Clone() const;
+  wxEvent *Clone() const override;
 
 private:
   std::shared_ptr<Settings> settings;

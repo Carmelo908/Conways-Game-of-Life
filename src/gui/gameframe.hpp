@@ -36,7 +36,7 @@ private:
 
   void onStartButtonClick(wxCommandEvent &);
 
-  void onSettingsChanged(SettingsUpdateEvent &e);
+  void onSettingsChanged(SettingsUpdateEvent &event);
 
   void updatePositionLabels(const Position &position);
 
