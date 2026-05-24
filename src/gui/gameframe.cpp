@@ -75,19 +75,19 @@ private:
 GameFrame::GameFrame(std::unique_ptr<Settings> &&initialSettings)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
     gameManager{std::make_unique<GameManager>()},
-    settings{std::move(initialSettings)},
+    delay{initialSettings->getDelay()},
     gameTimer{new wxTimer(this)},
     positionPanel{new PositionPanel(this)}
 {
-  assert(settings != nullptr);
-  settingsPanel = new SettingsPanel(this, *settings);
+  assert(initialSettings != nullptr);
+  settingsPanel = new SettingsPanel(this, *initialSettings);
   Bind(wxEVT_CLOSE_WINDOW, &GameFrame::onClose, this);
   Bind(wxEVT_BUTTON, &GameFrame::onStartButtonClick, this);
   Bind(wxEVT_TIMER, &GameFrame::onGameTimer, this);
   Bind(EVT_SETTINGS_UPDATED, &GameFrame::onSettingsChanged, this);
   SetFont(GetFont().Scale(1.3));
   createComponents();
-  changePosition(openPosition(settings->getPositionPath()));
+  changePosition(openPosition(initialSettings->getPositionPath()));
   SetSizerAndFit(new Layout(this));
   Show(true);
   Maximize();
@@ -111,7 +111,7 @@ void GameFrame::onGameTimer(wxTimerEvent &)
   updatePositionLabels(*position);
   auto elapsed = chr::steady_clock::now() - start;
   auto elapsedms = chr::duration_cast<chr::milliseconds>(elapsed).count();
-  gameTimer->StartOnce(settings->getDelay().count() - elapsedms);
+  gameTimer->StartOnce(delay.count() - elapsedms);
 }
 
 void GameFrame::onStartButtonClick(wxCommandEvent &)
@@ -122,14 +122,14 @@ void GameFrame::onStartButtonClick(wxCommandEvent &)
     gameTimer->Stop();
   } else
   {
-    gameTimer->StartOnce(settings->getDelay().count());
+    gameTimer->StartOnce(delay.count());
     startButton->SetLabelText("Stop");
   }
 }
 
 void GameFrame::onSettingsChanged(SettingsUpdateEvent &e)
 {
-  settings = e.getSettings();
+  auto settings = e.getSettings();
   if (e.hasPositionChanged())
   {
     changePosition(openPosition(settings->getPositionPath()));
@@ -162,7 +162,7 @@ void GameFrame::updatePositionLabels(const Position &position)
 
 void GameFrame::onClose(wxCloseEvent &)
 {
-  saveSettings(*settings);
+  saveSettings(settingsPanel->getSettings());
   Show(false);
   Destroy();
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <wx/frame.h>
 
 #include "settingspanel.hpp"
@@ -44,7 +45,7 @@ private:
   void onClose(wxCloseEvent &);
 
   std::unique_ptr<GameManager> gameManager;
-  std::shared_ptr<Settings> settings;
+  std::chrono::milliseconds delay;
 
   wxTimer *gameTimer;
 
