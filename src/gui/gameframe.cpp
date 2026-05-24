@@ -2,6 +2,7 @@
 
 #include <filesystem>
 
+#include <memory>
 #include <wx/button.h>
 #include <wx/filepicker.h>
 #include <wx/msgdlg.h>
@@ -11,6 +12,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "../game_manager.hpp"
 #include "../position.hpp"
 #include "../settings.hpp"
 #include "positionpanel.hpp"
@@ -71,6 +73,7 @@ private:
 
 GameFrame::GameFrame(std::unique_ptr<Settings> &&initialSettings)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
+    gameManager{std::make_unique<GameManager>()},
     settings{std::move(initialSettings)},
     gameTimer{new wxTimer(this)},
     positionPanel{new PositionPanel(this)}
@@ -83,6 +86,7 @@ GameFrame::GameFrame(std::unique_ptr<Settings> &&initialSettings)
   Bind(EVT_SETTINGS_UPDATED, &GameFrame::onSettingsChanged, this);
   SetFont(GetFont().Scale(1.3));
   createComponents();
+  changePosition(openPosition(settings->getPositionPath()));
   SetSizerAndFit(new Layout(this));
   Show(true);
   Maximize();
@@ -98,9 +102,10 @@ void GameFrame::createComponents()
 
 void GameFrame::onGameTimer(wxTimerEvent &)
 {
+  const std::shared_ptr position = gameManager->yieldPosition();
   position->advanceGen();
-  positionPanel->showPosition(position.get());
-  updatePositionLabels();
+  positionPanel->showPosition(position);
+  updatePositionLabels(*position);
   gameTimer->StartOnce(settings->getDelay().count());
 }
 
@@ -129,22 +134,23 @@ void GameFrame::onSettingsChanged(SettingsUpdateEvent &e)
 
 void GameFrame::changePosition(std::unique_ptr<Position> &&newPosition)
 {
-  position = std::move(newPosition);
-  if (position == nullptr)
+  gameManager->reset(std::move(newPosition));
+  if (gameManager->empty())
   {
     return;
   }
-  updatePositionLabels();
   startButton->Enable();
-  positionPanel->showPosition(position.get());
+  const std::shared_ptr position = gameManager->yieldPosition();
+  updatePositionLabels(*position);
+  positionPanel->showPosition(position);
 }
 
-void GameFrame::updatePositionLabels()
+void GameFrame::updatePositionLabels(const Position &position)
 {
-  auto value = std::to_string(position->getGenCount());
+  auto value = std::to_string(position.getGenCount());
   auto generationText = std::string("Generation: ") + value;
   generationLabel->SetLabelText(generationText);
-  value = std::to_string(position->getCellsQuantity());
+  value = std::to_string(position.getCellsQuantity());
   auto cellsQuantityText = std::string("Cells amount: ") + value;
   cellsQuantityLabel->SetLabelText(cellsQuantityText);
 }

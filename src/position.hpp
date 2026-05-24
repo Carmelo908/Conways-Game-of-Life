@@ -40,7 +40,7 @@ public:
   Position(CellSet &&cellSet);
 
   /// @brief Default copy operator.
-  Position(Position &) = default;
+  Position(const Position &) = default;
   Position(Position &&) = default;
   Position &operator=(const Position &) = default;
   Position &operator=(Position &&) = default;

@@ -17,7 +17,7 @@ PositionPanel::PositionPanel(wxWindow *parent)
   SetSize(panelSize);
 }
 
-void PositionPanel::showPosition(Position *position)
+void PositionPanel::showPosition(std::shared_ptr<const Position> position)
 {
   SetClientObject(new DrawingData(position));
   Refresh();
@@ -55,6 +55,7 @@ wxBitmap PositionPanel::makePositionBitmap(const Position &position)
   return posBitmap;
 }
 
-PositionPanel::DrawingData::DrawingData(const Position *position)
+PositionPanel::DrawingData::DrawingData(
+    std::shared_ptr<const Position> &position)
   : position{position}
 {}

@@ -3,6 +3,7 @@ set(
   main.cpp
   position.cpp
   settings.cpp
+  game_manager.cpp
   gui/settingspanel.cpp
   gui/gameframe.cpp
   gui/positionpanel.cpp

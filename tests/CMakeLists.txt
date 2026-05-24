@@ -4,6 +4,7 @@ set(
   UNIT_TESTS 
   position_test
   settings_test
+  game_manager_test
 )
 
 set(TESTS_ARGS --skip-benchmarks)
@@ -23,6 +24,13 @@ add_executable(
   ${CMAKE_SOURCE_DIR}/src/settings.cpp
 )
 target_link_libraries(settings_test PRIVATE nlohmann_json::nlohmann_json)
+
+add_executable(
+  game_manager_test
+  game_manager_test.cpp
+  ${CMAKE_SOURCE_DIR}/src/position.cpp
+  ${CMAKE_SOURCE_DIR}/src/game_manager.cpp
+)
 
 foreach(TEST_NAME IN LISTS UNIT_TESTS)
   add_test(${TEST_NAME} ${TEST_NAME} ${TESTS_ARGS})

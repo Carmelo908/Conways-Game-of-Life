@@ -19,7 +19,7 @@ public:
   ///
   /// @param position: the Position to be shown. if null, the panel just get
   /// black
-  void showPosition(Position *position);
+  void showPosition(std::shared_ptr<const Position> position);
 
 private:
   void OnPaint(wxPaintEvent &);
@@ -30,9 +30,9 @@ private:
 
   struct DrawingData : public wxClientData
   {
-    DrawingData(const Position *position);
+    DrawingData(std::shared_ptr<const Position> &position);
 
-    const Position *position;
+    std::shared_ptr<const Position> position;
   };
 
   static constexpr int maxWidth = 500;
