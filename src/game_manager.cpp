@@ -10,11 +10,10 @@
 GameManager::GameManager(std::unique_ptr<Position> &&position)
   : workerThread{std::jthread(&GameManager::processPositions, this)}
 {
-  if (position == nullptr)
+  if (position != nullptr)
   {
-    return;
+    positionsQueue.pushBack(std::move(position));
   }
-  positionsQueue.pushBack(std::move(position));
 }
 
 GameManager::GameManager()
@@ -25,6 +24,10 @@ GameManager::~GameManager() { stopFlag = true; }
 
 std::unique_ptr<Position> GameManager::yieldPosition()
 {
+  if (positionsQueue.empty())
+  {
+    throw std::runtime_error("Cannon pop empty GameManager queue");
+  }
   return positionsQueue.pop();
 }
 
@@ -36,16 +39,12 @@ void GameManager::reset(std::unique_ptr<Position> &&position)
   }
   positionsQueue.clear();
   positionsQueue.pushBack(std::move(position));
-  if (workerThread.joinable())
-  {
-    resetFlag = true;
-  } else
-  {
-    workerThread = std::jthread(&GameManager::processPositions, this);
-  }
+  resetFlag = true;
 }
 
-bool GameManager::empty() const { return positionsQueue.empty(); }
+size_t GameManager::queueSize() const { return positionsQueue.size(); }
+
+bool GameManager::queueEmpty() const { return positionsQueue.empty(); }
 
 void GameManager::processPositions()
 {
@@ -53,15 +52,15 @@ void GameManager::processPositions()
   {
     if (positionsQueue.empty())
     {
-      std::this_thread::yield();
+      if (stopFlag)
+      {
+        break;
+      }
       continue;
     }
     auto next{positionsQueue.copyBack()};
     next->advanceGen();
-    while (positionsQueue.size() >= queueLimit)
-    {
-      std::this_thread::yield();
-    }
+    waitFullQueue();
     if (stopFlag)
     {
       break;
@@ -72,6 +71,14 @@ void GameManager::processPositions()
       continue;
     }
     positionsQueue.pushBack(std::move(next));
+  }
+}
+
+void GameManager::waitFullQueue() const
+{
+  while (positionsQueue.size() >= queueLimit)
+  {
+    std::this_thread::yield();
   }
 }
 
@@ -86,10 +93,6 @@ std::unique_ptr<Position> GameManager::SharedQueue::pop()
   while (true)
   {
     const std::unique_lock lock{mutex};
-    if (queue.empty())
-    {
-      throw std::runtime_error("Cannon pop empty GameManager queue");
-    }
     if (queue.size() > 1)
     {
       auto result = std::move(queue.front());

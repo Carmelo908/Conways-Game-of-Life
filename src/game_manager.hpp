@@ -8,7 +8,7 @@
 #include "position.hpp"
 
 /// @brief represents a work manager for Position that process them
-/// asynchronously and puts them in a queue for the user to consume them.
+/// asynchronously and puts them in a queue for the consumer to get from.
 ///
 /// The queue has a maximun size of 256 and has to have at least one element to
 /// process from.
@@ -17,12 +17,13 @@ class GameManager
 public:
   /// @brief constructs the GameManager, creates the thread and starts
   /// processing from position.
-  /// @param position the starting position to process. if null, the constructor
-  /// doesn't start processing.
+  /// @param position the starting position to process. if null, the worker
+  /// thread doesn't start processing until reset() is called with a non null
+  /// arguments.
   GameManager(std::unique_ptr<Position> &&position);
 
   /// @brief defaults constructs the GameManager and creates the worker thread.
-  /// Doesn't start processing until restart() is called with a non null
+  /// Doesn't start processing until reset() is called with a non null
   /// argument.
   GameManager();
 
@@ -34,22 +35,32 @@ public:
   GameManager &operator=(const GameManager &) = delete;
   GameManager &operator=(GameManager &&) = delete;
 
-  /// @return the next position in the queue, may lock the current thread if the
-  /// queue size equals 1.
-  /// @throw std::runtime_error if called while empty equals true.
+  /// @return the next position in the queue.
+  ///
+  /// may lock the current thread until
+  /// the Position is advanced if the queue size equals 1.
+  ///
+  /// @throw std::runtime_error if called while empty() == true.
   std::unique_ptr<Position> yieldPosition();
 
-  /// @brief Makes the GameManager clear its queue and start processing another
+  /// @brief clears the GameManager queue and starts processing from another
   /// position.
   /// @param position the new position to manage and own.
   void reset(std::unique_ptr<Position> &&position);
 
+  /// @return the elements amount of the manager's queue.
+  size_t queueSize() const;
+
   /// @return wether the queue is empty, which would mean the Manager isn't
-  /// processing any Position.
-  bool empty() const;
+  /// managind or processing any Position.
+  bool queueEmpty() const;
 
 private:
   void processPositions();
+
+  void waitEmptyQueue() const;
+
+  void waitFullQueue() const;
 
   class SharedQueue
   {

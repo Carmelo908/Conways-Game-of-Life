@@ -152,7 +152,7 @@ void GameFrame::changePosition(std::unique_ptr<Position> &&newPosition)
 {
   gameTimer->Stop();
   gameManager->reset(std::move(newPosition));
-  if (gameManager->empty())
+  if (gameManager->queueEmpty())
   {
     return;
   }
