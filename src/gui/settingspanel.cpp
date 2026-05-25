@@ -54,7 +54,7 @@ void SettingsPanel::createControls(const Settings &initialSettings)
   delayCtrl->Create(this, wxID_ANY);
   delayCtrl->SetInitialSize(wxSize(200, 30));
   delayCtrl->SetValue(initialSettings.getDelay().count());
-  delayCtrl->SetRange(0, 1000);
+  delayCtrl->SetRange(10, 1000);
 }
 
 wxStaticText *SettingsPanel::createLabel(std::string_view labelText)

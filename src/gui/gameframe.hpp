@@ -32,6 +32,8 @@ private:
 
   void createComponents();
 
+  void updateSettings(Settings &settings);
+
   void onGameTimer(wxTimerEvent &);
 
   void onStartButtonClick(wxCommandEvent &);

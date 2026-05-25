@@ -13,7 +13,7 @@ bool validatePath(const std::filesystem::path &p)
 
 bool validateDelay(const std::chrono::milliseconds &d)
 {
-  return d.count() > 0 && d.count() < 1000;
+  return d.count() >= 10 && d.count() <= 1000;
 }
 
 Settings parseFileSettings(const std::filesystem::path &settingsFilePath)

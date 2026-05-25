@@ -22,7 +22,7 @@
 constexpr auto parsingErrorMessage =
     "An error ocurred parsing the file. It may contain invalid data.";
 
-std::unique_ptr<Position> openPosition(const std::filesystem::path &path)
+static std::unique_ptr<Position> openPosition(const std::filesystem::path &path)
 {
   if (path.empty())
   {
@@ -36,6 +36,14 @@ std::unique_ptr<Position> openPosition(const std::filesystem::path &path)
     wxMessageBox(parsingErrorMessage, "Error opening the file");
     return nullptr;
   }
+}
+
+static int calcWaitTime(std::chrono::steady_clock::time_point start,
+                        std::chrono::milliseconds delay)
+{
+  auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+      std::chrono::steady_clock::now() - start);
+  return std::max(delay.count() - elapsed.count(), 1L);
 }
 
 class GameFrame::Layout : public wxBoxSizer
@@ -87,6 +95,7 @@ GameFrame::GameFrame(std::unique_ptr<Settings> &&initialSettings)
   Bind(EVT_SETTINGS_UPDATED, &GameFrame::onSettingsChanged, this);
   SetFont(GetFont().Scale(1.3));
   createComponents();
+  updateSettings(*initialSettings);
   changePosition(openPosition(initialSettings->getPositionPath()));
   SetSizerAndFit(new Layout(this));
   Show(true);
@@ -101,17 +110,19 @@ void GameFrame::createComponents()
   cellsQuantityLabel = new wxStaticText(this, wxID_ANY, "");
 }
 
+void GameFrame::updateSettings(Settings &settings)
+{
+  delay = settings.getDelay();
+}
+
 void GameFrame::onGameTimer(wxTimerEvent &)
 {
-  namespace chr = std::chrono;
-
-  auto start = chr::steady_clock::now();
+  auto start = std::chrono::steady_clock::now();
   const std::shared_ptr position = gameManager->yieldPosition();
   positionPanel->showPosition(position);
   updatePositionLabels(*position);
-  auto elapsed = chr::steady_clock::now() - start;
-  auto elapsedms = chr::duration_cast<chr::milliseconds>(elapsed).count();
-  gameTimer->StartOnce(delay.count() - elapsedms);
+  auto waitTime = calcWaitTime(start, delay);
+  gameTimer->StartOnce(waitTime);
 }
 
 void GameFrame::onStartButtonClick(wxCommandEvent &)
@@ -134,7 +145,7 @@ void GameFrame::onSettingsChanged(SettingsUpdateEvent &event)
   {
     changePosition(openPosition(settings->getPositionPath()));
   }
-  delay = settings->getDelay();
+  updateSettings(*settings);
 }
 
 void GameFrame::changePosition(std::unique_ptr<Position> &&newPosition)
