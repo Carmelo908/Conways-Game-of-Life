@@ -3,11 +3,10 @@
 #include <filesystem>
 #include <fstream>
 #include <unordered_set>
-#include <vector>
 
 #include <nlohmann/json_fwd.hpp>
 
-/// @brief Represents the coordinates of a cell, generally an alive one.
+/// @brief Represents the coordinates of a cell.
 struct CellCoords
 {
   int64_t x;
@@ -17,8 +16,7 @@ struct CellCoords
   bool operator==(const CellCoords &) const = default;
 };
 
-/// @brief Represents a Position in the Conway's Game of Life with fixed
-/// dimensions.
+/// @brief Represents a Position in the Conway's Game of Life.
 class Position
 {
   struct CellCoordsHash // Needed for the unordered_set of CellCoords
@@ -27,10 +25,6 @@ class Position
   };
 
 public:
-  /// @brief Type alias for a row in a 2d vector which contains the data to
-  /// construct a Position.
-  using Row = std::vector<char>;
-
   /// @brief Type alias for a set of cells with custom hash.
   using CellSet = std::unordered_set<CellCoords, CellCoordsHash>;
 
@@ -84,7 +78,7 @@ public:
 
   /// @return a const iterator of the underlying set to the first cell.
   CellSet::const_iterator begin() const;
-  /// @return a const iterator of the underlying set to the last cell.
+  /// @return a const iterator to the end of the underlying set.
   CellSet::const_iterator end() const;
 
   /// @return how much alive cells there are in the Position.
@@ -95,6 +89,8 @@ public:
 private:
   using CellRef = const CellCoords &;
   using CellSetRef = const CellSet &;
+
+  auto updateCellLambda(CellSet &checkedCells);
 
   void doOnSorrondingCells(CellRef cell, CellSetRef previousGen,
                            auto action) const;

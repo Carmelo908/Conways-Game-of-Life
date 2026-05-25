@@ -9,7 +9,9 @@
 
 #include <position.hpp>
 
-const auto positionFilename = "testing_position.json";
+const auto positionFile = "testing_position.json";
+const auto positionFilepath =
+    std::filesystem::path(__FILE__).remove_filename().append(positionFile);
 
 using namespace std::string_literals;
 
@@ -83,10 +85,7 @@ TEST_CASE("Position functionality")
   BENCHMARK_ADVANCED("Advance fixed Position 100 times")
   (Catch::Benchmark::Chronometer meter)
   {
-    auto benchmarkFilepath =
-        std::filesystem::path(__FILE__).remove_filename().append(
-            positionFilename);
-    Position benchmarkPosition{Position::parseJsonFile(benchmarkFilepath)};
+    Position benchmarkPosition{Position::parseJsonFile(positionFilepath)};
     auto advance100Times = [&] {
       for (int i = 0; i < 100; i++)
       {
