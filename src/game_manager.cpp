@@ -84,7 +84,7 @@ void GameManager::waitFullQueue() const
 
 GameManager::SharedQueue::SharedQueue(std::unique_ptr<Position> &&position)
 {
-  const std::unique_lock lock{mutex};
+  std::scoped_lock lock{mutex};
   queue.push(std::move(position));
 }
 
@@ -92,7 +92,7 @@ std::unique_ptr<Position> GameManager::SharedQueue::pop()
 {
   while (true)
   {
-    const std::unique_lock lock{mutex};
+    const std::scoped_lock lock{mutex};
     if (queue.size() > 1)
     {
       auto result = std::move(queue.front());
@@ -104,31 +104,31 @@ std::unique_ptr<Position> GameManager::SharedQueue::pop()
 
 std::unique_ptr<Position> GameManager::SharedQueue::copyBack() const
 {
-  const std::unique_lock lock{mutex};
+  std::scoped_lock lock{mutex};
   return queue.empty() ? nullptr : std::make_unique<Position>(*queue.back());
 }
 
 void GameManager::SharedQueue::pushBack(std::unique_ptr<Position> &&position)
 {
-  const std::unique_lock lock{mutex};
+  std::scoped_lock lock{mutex};
   queue.push(std::move(position));
 }
 
 size_t GameManager::SharedQueue::size() const
 {
-  const std::unique_lock lock{mutex};
+  std::scoped_lock lock{mutex};
   return queue.size();
 }
 
 bool GameManager::SharedQueue::empty() const
 {
-  const std::unique_lock lock{mutex};
+  std::scoped_lock lock{mutex};
   return queue.empty();
 }
 
 void GameManager::SharedQueue::clear()
 {
-  const std::unique_lock lock{mutex};
+  std::scoped_lock lock{mutex};
   std::queue<std::unique_ptr<Position>> tmp{};
   queue.swap(tmp);
 }
