@@ -44,6 +44,9 @@ private:
 
   void changePosition(std::unique_ptr<Position> &&position);
 
+  static std::unique_ptr<Position>
+  openNewPosition(const std::filesystem::path &path);
+
   void onClose(wxCloseEvent &);
 
   std::unique_ptr<GameManager> gameManager;

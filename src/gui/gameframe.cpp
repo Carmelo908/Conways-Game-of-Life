@@ -2,16 +2,14 @@
 
 #include <chrono>
 #include <filesystem>
-
 #include <memory>
+
 #include <wx/button.h>
 #include <wx/filepicker.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/timer.h>
-
-#include <nlohmann/json.hpp>
 
 #include "../game_manager.hpp"
 #include "../position.hpp"
@@ -22,27 +20,13 @@
 constexpr auto parsingErrorMessage =
     "An error ocurred parsing the file. It may contain invalid data.";
 
-static std::unique_ptr<Position> openPosition(const std::filesystem::path &path)
-{
-  if (path.empty())
-  {
-    return nullptr;
-  }
-  try
-  {
-    return std::make_unique<Position>(Position::parseJsonFile(path));
-  } catch (const nlohmann::json::exception &e)
-  {
-    wxMessageBox(parsingErrorMessage, "Error opening the file");
-    return nullptr;
-  }
-}
+namespace chr = std::chrono;
 
-static int calcWaitTime(std::chrono::steady_clock::time_point start,
-                        std::chrono::milliseconds delay)
+static int calcWaitTime(chr::steady_clock::time_point start,
+                        chr::milliseconds delay)
 {
-  auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-      std::chrono::steady_clock::now() - start);
+  auto end = chr::steady_clock::now();
+  auto elapsed = chr::duration_cast<chr::milliseconds>(end - start);
   return std::max(delay.count() - elapsed.count(), 1L);
 }
 
@@ -96,10 +80,10 @@ GameFrame::GameFrame(std::unique_ptr<Settings> &&initialSettings)
   SetFont(GetFont().Scale(1.3));
   createComponents();
   updateSettings(*initialSettings);
-  changePosition(openPosition(initialSettings->getPositionPath()));
-  SetSizerAndFit(new Layout(this));
+  changePosition(openNewPosition(initialSettings->getPositionPath()));
   Show(true);
   Maximize();
+  SetSizerAndFit(new Layout(this));
 }
 
 void GameFrame::createComponents()
@@ -143,7 +127,7 @@ void GameFrame::onSettingsChanged(SettingsUpdateEvent &event)
   auto settings = event.getSettings();
   if (event.hasPositionChanged())
   {
-    changePosition(openPosition(settings->getPositionPath()));
+    changePosition(openNewPosition(settings->getPositionPath()));
   }
   updateSettings(*settings);
 }
@@ -151,11 +135,11 @@ void GameFrame::onSettingsChanged(SettingsUpdateEvent &event)
 void GameFrame::changePosition(std::unique_ptr<Position> &&newPosition)
 {
   gameTimer->Stop();
-  gameManager->reset(std::move(newPosition));
-  if (gameManager->queueEmpty())
+  if (newPosition == nullptr)
   {
     return;
   }
+  gameManager->reset(std::move(newPosition));
   startButton->Enable();
   const std::shared_ptr position = gameManager->yieldPosition();
   updatePositionLabels(*position);
@@ -172,9 +156,22 @@ void GameFrame::updatePositionLabels(const Position &position)
   cellsQuantityLabel->SetLabelText(cellsQuantityText);
 }
 
+std::unique_ptr<Position>
+GameFrame::openNewPosition(const std::filesystem::path &path)
+{
+  auto initialCellset{Position::parseJsonFile(path)};
+  if (initialCellset.has_value())
+  {
+    return std::make_unique<Position>(std::move(*initialCellset));
+  } else
+  {
+    wxMessageBox(parsingErrorMessage, "Error opening the file");
+    return nullptr;
+  }
+}
+
 void GameFrame::onClose(wxCloseEvent &)
 {
   saveSettings(settingsPanel->getSettings());
   Show(false);
-  Destroy();
 }

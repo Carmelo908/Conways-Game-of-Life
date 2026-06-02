@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <fstream>
+#include <optional>
 #include <unordered_set>
 
 #include <nlohmann/json_fwd.hpp>
@@ -54,18 +55,19 @@ public:
   /// @param file: file path expected to be non empty and refer to a json file.
   /// Delegates to parseJsonFile(const std::ifstream &).
   /// @return The opened Position
-  static CellSet parseJsonFile(const std::filesystem::path &file);
+  static std::optional<CellSet>
+  parseJsonFile(const std::filesystem::path &file);
 
   /// @brief Delegates actual parsing of file's contents to parseJson(const
   /// nlohmann::json &).
   /// @return The openned Position
-  static CellSet parseJsonFile(std::ifstream &file);
+  static std::optional<CellSet> parseJsonFile(std::ifstream &file);
 
   /// @brief Open a Position from a nlohmann::json object whose data is expected
   /// to be valid.
   /// @throws nlohmann::exception if the JSON data is invalid.
   /// @return The openned Position.
-  static CellSet parseJson(const nlohmann::json &jsonObject);
+  static std::optional<CellSet> parseJson(const nlohmann::json &jsonObject);
 
   /// @brief Advances the Position's generation following the Conway's Game of
   /// Life rules.

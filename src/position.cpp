@@ -17,20 +17,26 @@ bool Position::operator==(const Position &rhs) const
   return this->aliveCells == rhs.aliveCells;
 }
 
-Position::CellSet Position::parseJsonFile(const std::filesystem::path &filepath)
+std::optional<Position::CellSet>
+Position::parseJsonFile(const std::filesystem::path &filepath)
 {
   std::ifstream file{filepath};
   return parseJsonFile(file);
 }
 
-Position::CellSet Position::parseJsonFile(std::ifstream &file)
+std::optional<Position::CellSet> Position::parseJsonFile(std::ifstream &file)
 {
-  auto jsonObject = nlohmann::json::parse(file);
+  auto jsonObject = nlohmann::json::parse(file, nullptr, false);
   return parseJson(jsonObject);
 }
 
-Position::CellSet Position::parseJson(const nlohmann::json &jsonObject)
+std::optional<Position::CellSet>
+Position::parseJson(const nlohmann::json &jsonObject)
 {
+  if (jsonObject.is_discarded())
+  {
+    return {};
+  }
   CellSet cellSet{};
   for (auto &cell : jsonObject)
   {

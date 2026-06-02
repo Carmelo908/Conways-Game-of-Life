@@ -51,7 +51,7 @@ TEST_CASE("Opening a position from json")
   auto json = nlohmann::json::parse(R"([
     [0, -1], [0, 0], [0, 1]
   ])");
-  Position pos{Position::parseJson(json)};
+  Position pos{*Position::parseJson(json)};
   Position::CellSet expectedCells{};
   expectedCells.insert({.x = 0, .y = -1});
   expectedCells.insert({.x = 0, .y = 0});
@@ -85,7 +85,7 @@ TEST_CASE("Position functionality")
   BENCHMARK_ADVANCED("Advance fixed Position 100 times")
   (Catch::Benchmark::Chronometer meter)
   {
-    Position benchmarkPosition{Position::parseJsonFile(positionFilepath)};
+    Position benchmarkPosition{*Position::parseJsonFile(positionFilepath)};
     auto advance100Times = [&] {
       for (int i = 0; i < 100; i++)
       {
