@@ -23,9 +23,36 @@ wxBitmap PositionRenderer::render(const Position &position) const
       {
         continue;
       };
-      auto cellPoint = wxPoint(x * 5, y * 5);
-      bitmapDC.DrawRectangle(cellPoint, wxSize(5, 5));
+      auto cellPoint = wxPoint(x * zoom, y * zoom);
+      bitmapDC.DrawRectangle(cellPoint, wxSize(zoom, zoom));
     }
   }
   return posBitmap;
 }
+
+void PositionRenderer::moveCamera(Direction d)
+{
+  /* Camera move nimplemented */
+  switch (d)
+  {
+  case Direction::up:
+    camera.y++;
+    break;
+  case Direction::down:
+    camera.y--;
+    break;
+  case Direction::left:
+    camera.x--;
+    break;
+  case Direction::right:
+    camera.x++;
+    break;
+  }
+}
+void PositionRenderer::setZoom(int z) { zoom = z; }
+
+int PositionRenderer::getZoom() const { return zoom; }
+
+void PositionRenderer::setSize(wxSize s) { size = s; }
+
+wxSize PositionRenderer::getSize() const { return size; }

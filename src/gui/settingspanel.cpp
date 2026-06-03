@@ -47,6 +47,7 @@ SettingsPanel::SettingsPanel(wxWindow *parent, const Settings &initialSettings)
   setUpLayout();
   Bind(wxEVT_FILEPICKER_CHANGED, &SettingsPanel::onSettingsChanged, this);
   Bind(wxEVT_SPINCTRL, &SettingsPanel::onSettingsChanged, this);
+  Bind(wxEVT_SLIDER, &SettingsPanel::onSettingsChanged, this);
 }
 
 void SettingsPanel::createControls(const Settings &initialSettings)

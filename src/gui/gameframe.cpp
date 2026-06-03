@@ -96,6 +96,7 @@ void GameFrame::createComponents()
 void GameFrame::updateSettings(Settings &settings)
 {
   delay = settings.getDelay();
+  renderer->setZoom(settings.getZoom());
 }
 
 void GameFrame::onGameTimer(wxTimerEvent &)

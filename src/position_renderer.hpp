@@ -4,7 +4,7 @@
 
 #include "position.hpp"
 
-enum Direction
+enum class Direction
 {
   up,
   down,
@@ -31,8 +31,8 @@ public:
   void setZoom(int z);
   int getZoom() const;
 
-  void setSize(int s);
-  int getSize() const;
+  void setSize(wxSize s);
+  wxSize getSize() const;
 
 private:
   wxSize size;
