@@ -25,7 +25,7 @@ public:
   /// @param posFilePath must be an existing JSON file.
   /// @param delay count() must be in range (0, 1000).
   Settings(const std::filesystem::path &positionPath,
-           std::chrono::milliseconds delay);
+           std::chrono::milliseconds delay, int zoom);
 
   /// @brief default comparision operator.
   bool operator==(const Settings &other) const = default;
@@ -36,15 +36,20 @@ public:
   /// @return the delay field.
   std::chrono::milliseconds getDelay() const;
 
+  int getZoom() const;
+
   /// @param d only sets the value if it's a existing file.
   void setPositionPath(const std::filesystem::path &p);
 
   /// @param p only sets the value if d.count() is in range (0, 1000).
   void setDelay(std::chrono::milliseconds d);
 
+  void setZoom(int z);
+
 private:
   std::filesystem::path positionPath;
   std::chrono::milliseconds delay;
+  int zoom;
 };
 
 /// \related Settings

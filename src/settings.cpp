@@ -16,6 +16,8 @@ bool validateDelay(const std::chrono::milliseconds &d)
   return d.count() >= 10 && d.count() <= 1000;
 }
 
+bool validateZoom(int z) { return z >= 1 && z <= 10; }
+
 Settings parseFileSettings(const std::filesystem::path &settingsFilePath)
 {
   std::ifstream f{settingsFilePath};
@@ -63,11 +65,12 @@ void saveSettings(const Settings &settings,
 
 Settings::Settings()
   : positionPath{},
-    delay{50}
+    delay{50},
+    zoom{5}
 {}
 
 Settings::Settings(const std::filesystem::path &positionPath,
-                   std::chrono::milliseconds delay)
+                   std::chrono::milliseconds delay, int zoom)
   : Settings()
 {
   if (validatePath(positionPath))
@@ -78,6 +81,10 @@ Settings::Settings(const std::filesystem::path &positionPath,
   {
     this->delay = delay;
   }
+  if (validateZoom(zoom))
+  {
+    this->zoom = zoom;
+  }
 }
 
 const std::filesystem::path &Settings::getPositionPath() const
@@ -86,6 +93,8 @@ const std::filesystem::path &Settings::getPositionPath() const
 }
 
 std::chrono::milliseconds Settings::getDelay() const { return delay; }
+
+int Settings::getZoom() const { return zoom; }
 
 void Settings::setPositionPath(const std::filesystem::path &p)
 {
@@ -100,5 +109,13 @@ void Settings::setDelay(std::chrono::milliseconds d)
   if (validateDelay(d))
   {
     delay = d;
+  }
+}
+
+void Settings::setZoom(int z)
+{
+  if (validateZoom(z))
+  {
+    zoom = z;
   }
 }

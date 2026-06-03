@@ -9,7 +9,7 @@ TEST_CASE("Testing settings initialization and JSON parsing")
 {
   SECTION("Initialization with bad arguments")
   {
-    const Settings s1{"", std::chrono::milliseconds(-10)};
+    const Settings s1{"", std::chrono::milliseconds(-10), 100};
     const Settings s2{};
     CHECK(s1 == s2);
   }

@@ -7,11 +7,13 @@
 
 #include <wx/event.h>
 #include <wx/panel.h>
+#include <wx/slider.h>
 
 #include "../settings.hpp"
 
 class wxFilePickerCtrl;
 class wxSpinCtrl;
+class wxSlider;
 class wxStaticText;
 
 /// @brief represents a event that is going to be posted by SettingsPanel to its
@@ -60,6 +62,8 @@ private:
 
   std::filesystem::path getPositionPath() const;
 
+  int getZoom() const;
+
   void createControls(const Settings &initialSettings);
 
   wxStaticText *createLabel(std::string_view labelText);
@@ -70,4 +74,5 @@ private:
 
   wxFilePickerCtrl *pathCtrl;
   wxSpinCtrl *delayCtrl;
+  wxSlider *zoomCtrl;
 };
