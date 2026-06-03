@@ -1,4 +1,5 @@
 #include "position_renderer.hpp"
+#include "position.hpp"
 
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
@@ -15,15 +16,11 @@ wxBitmap PositionRenderer::render(const Position &position) const
   wxBitmap posBitmap{size};
   wxMemoryDC bitmapDC{posBitmap};
   bitmapDC.SetPen(*wxWHITE_PEN);
-  for (int y = -size.GetY() / 2; y < size.GetY() / 2; y++)
+  for (auto cell : position)
   {
-    for (int x = -size.GetX() / 2; x < size.GetX() / 2; x++)
+    if (insideBitmap(cell))
     {
-      if (!position.getCellAt(x, y))
-      {
-        continue;
-      };
-      auto cellPoint = wxPoint(x * zoom, y * zoom);
+      auto cellPoint = wxPoint(cell.x * zoom, cell.y * zoom);
       bitmapDC.DrawRectangle(cellPoint, wxSize(zoom, zoom));
     }
   }
@@ -49,6 +46,7 @@ void PositionRenderer::moveCamera(Direction d)
     break;
   }
 }
+
 void PositionRenderer::setZoom(int z) { zoom = z; }
 
 int PositionRenderer::getZoom() const { return zoom; }
@@ -56,3 +54,10 @@ int PositionRenderer::getZoom() const { return zoom; }
 void PositionRenderer::setSize(wxSize s) { size = s; }
 
 wxSize PositionRenderer::getSize() const { return size; }
+
+bool PositionRenderer::insideBitmap(CellCoords cell) const
+{
+  bool insideCoordsX = cell.x * zoom <= size.x && cell.x >= 0;
+  bool insideCoordsY = cell.y * zoom <= size.y && cell.y >= 0;
+  return insideCoordsX && insideCoordsY;
+}

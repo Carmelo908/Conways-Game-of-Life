@@ -1,8 +1,7 @@
-#include <sys/types.h>
-#include <wx/bitmap.h>
-#include <wx/gdicmn.h>
 
 #include "position.hpp"
+
+#include <wx/gdicmn.h>
 
 enum class Direction
 {
@@ -35,6 +34,8 @@ public:
   wxSize getSize() const;
 
 private:
+  bool insideBitmap(CellCoords cell) const;
+
   wxSize size;
   int zoom;
   wxPoint camera;
