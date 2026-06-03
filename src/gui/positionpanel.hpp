@@ -3,6 +3,7 @@
 #include <wx/panel.h>
 
 class Position;
+class PositionRenderer;
 class wxBitmap;
 class wxPaintEvent;
 
@@ -13,7 +14,7 @@ public:
   /// @brief Constructs the panel which is hidden until showPosition is
   /// executed at least once.
   /// @param parent: the parent windows (GameFrame).
-  PositionPanel(wxWindow *parent);
+  PositionPanel(wxWindow *parent, const PositionRenderer *renderer);
 
   /// @brief shows the Position on the panel in a monochromatic wxBitmap
   ///
@@ -21,20 +22,18 @@ public:
   /// black
   void showPosition(std::shared_ptr<const Position> position);
 
+  static wxSize size();
+
 private:
   void OnPaint(wxPaintEvent &);
 
-  static int getCellSizeUnits(const Position &pos);
-
-  static wxBitmap makePositionBitmap(const Position &position);
-
   struct DrawingData : public wxClientData
   {
-    DrawingData(std::shared_ptr<const Position> &position);
+    DrawingData(const PositionRenderer *renderer);
+    DrawingData(std::shared_ptr<const Position> &position,
+                const PositionRenderer *renderer);
 
     std::shared_ptr<const Position> position;
+    const PositionRenderer *renderer;
   };
-
-  static constexpr int maxWidth = 500;
-  static constexpr int maxHeight = 500;
 };

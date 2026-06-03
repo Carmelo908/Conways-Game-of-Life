@@ -1,18 +1,16 @@
 #include "gameframe.hpp"
 
-#include <chrono>
 #include <filesystem>
 #include <memory>
 
 #include <wx/button.h>
-#include <wx/filepicker.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/timer.h>
 
 #include "../game_manager.hpp"
-#include "../position.hpp"
+#include "../position_renderer.hpp"
 #include "../settings.hpp"
 #include "positionpanel.hpp"
 #include "settingspanel.hpp"
@@ -67,8 +65,9 @@ private:
 GameFrame::GameFrame(std::unique_ptr<Settings> &&initialSettings)
   : wxFrame(nullptr, wxID_ANY, "Conway's Game of Life", wxDefaultPosition),
     gameManager{std::make_unique<GameManager>()},
+    renderer{std::make_unique<PositionRenderer>(PositionPanel::size())},
     gameTimer{new wxTimer(this)},
-    positionPanel{new PositionPanel(this)}
+    positionPanel{new PositionPanel(this, renderer.get())}
 {
   assert(initialSettings != nullptr);
   delay = initialSettings->getDelay(),

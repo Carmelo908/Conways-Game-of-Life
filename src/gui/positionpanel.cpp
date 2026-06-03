@@ -1,61 +1,48 @@
 #include "positionpanel.hpp"
+#include "../position_renderer.hpp"
 
-#include <wx/bitmap.h>
 #include <wx/dcclient.h>
-#include <wx/dcmemory.h>
 #include <wx/gdicmn.h>
+#include <wx/gtk/bitmap.h>
 
-#include "../position.hpp"
-
-PositionPanel::PositionPanel(wxWindow *parent)
+PositionPanel::PositionPanel(wxWindow *parent, const PositionRenderer *renderer)
   : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(1000, 500),
             wxBORDER_THEME)
 {
+  SetClientObject(new DrawingData(renderer));
   Bind(wxEVT_PAINT, &PositionPanel::OnPaint, this);
   SetBackgroundColour(wxColour(0, 0, 0));
-  const wxSize panelSize{maxWidth, maxHeight};
-  SetSize(panelSize);
+  SetSize(size());
 }
 
 void PositionPanel::showPosition(std::shared_ptr<const Position> position)
 {
-  SetClientObject(new DrawingData(position));
+  auto clientData = dynamic_cast<DrawingData *>(GetClientObject());
+  clientData->position = std::move(position);
+  SetClientObject(new DrawingData(clientData->position, clientData->renderer));
   Refresh();
 }
+
+wxSize PositionPanel::size() { return {500, 500}; }
 
 void PositionPanel::OnPaint(wxPaintEvent &)
 {
   auto clientData{dynamic_cast<DrawingData *>(GetClientObject())};
-  if (clientData == nullptr || clientData->position == nullptr)
+  if (!clientData || !clientData->position)
   {
     wxPaintDC(this).Clear();
     return;
   }
-  auto posBitmap = makePositionBitmap(*clientData->position);
+  auto posBitmap = clientData->renderer->render(*clientData->position);
   wxPaintDC(this).DrawBitmap(posBitmap, 0, 0);
 }
 
-wxBitmap PositionPanel::makePositionBitmap(const Position &position)
-{
-  wxBitmap posBitmap{maxWidth, maxHeight};
-  wxMemoryDC bitmapDC{posBitmap};
-  bitmapDC.SetPen(*wxWHITE_PEN);
-  for (int y = -maxHeight / 2; y < maxHeight / 2; y++)
-  {
-    for (int x = -maxWidth / 2; x < maxWidth / 2; x++)
-    {
-      if (!position.getCellAt(x, y))
-      {
-        continue;
-      };
-      auto cellPoint = wxPoint(x * 5, y * 5);
-      bitmapDC.DrawRectangle(cellPoint, wxSize(5, 5));
-    }
-  }
-  return posBitmap;
-}
+PositionPanel::DrawingData::DrawingData(const PositionRenderer *renderer)
+  : renderer{renderer}
+{}
 
 PositionPanel::DrawingData::DrawingData(
-    std::shared_ptr<const Position> &position)
-  : position{position}
+    std::shared_ptr<const Position> &position, const PositionRenderer *renderer)
+  : position{position},
+    renderer{renderer}
 {}

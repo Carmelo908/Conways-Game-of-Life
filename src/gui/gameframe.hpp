@@ -6,6 +6,7 @@
 #include "settingspanel.hpp"
 
 class GameManager;
+class PositionRenderer;
 class Position;
 class PositionPanel;
 class Settings;
@@ -50,6 +51,7 @@ private:
   void onClose(wxCloseEvent &);
 
   std::unique_ptr<GameManager> gameManager;
+  std::unique_ptr<PositionRenderer> renderer;
   std::chrono::milliseconds delay;
 
   wxTimer *gameTimer;

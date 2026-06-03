@@ -4,6 +4,7 @@ set(
   position.cpp
   settings.cpp
   game_manager.cpp
+  position_renderer.cpp
   gui/settingspanel.cpp
   gui/gameframe.cpp
   gui/positionpanel.cpp
