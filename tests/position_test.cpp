@@ -85,7 +85,7 @@ TEST_CASE("Position functionality")
   BENCHMARK_ADVANCED("Advance fixed Position 100 times")
   (Catch::Benchmark::Chronometer meter)
   {
-    Position benchmarkPosition{*Position::parseJsonFile(positionFilepath)};
+    Position benchmarkPosition{*Position::parseJson(positionFilepath)};
     auto advance100Times = [&] {
       for (int i = 0; i < 100; i++)
       {

@@ -11,9 +11,9 @@ class wxPaintEvent;
 class PositionPanel : public wxPanel
 {
 public:
-  /// @brief Constructs the panel which is hidden until showPosition is
-  /// executed at least once.
+  /// @brief Constructs the panel.
   /// @param parent: the parent windows (GameFrame).
+  /// @param renderer: the position renderer owned by the GameFrame parent.
   PositionPanel(wxWindow *parent, const PositionRenderer *renderer);
 
   /// @brief shows the Position on the panel in a monochromatic wxBitmap

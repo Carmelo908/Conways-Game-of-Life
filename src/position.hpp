@@ -51,22 +51,14 @@ public:
   /// compare other properties
   bool operator==(const Position &rhs) const;
 
-  /// @brief Creates a position from a JSON file
-  /// @param file: file path expected to be non empty and refer to a json file.
-  /// Delegates to parseJsonFile(const std::ifstream &).
-  /// @return The opened Position
-  static std::optional<CellSet>
-  parseJsonFile(const std::filesystem::path &file);
+  /// @return Empty object if the parsing of the argument file fails or file is
+  /// empty, otherwise the opened Position.
+  static std::optional<CellSet> parseJson(const std::filesystem::path &file);
 
-  /// @brief Delegates actual parsing of file's contents to parseJson(const
-  /// nlohmann::json &).
-  /// @return The openned Position
-  static std::optional<CellSet> parseJsonFile(std::ifstream &file);
+  /// @return Empty object if the parsing fails, otherwise the openned Position
+  static std::optional<CellSet> parseJson(std::ifstream &file);
 
-  /// @brief Open a Position from a nlohmann::json object whose data is expected
-  /// to be valid.
-  /// @throws nlohmann::exception if the JSON data is invalid.
-  /// @return The openned Position.
+  /// \overload
   static std::optional<CellSet> parseJson(const nlohmann::json &jsonObject);
 
   /// @brief Advances the Position's generation following the Conway's Game of
@@ -78,7 +70,7 @@ public:
   /// \overload
   bool getCellAt(int64_t coordX, int64_t coordY) const;
 
-  /// @return a const iterator of the underlying set to the first cell.
+  /// @return a const iterator to the beggining of the underlying set.
   CellSet::const_iterator begin() const;
   /// @return a const iterator to the end of the underlying set.
   CellSet::const_iterator end() const;

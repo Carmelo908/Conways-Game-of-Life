@@ -159,7 +159,7 @@ void GameFrame::updatePositionLabels(const Position &position)
 std::unique_ptr<Position>
 GameFrame::openNewPosition(const std::filesystem::path &path)
 {
-  auto initialCellset{Position::parseJsonFile(path)};
+  auto initialCellset{Position::parseJson(path)};
   if (initialCellset.has_value())
   {
     return std::make_unique<Position>(std::move(*initialCellset));
@@ -173,5 +173,5 @@ GameFrame::openNewPosition(const std::filesystem::path &path)
 void GameFrame::onClose(wxCloseEvent &)
 {
   saveSettings(settingsPanel->getSettings());
-  Show(false);
+  Hide();
 }

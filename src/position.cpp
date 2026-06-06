@@ -18,13 +18,13 @@ bool Position::operator==(const Position &rhs) const
 }
 
 std::optional<Position::CellSet>
-Position::parseJsonFile(const std::filesystem::path &filepath)
+Position::parseJson(const std::filesystem::path &filepath)
 {
   std::ifstream file{filepath};
-  return parseJsonFile(file);
+  return parseJson(file);
 }
 
-std::optional<Position::CellSet> Position::parseJsonFile(std::ifstream &file)
+std::optional<Position::CellSet> Position::parseJson(std::ifstream &file)
 {
   auto jsonObject = nlohmann::json::parse(file, nullptr, false);
   return parseJson(jsonObject);

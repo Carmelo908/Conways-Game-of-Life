@@ -9,9 +9,11 @@
 ///
 /// It can be loaded and saved in JSON format and its values are used in the
 /// program runtime. Its fields are:
-/// positionPath = a file path to the last opened position file.
+/// position_path = a file path to the last opened position file.
 /// delay = a duration in milliseconds for which the UI should pause between
 /// every generation.
+/// zoom = a number that represents how much space will be drawed when creating
+/// a bitmap from a Position.
 class Settings
 {
 public:
@@ -22,7 +24,7 @@ public:
 
   /// @brief Constructs Settings with default values and only saves the
   /// arguments if they accomplish specific conditions.
-  /// @param posFilePath must be an existing JSON file.
+  /// @param positionPath must be an existing JSON file.
   /// @param delay count() must be in range (0, 1000).
   Settings(const std::filesystem::path &positionPath,
            std::chrono::milliseconds delay, int zoom);
@@ -30,20 +32,22 @@ public:
   /// @brief default comparision operator.
   bool operator==(const Settings &other) const = default;
 
-  /// @return the positionPath field.
+  /// @return the position_path field.
   const std::filesystem::path &getPositionPath() const;
 
   /// @return the delay field.
   std::chrono::milliseconds getDelay() const;
 
+  /// @return the zoom field.
   int getZoom() const;
 
   /// @param d only sets the value if it's a existing file.
   void setPositionPath(const std::filesystem::path &p);
 
-  /// @param p only sets the value if d.count() is in range (0, 1000).
+  /// @param p only sets the value if d.count() is in range [0, 1000].
   void setDelay(std::chrono::milliseconds d);
 
+  /// @param p only sets the value if z is in range [0, 20].
   void setZoom(int z);
 
 private:

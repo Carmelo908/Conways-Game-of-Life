@@ -16,7 +16,7 @@ bool validateDelay(const std::chrono::milliseconds &d)
   return d.count() >= 10 && d.count() <= 1000;
 }
 
-bool validateZoom(int z) { return z >= 1 && z <= 10; }
+bool validateZoom(int z) { return z >= 1 && z <= 20; }
 
 Settings parseFileSettings(const std::filesystem::path &settingsFilePath)
 {

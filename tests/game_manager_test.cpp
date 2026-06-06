@@ -17,7 +17,7 @@ const auto positionFilepath =
 
 std::unique_ptr<Position> openTestPosition()
 {
-  return std::make_unique<Position>(*Position::parseJsonFile(positionFilepath));
+  return std::make_unique<Position>(*Position::parseJson(positionFilepath));
 }
 
 TEST_CASE("Game Manager") // NOLINT
