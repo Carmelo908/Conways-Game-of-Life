@@ -49,6 +49,10 @@ public:
 
 private:
   bool insideBitmap(CellCoords cell) const;
+  wxPoint cellPoint(CellCoords cell) const;
+
+  int offsetX() const;
+  int offsetY() const;
 
   wxSize size;
   int zoom;

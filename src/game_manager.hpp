@@ -12,6 +12,10 @@
 ///
 /// The queue has a maximun size of 256 and has to have at least one element to
 /// process from.
+///
+/// \todo change implementation to remove busy waiting from the worker thread
+/// with a mutex and a std::condition_variable instead of using
+/// this_thread::yield().
 class GameManager
 {
 public:

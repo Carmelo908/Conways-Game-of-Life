@@ -20,8 +20,8 @@ wxBitmap PositionRenderer::render(const Position &position) const
   {
     if (insideBitmap(cell))
     {
-      auto cellPoint = wxPoint(cell.x * zoom, cell.y * zoom);
-      bitmapDC.DrawRectangle(cellPoint, wxSize(zoom, zoom));
+      auto point = cellPoint(cell);
+      bitmapDC.DrawRectangle(point, wxSize(zoom, zoom));
     }
   }
   return posBitmap;
@@ -29,7 +29,6 @@ wxBitmap PositionRenderer::render(const Position &position) const
 
 void PositionRenderer::moveCamera(Direction d)
 {
-  /* Camera move nimplemented */
   switch (d)
   {
   case Direction::up:
@@ -57,7 +56,18 @@ wxSize PositionRenderer::getSize() const { return size; }
 
 bool PositionRenderer::insideBitmap(CellCoords cell) const
 {
-  bool insideCoordsX = cell.x * zoom <= size.x && cell.x >= 0;
-  bool insideCoordsY = cell.y * zoom <= size.y && cell.y >= 0;
-  return insideCoordsX && insideCoordsY;
+  bool afterLeftEdge = cell.x >= -offsetX();
+  bool beforeRightEdge = cell.x * zoom <= size.x - offsetX();
+  bool beforeTopEdge = cell.y * zoom <= size.y - offsetY();
+  bool afterBottomEdge = cell.y >= -offsetY();
+  return beforeTopEdge && beforeRightEdge && afterBottomEdge && afterLeftEdge;
 }
+
+wxPoint PositionRenderer::cellPoint(CellCoords cell) const
+{
+  return wxPoint(cell.x * zoom + offsetX(), cell.y * zoom + offsetY());
+}
+
+int PositionRenderer::offsetX() const { return size.x / 2 + camera.x * zoom; }
+
+int PositionRenderer::offsetY() const { return size.y / 2 + camera.y * zoom; }

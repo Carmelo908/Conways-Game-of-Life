@@ -20,6 +20,9 @@ class wxStaticText;
 /// @brief The window in which the Conway's Game of life is runned.
 ///
 /// It contains all the controls, creates it's own layout and controls the game.
+///
+/// \bug zoom changes by the userstopped updating the PositionPanel when the
+/// gameTimer is not running.
 class GameFrame : private wxFrame
 {
 public:
